@@ -13,6 +13,12 @@ Data files:
 dbpedia_map:
 -----------
 Mapping from DBPedia's categories to ConLL's.
+- SportsTeamSeason should be 0?
+- AnatomicalStructure: MISC (type of object) or 0?
+- Asteroid, Celestial body, etc
+- MeanOfTransportation: is this what they mean by 'car types'?
+- MusicGenre: titles/types, but not mentioned explicitly.
+
 
 dbpedia_3.x.owl:
 ---------------

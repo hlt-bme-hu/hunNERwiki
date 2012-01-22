@@ -2,3 +2,12 @@ Person PER
 Place LOC
 Organization ORG
 Organisation ORG
+SportsLeague MISC
+SportsTeamSeason MISC
+Event MISC
+Holiday MISC
+Ideology MISC
+Language MISC
+ProgrammingLanguage MISC
+Project MISC
+Work MISC
