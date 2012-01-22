@@ -1,0 +1,28 @@
+Scripts:
+=======
+
+extract_dbpedia_types.py:
+------------------------
+Takes the instance file as input and extracts the article - NER category
+pairings. The mapping from DBPedia to ConLL categories can be supplied in
+another file.
+
+Data files:
+==========
+
+dbpedia_map:
+-----------
+Mapping from DBPedia's categories to ConLL's.
+
+dbpedia_3.x.owl:
+---------------
+The T-box of the DBPedia ontology. Downloaded from DBPedia.
+
+instance_types_en.nt:
+--------------------
+Instance type data. Downloaded from DBPedia.
+
+dbpedia_entities:
+----------------
+Output of the extract_dbpedia_types.py when run on instance_types_en.nt.
+Used in generation of the NER training corpus.
