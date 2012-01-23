@@ -16,6 +16,7 @@ Mapping from DBPedia's categories to ConLL's.
 - EthnicGroup: plural
 - title may contain extra words, punctuation marks, plural case, etc.
 - AutomobileEngine?
+- British -> United Kingdom: LOC?!
 
 dbpedia_3.x.owl:
 ---------------
