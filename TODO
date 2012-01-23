@@ -20,13 +20,17 @@ Az anyag feltuningolása:
 további előfordulásokhoz
        -rossz nevek listája: rossz link, vagy nincs link & a jó
 neveket is kiirtja
--datumot tartalmazo mondatok nem kiszuresenek a megoldasa
--külső erőforrások:
-       -dátumregexp
-       -lista a hónapnevekkel
--tulajdonnév nélküli mondatokat is tegyük bene kulon gyujtsuk!) --> megnezni a CoNLL-ben, hogy hogy van
+-linkelt datumot tartalmazo mondatok nem kiszuresenek a megoldasa
+	-nem lehet a dbpedia alapjan azonositani, hogy a link az egy year-re mutat, es akkor azokat eldobni? amugy nem sok olyat talaltam, ahol az ev be van linkelve
+	-dátumregex
+       -lista a hónapnevekkl: DONE: /home/eszter/huntaggers/hunner/myLists/months.list 
+-tulajdonnév nélküli mondatokat is tegyüle (ne kulon gyujtsuk!) --> megnezni a CoNLL-ben, hogy hogy van
+	CoNLL: nincs is olyan mondat benne, amiben ne lenne NE, de ez a genre miatt van, mert ezek csak hirek
+	a wiki ebbpl a szempontbol mas tipus, itt vannak ilyen mondatok
+	mivel a feature-eink nem nyulnak mondaton kivulre, akar ossze is keverhetjuk oket
+	a NE nelkuli mondatok azert szamithatnak, mert a feature-ok sulyat lehet, hogy megvaltoztatja az, ha tobb nem nagybetus nem-NE van a szovegben -- ebben nem vagyok biztos, ki kene merni 
 
--punktuációs feature
+-punktuációs featu: DONE
 
 Hova:
 Kerdes: ugye nem csinalta meg mar mas?
