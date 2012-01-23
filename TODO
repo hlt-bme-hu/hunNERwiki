@@ -1,0 +1,40 @@
+Problemak:
+
+-hunpos: VBZ helyett NNS sokszor!!!!
+-talaltam olyan mondatot a kept-ben, amiben nincs ragozott ige, ezeket is ki kene szurni. vagyis maradjanak csak azok a mondatok, amikben van VBD vagy VBZ vagy VBP
+-CoNLL guideline-ban megnezni, hogy mit hogyan annotalnak --> mi is ugy!
+http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt
+http://mappings.dbpedia.org/server/ontology/classes#Organisation
+ezeket osszevetni!
+
+NER tagging:
+-wiki_minit újracsinálni a kept-ből: feléből train and devel, másik feléből test
+
+
+Az anyag feltuningolása:
+
+-Queen es tarsai????
+-saját cím felcímkézése
+-a cikkben szereplő már említett nevekből lista,
+       -jó nevek listája (azonosítható) --> innen vehetjük a taget a
+további előfordulásokhoz
+       -rossz nevek listája: rossz link, vagy nincs link & a jó
+neveket is kiirtja
+-datumot tartalmazo mondatok nem kiszuresenek a megoldasa
+-külső erőforrások:
+       -dátumregexp
+       -lista a hónapnevekkel
+-tulajdonnév nélküli mondatokat is tegyük bene kulon gyujtsuk!) --> megnezni a CoNLL-ben, hogy hogy van
+
+-punktuációs feature
+
+Hova:
+Kerdes: ugye nem csinalta meg mar mas?
+
+
+- LREC/W129: Language Resource Merging
+- ACL, EMNLP, EACL
+- ROBUS-UNSUP: jövőre (jan 27)
+- http://aclweb.org/aclwiki/index.php?title=Journals#Linguistics
+- COLING: http://www.coling2012-iitb.org/
+- http://www.anlp.jp/en/home/topic110912.html
