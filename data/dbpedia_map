@@ -2,12 +2,16 @@ Person PER
 Place LOC
 Organization ORG
 Organisation ORG
+Award MISC
 SportsLeague MISC
-SportsTeamSeason MISC
+SportsTeamSeason 0
+EthnicGroup MISC
 Event MISC
 Holiday MISC
 Ideology MISC
 Language MISC
+MeanOfTransportation MISC
 ProgrammingLanguage MISC
 Project MISC
+Weapon MISC
 Work MISC
