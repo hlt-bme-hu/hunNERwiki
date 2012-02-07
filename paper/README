@@ -1,0 +1,6 @@
+The two papers in this directory shall be:
+- engNERwiki, the original paper we will try to submit to LREC/ACL/whatever, and
+- hunNERwiki, the paper describing the application of our method to Hungarian.
+
+TODO:
+- find a better name for engNERwiki, it sucks (eNERwiki? wikiNER?)
