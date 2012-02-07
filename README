@@ -18,6 +18,7 @@ Mapping from DBPedia's categories to ConLL's.
 - Asteroid, Celestial body, etc
 - MeanOfTransportation: is this what they mean by 'car types'?
 - MusicGenre: titles/types, but not mentioned explicitly.
+- Eras in time: should this include Year or YearInSpaceFlight?
 
 
 dbpedia_3.x.owl:
