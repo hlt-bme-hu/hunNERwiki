@@ -21,7 +21,7 @@
 \title{XXX}
 
 %\author{Dávid Márk Nemeskey \\
-%  XXX Computer and Automation Research Institute\\
+%  Research Institute for Computer Science and Automation \\
 %  Hungarian Academy of Sciences \\
 %  H-1111 Lágymányosi út 11, Budapest \\
 %  {\tt nemeskey.david@sztaki.hu} \\\And
@@ -38,10 +38,6 @@
 \begin{abstract}
   This document contains the instructions for preparing a camera-ready manuscript for the proceedings of ACL2012. The document itself conforms to its own specifications, and is therefore an example of what your manuscript should look like. These instructions should be used for both papers submitted for review and for final versions of accepted papers. Authors are asked to conform to all the directions reported in this document.
 \end{abstract}
-
-\section{Credits}
-
-This document has been adapted from the instructions for earlier ACL proceedings, including those for ACL-2008 by Johanna D. Moore, Simone Teufel, James Allan, and Sadaoki Furui, those for ACL-2005 by Hwee Tou Ng and Kemal Oflazer, those for ACL-2002 by Eugene Charniak and Dekang Lin, and earlier ACL and EACL formats. Those versions were written by several people, including John Chen, Henry S. Thompson and Donald Walker. Additional elements were taken from the formatting instructions of the {\em International Joint Conference on Artificial Intelligence}.
 
 \section{Introduction}
 
@@ -66,8 +62,29 @@ The paper is structured as follows.
 % Ide kell? Vagy Conclusion elé?
 
 \section{Creation of the Corpus}  % Dzsííízösz
+XXX: past or present tense?
+% Introduction
+We decided to use Wikipedia because
+
+The categories of Wikipedia are too numerous and ; not a tree;
+
+Wikipedia proves to be a rich source of information about its entities; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Since our goal is to create a NER training corpus, our interest is limited to the article text. Templates are removed from the articles; however, the names of the templates have been retained for , but all data (including infobox) 
+
+Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty and can be safely ignored altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages have been dropped from the corpus as well.
+
+The corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the XXX (Attila) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The data was then converted into the tab separated format used by ConLL (XXX, CITE).
+
+Though not included in the corpus, redirect pages can improve recall of the gold standard (XXX). 
 % 1. Parsing Wikipedia (hunpos)
-% 2. The DBpedia -> ConLL mapping
+% TODO: redirect redirect pages
+
+\subsection{The DBpedia -- ConLL mapping}
+
+The entities in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The taxonomy 
+% description of the DBpedia ontology
+On the surface, this hierarchy seems the parallel the four categories (\texttt{PER, LOC, ORG and MISC}) XXX. However, closer inspection reveals that the similarity is superficial. The ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt)
+The full mapping can be found in LINK Appendix A (XXX or not).
+
 % 3. Training sentence extraction
 %   a. only known links
 %   b. title parts
@@ -77,6 +94,10 @@ The paper is structured as follows.
 %   a. unknown links, no unlinked names
 %   b. might be good for quality evaluation / recursive tagging (next paper?)
 % 5. teaching the original DBpedia categories?
+
+\section{Creation of the Hungarian Corpus}
+% Inconsistent template names, esp. across languages
+% Comparison of the Hungarian DBpedia vs English + mapping?
 
 \section{Evaluation}
 
