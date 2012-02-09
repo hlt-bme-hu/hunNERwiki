@@ -59,23 +59,26 @@ The applied annotation schema is the CoNLL tagset, which is one of the major sta
 The paper is structured as follows. 
 
 \section{Related Work}
+% Wikify! 
 % Ide kell? Vagy Conclusion elé?
 
 \section{Creation of the Corpus}  % Dzsííízösz
+
+% Introduction: Wikipedia + DBpedia
+The corpora are available in the tab separated format used by ConLL (XXX, CITE). In this format, one line contains one word, its linguistic features and the named entity tags. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word, part-of-speech tag and chunk tag. Two named entity tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the ConLL named entity tag. While the named entity tags can be considered "gold", the linguistic features are provided on a "best-effort" basis (XXX: check the LREC paper to find a better wording for this).
 XXX: past or present tense?
-% Introduction
+
 We decided to use Wikipedia because
 
 The categories of Wikipedia are too numerous and ; not a tree;
 
-Wikipedia proves to be a rich source of information about its entities; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Since our goal is to create a NER training corpus, our interest is limited to the article text. Templates are removed from the articles; however, the names of the templates have been retained for , but all data (including infobox) 
+Wikipedia proves to be a rich source of information about its entities; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Since our goal is to create a NER training corpus, our interest is limited to the article text. Templates are removed from the articles; however, the names of the templates have been retained for XXX, but all data (including infobox) 
 
-Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty and can be safely ignored altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages have been dropped from the corpus as well.
+Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty and are safe to ignore altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages have been dropped from the corpus as well.
 
-The corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the XXX (Attila) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The data was then converted into the tab separated format used by ConLL (XXX, CITE).
+The corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the XXX (Attila) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged by HunPos (CITE). Chunking was performed by HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
 
 Though not included in the corpus, redirect pages can improve recall of the gold standard (XXX). 
-% 1. Parsing Wikipedia (hunpos)
 % TODO: redirect redirect pages
 
 \subsection{The DBpedia -- ConLL mapping}
