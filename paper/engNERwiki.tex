@@ -83,10 +83,13 @@ Though not included in the corpus, redirect pages can improve recall of the gold
 
 \subsection{The DBpedia -- ConLL mapping}
 
-The entities in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The taxonomy 
+
+The classes in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The ontology contains the 350 most frequent categories of Wikipedia, arranged into a taxonomy tree under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies: \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
 % description of the DBpedia ontology
-On the surface, this hierarchy seems the parallel the four categories (\texttt{PER, LOC, ORG and MISC}) XXX. However, closer inspection reveals that the similarity is superficial. The ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt)
+On the surface, this hierarchy seems to parallel the four categories (\texttt{PER, LOC, ORG and MISC}) XXX. However, closer inspection reveals that the similarity is superficial. The ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt)
 The full mapping can be found in LINK Appendix A (XXX or not).
+
+\subsection{Extraction of the Training Sentences}
 
 % 3. Training sentence extraction
 %   a. only known links
