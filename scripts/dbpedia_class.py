@@ -5,6 +5,8 @@ import sys
 import re
 import copy
 import xml.sax.handler
+import networkx as nx
+import matplotlib.pyplot as plt
 
 class OwlClassHierarchy(xml.sax.handler.ContentHandler):
     URI_PATTERN = re.compile(r'http:.*/(.+)')
@@ -102,6 +104,20 @@ class OwlClassHierarchy(xml.sax.handler.ContentHandler):
             self.sorted = dict((t[1], t[0]) for t in enumerate(self.sorted))
         return self.sorted
 
+    def draw_graph(self):
+        """Draws a graph of the ontology classes. Again, use only for small
+        ontologies."""
+        G = nx.DiGraph()
+        G.add_nodes_from(self.tree.keys())
+        for cls, parents in self.tree.iteritems():
+            for parent in parents:
+                G.add_edge(cls, parent)
+        pos = nx.spring_layout(G, scale=0.1)
+        nx.draw_networkx_nodes(G, pos)
+        nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.5)
+        nx.draw_networkx_labels(G, pos, font_weight='bold')
+        plt.show()
+
     @staticmethod
     def _strip_uri(uri):
         m = OwlClassHierarchy.URI_PATTERN.match(uri)
@@ -120,4 +136,9 @@ if __name__ == '__main__':
     handler.create_isa_map()
     print handler.is_a('University', 'Organisation')
 #    print handler.get_sorted()
+#    handler.draw_graph()
+#    for child, parents in handler.tree.iteritems():
+#        if len(parents) > 1:
+#            print child, parents
 
+#    print 'Library', handler.isa_map['Library']
