@@ -32,7 +32,7 @@ class OwlClassHierarchy(xml.sax.handler.ContentHandler):
                 self.cls = OwlClassHierarchy._strip_uri(uri)
         elif name == 'rdfs:subClassOf':
             uri = attrs.get('rdf:resource')
-            if self.cls is not None and uri is not None:
+            if self.cls is not None and uri is not None and uri.startswith('http://dbpedia.org/ontology'):
                 self.super_cls.append(OwlClassHierarchy._strip_uri(uri))
 
     def endElement(self, name):
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         sys.exit()
 
     handler = OwlClassHierarchy(sys.argv[1])
-#    print handler.get_sorted()
     handler.create_isa_map()
     print handler.is_a('University', 'Organisation')
+#    print handler.get_sorted()
 
