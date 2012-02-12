@@ -81,20 +81,6 @@ The corpus is based on the Wikipedia snapshot as of XXX. The xml files were pars
 Though not included in the corpus, redirect pages can improve recall of the gold standard (XXX). 
 % TODO: redirect redirect pages
 
-\subsection{The DBpedia -- ConLL mapping}
-
-% Introduction + entity -> class -> category.
-
-The classes in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The ontology contains the 320 most frequent categories of Wikipedia, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes XXX): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
-
-It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the ConLL NER categories \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, MISC is more elusive; according to the ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt), the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other class outside the main sub-hierarchies. 
-
-While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but in the ConLL corpus, sport leagues are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, ConLL does not recognize such entities. To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class -- NER category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to the entity the category of the class that matches it most closely -- i.e. the category of the entity's class, if it is in the list, or that of its closest ancestor. XXX!!! If no match is found, the entity is tagged with \texttt{0}. Since we take advantage of the inheritence hierarchy, the mapping list remains short: it contains only the root classes of the main sub-hierarchies, exceptions of the like XXX mentioned above and the various classes that belong to the MISC category according to the ConLL annotation guideline.
-
-As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph. This introduces the problem of selecting the right superclass, and hence, ConLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NER mapping for the ambiguous XXX class and adding it to the mapping file. The first approach, unfortunately, already fails to assign the correct ConLL NER tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation; ConLL's LOC. Therefore, only the second, manual approach ensures correct tagging. XXX
-
-The full mapping can be found in LINK Appendix A (XXX or not).
-
 \subsection{Extraction of the Training Sentences}
 
 The basic unit of a NER training corpus is the sentence. In this section, we describe how training sentences are extracted from the preprocessed Wikipedia pages.
@@ -110,6 +96,20 @@ The basic unit of a NER training corpus is the sentence. In this section, we des
 %   a. unknown links, no unlinked names
 %   b. might be good for quality evaluation / recursive tagging (next paper?)
 % 5. teaching the original DBpedia categories?
+
+\subsection{The DBpedia -- ConLL mapping}
+
+% Introduction + entity -> class -> category.
+
+The classes in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The ontology contains the 320 most frequent categories of Wikipedia, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes XXX): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
+
+It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the ConLL NER categories \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, MISC is more elusive; according to the ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt), the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other class outside the main sub-hierarchies. 
+
+While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but in the ConLL corpus, sport leagues are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, ConLL does not recognize such entities. To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class -- NER category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to the entity the category of the class that matches it most closely -- i.e. the category of the entity's class, if it is in the list, or that of its closest ancestor. XXX!!! If no match is found, the entity is tagged with \texttt{0}. Since we take advantage of the inheritence hierarchy, the mapping list remains short: it contains only the root classes of the main sub-hierarchies, exceptions of the like XXX mentioned above and the various classes that belong to the MISC category according to the ConLL annotation guideline.
+
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph. This introduces the problem of selecting the right superclass, and hence, ConLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NER mapping for the ambiguous XXX class and adding it to the mapping file. The first approach, unfortunately, already fails to assign the correct ConLL NER tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation; ConLL's LOC. Therefore, only the second, manual approach ensures correct tagging. XXX
+
+The full mapping can be found in LINK Appendix A (XXX or not).
 
 \section{Creation of the Hungarian Corpus}
 
