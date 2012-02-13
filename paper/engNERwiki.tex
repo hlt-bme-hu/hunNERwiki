@@ -76,22 +76,37 @@ Wikipedia proves to be a rich source of information about its entities; aside fr
 
 Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty and are safe to ignore altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages have been dropped from the corpus as well.
 
-The corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the XXX (Attila) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged by HunPos (CITE). Chunking was performed by HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
-
-Though not included in the corpus, redirect pages can improve recall of the gold standard (XXX). 
-% TODO: redirect redirect pages
+The corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the XXX (Attila) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged with HunPos (CITE). Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
 
 \subsection{Extraction of the Training Sentences}
 
 The basic unit of a NER training corpus is the sentence. In this section, we describe how training sentences are extracted from the preprocessed Wikipedia pages.
 
+\subsubsection{Sentence selection}
 
+A NER training corpus consists of sentences that contain "gold" quality information about the named entities (or lack thereof) occuring in them: XXX In order to achieve 
+
+The text in Wikipedia is 
+Unknown entities might or might not be 
+
+whose validity is 
+
+Some  Resolving these links results in a STAT increase in recall.
+Though not included in the corpus, redirect pages can improve recall of the gold standard (XXX). 
+% TODO: redirect redirect pages
 
 % 3. Training sentence extraction
 %   a. only known links
 %   b. title parts
 %   c. parts of links mention earlier
 %   d. date regexp
+% recall+precision?
+
+\subsubsection*{Filtering}
+
+
+Some sentences that were selected by the process above
+
 % 4. Test sentence extraction?
 %   a. unknown links, no unlinked names
 %   b. might be good for quality evaluation / recursive tagging (next paper?)
