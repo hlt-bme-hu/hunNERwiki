@@ -80,20 +80,27 @@ The corpus is based on the Wikipedia snapshot as of XXX. The xml files were pars
 
 \subsection{Extraction of the Training Sentences}
 
-The basic unit of a NER training corpus is the sentence. In this section, we describe how training sentences are extracted from the preprocessed Wikipedia pages.
+A NER training corpus consists of sentences that accurately tag named entities occurring in them. In order to automatically prepare such sentences, two tasks need to be performed: identification of entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus. In this section, we describe how these steps were implemented, as well as the post-filtering we employed to dispose of correctly tagged but unusable training sentences.
 
-\subsubsection{Sentence selection}
+% TODO: we want to be on the strict side!
 
-A NER training corpus consists of sentences that contain "gold" quality information about the named entities (or lack thereof) occuring in them: XXX In order to achieve 
+\subsubsection{Entity identification}
 
-The text in Wikipedia is 
+Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity. There are exceptions to this rule, however. Disambiguation pages are used when the page title is ambiguous, and can refer to several entities. If a link points to a disambiguation page, we acknowledge the anchor text as an entity, but mark it unknown. A similar measure is taken if the link target XXX does not exist. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
+
+Not all entities are marked with links, however. Authors may neglect to add XXX references to their text. Furthermore, in a Wikipedia article XXX, typically only the first mention of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g. family names are used instead of full names.
+
+% Numbers, years.
+
+\subsubsection{Tagging}
+
+We use DBpedia as 
+
+Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. Sentences without any entities are retained as well, so that the corpus mirrors (XXX the distribution of the entities in the corpus mirrors their distribution in Wikipedia?) the distribution of entities in Wikipedia as closely as possible; this is also in line with how the ConLL corpus is assembled. (XXX or is it)
+
 Unknown entities might or might not be 
 
-whose validity is 
-
-Some  Resolving these links results in a STAT increase in recall.
-Though not included in the corpus, redirect pages can improve recall of the gold standard (XXX). 
-% TODO: redirect redirect pages
+% TODO: monetary, etc. units?
 
 % 3. Training sentence extraction
 %   a. only known links
@@ -102,8 +109,7 @@ Though not included in the corpus, redirect pages can improve recall of the gold
 %   d. date regexp
 % recall+precision?
 
-\subsubsection*{Filtering}
-
+\subsubsection{Filtering}
 
 Some sentences that were selected by the process above
 
@@ -120,11 +126,18 @@ The classes in DBpedia are organized into a type hierarchy, available as an OWL 
 
 It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the ConLL NER categories \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, MISC is more elusive; according to the ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt), the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other class outside the main sub-hierarchies. 
 
-While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but in the ConLL corpus, sport leagues are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, ConLL does not recognize such entities. To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class -- NER category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to the entity the category of the class that matches it most closely -- i.e. the category of the entity's class, if it is in the list, or that of its closest ancestor. XXX!!! If no match is found, the entity is tagged with \texttt{0}. Since we take advantage of the inheritence hierarchy, the mapping list remains short: it contains only the root classes of the main sub-hierarchies, exceptions of the like XXX mentioned above and the various classes that belong to the MISC category according to the ConLL annotation guideline.
+While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but in the ConLL corpus, sport leagues are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, ConLL does not recognize such entities. To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class -- NER category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to the entity the category of the class that matches it most closely -- i.e. the category of the entity's class, if it is in the list, or that of its closest ancestor. XXX!!! If no match is found, the entity is tagged with \texttt{0}. Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main sub-hierarchies, exceptions of the like XXX mentioned above and the various classes that belong to the MISC category according to the ConLL annotation guideline.
 
 As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph. This introduces the problem of selecting the right superclass, and hence, ConLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NER mapping for the ambiguous XXX class and adding it to the mapping file. The first approach, unfortunately, already fails to assign the correct ConLL NER tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation; ConLL's LOC. Therefore, only the second, manual approach ensures correct tagging. XXX
 
 The full mapping can be found in LINK Appendix A (XXX or not).
+
+\subsection{Remarks}
+
+Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), currencies (Euro, Dollar), calendrical units XXX (January, the year 1999) or other concepts that fall outside the scope of NER. However, such entities are either missing from DBpedia altogether, or belong to classes mapped to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that 
+% TODO: this is not true, we need filters!
+
+In this paper, we describe % not only ConLL
 
 \section{Creation of the Hungarian Corpus}
 
