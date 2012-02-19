@@ -82,32 +82,51 @@ The corpus is based on the Wikipedia snapshot as of XXX. The xml files were pars
 
 A NER training corpus consists of sentences that accurately tag named entities occurring in them. In order to automatically prepare such sentences, two tasks need to be performed: identification of entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus. In this section, we describe how these steps were implemented, as well as the post-filtering we employed to dispose of correctly tagged but unusable training sentences.
 
-% TODO: we want to be on the strict side!
-
 \subsubsection{Entity identification}
+% TODO: identification and tagging happens in parallel, else the recall oriented approach cannot be explained.
 
 Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity. There are exceptions to this rule, however. Disambiguation pages are used when the page title is ambiguous, and can refer to several entities. If a link points to a disambiguation page, we acknowledge the anchor text as an entity, but mark it unknown. A similar measure is taken if the link target XXX does not exist. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
 
-Not all entities are marked with links, however. Authors may neglect to add XXX references to their text. Furthermore, in a Wikipedia article XXX, typically only the first mention of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g. family names are used instead of full names.
+Not all entities are marked with links, however. Authors may neglect to add XXX references to their text. Furthermore, in a Wikipedia article XXX, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g. family names are used instead of full names. We devised XXX two methods to account for unmarked entities: one that emphasizes XXX precision, and the other, recall. XXX
 
-% Numbers, years.
+% Or NPP
+
+The precision-oriented approach seeks to minimize the risk of a word getting incorrectly tagged XXX in the corpus. A short study of the ConLL annotation guidelines reveals that the words in the entities of interest to us all start with capital letter. According to this method XXX, all sentences that contain words that start with capital letter, but are not part of the anchor text of a link, XXX are discarded. The rationale behind this approach is that the sheer size of Wikipedia guarantees that we end up with a sizeable corpus even with such a strict policy. XXX
+
+The recall-oriented method tries to associate unmarked entities with entities already identified on the same page. Only if the attempt fails is the sentence that contains the words discarded. This approach aims to generate more training sentences with as little loss of precision as possible. 
+
+The algorithm maintains a list of entities already indentified on the page. The list includes
+\begin{itemize}
+\item The page title; % if it is in DBpedia
+\item Title of redirect pages that target the current page; % TODO
+\item Entities marked with links in the text thus far.
+\end{itemize}
+
+When an unmarked entity is encountered, the list is consulted to find an item that contains it in its entirety; i.e. all of its words and in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NER tag, the unmarked entity is tagged accordingly. Otherwise the sentence is discarded.
+
+Both approaches are evaluated in the next chapter.
 
 \subsubsection{Tagging}
 
+%TODO: merge with Entity Identification
 We use DBpedia as 
 
-Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. Sentences without any entities are retained as well, so that the corpus mirrors (XXX the distribution of the entities in the corpus mirrors their distribution in Wikipedia?) the distribution of entities in Wikipedia as closely as possible; this is also in line with how the ConLL corpus is assembled. (XXX or is it)
+Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. Sentences without any entities are retained as well, so that the corpus mirrors (XXX the distribution of entities in the corpus mirrors their distribution in Wikipedia?) the distribution of entities in Wikipedia as closely as possible; this is also in line with how the ConLL corpus is assembled. (XXX or is it)
 
-Unknown entities might or might not be 
+\subsubsection{Exceptions}
+
+Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of NER. In this section, we describe the measures taken to avoid errors introduced by these false entities.
+
+Links to number pages are filtered by the surface form of the page title. To Common nouns are filtered by their surface form and POS category: links that contain no proper nouns are discarded
+
+Proper entities However, such entities are either missing from DBpedia altogether, or we can map the classes they belong to to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that 
+
+Dates require special attention because 
+
+Wikipedia 
+% Numbers, years.
 
 % TODO: monetary, etc. units?
-
-% 3. Training sentence extraction
-%   a. only known links
-%   b. title parts
-%   c. parts of links mention earlier
-%   d. date regexp
-% recall+precision?
 
 \subsubsection{Filtering}
 
@@ -134,8 +153,6 @@ The full mapping can be found in LINK Appendix A (XXX or not).
 
 \subsection{Remarks}
 
-Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), currencies (Euro, Dollar), calendrical units XXX (January, the year 1999) or other concepts that fall outside the scope of NER. However, such entities are either missing from DBpedia altogether, or belong to classes mapped to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that 
-% TODO: this is not true, we need filters!
 
 In this paper, we describe % not only ConLL
 
@@ -144,6 +161,7 @@ In this paper, we describe % not only ConLL
 % Good for middle-sized languages
 % Inconsistent template names, esp. across languages
 % Comparison of the Hungarian DBpedia vs English + mapping
+% Not all entities are written w/ capital letters => we need lists.
 
 \section{Evaluation}
 
