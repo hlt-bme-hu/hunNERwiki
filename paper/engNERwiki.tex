@@ -58,10 +58,6 @@ The applied annotation schema is the CoNLL tagset, which is one of the major sta
 
 The paper is structured as follows. 
 
-\section{Related Work}
-% Wikify! 
-% Ide kell? Vagy Conclusion elé?
-
 \section{Creation of the Corpus}  % Dzsííízösz
 
 % Introduction: Wikipedia + DBpedia
@@ -131,7 +127,10 @@ Time expressions require special attention due to two reasons. First, Wikipedia 
 
 \subsubsection{Filtering}
 
-Some sentences that were selected by the process above
+There are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a named entity recognizer for user generated content. We have added a post-filtering step to recognize and label these fragments, so that users of the corpus can decide what to do with them. XXX
+
+Manual inspection has found two conditions that can be used to detect fragments. A sentence is labelled as such if it either lacks a punctuation mark at the end or it contains no finite verbs. Our final corpus contains STAT full sentences and STAT fragments.
+% TODO: Last sentence to evaluation? But then this whole subsection is too short.
 
 % 4. Test sentence extraction?
 %   a. unknown links, no unlinked names
@@ -154,8 +153,7 @@ The full mapping can be found in LINK Appendix A (XXX or not).
 
 \subsection{Remarks}
 
-
-In this paper, we describe % not only ConLL
+In this paper, we describe % not only ConLL? Do we need this?
 
 \section{Creation of the Hungarian Corpus}
 
@@ -168,6 +166,10 @@ In this paper, we describe % not only ConLL
 
 % vs. ConLL / Szeged
 % Corpus sizes, performance, tagging conventions
+
+\section{Related Work}
+% Wikify!
+% stuff from Mining Meaning from Wikipedia
 
 \section{Conclusions and Future Work}
 
