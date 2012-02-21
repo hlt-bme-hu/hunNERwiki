@@ -1,12 +1,11 @@
-#!/usr/bin/python3
 """Extracts the page name and type from a dbpedia instance type nt dump.
 It is assumed that the types that belong to the same page are in consecutive
 lines."""
 
-# TODO: rewrite in python2
-# TODO: include type hierarchy, prefer more specific types
-
 import re
+from langtools.utils.file_utils import FileReader
+from langtools.utils.cmd_utils import get_params_sing
+from dbpedia_class import OwlClassHierarchy
 
 _type_re = re.compile(r'^\s*<http://dbpedia.org/resource/(.+?)>\s+<http://(.+?)>\s+<http://(.+?)>')
 
@@ -43,14 +42,39 @@ def merge_pairs(pairs):
         yield (key, value)
     return
 
+def filter_general(pairs, hierarchy, what_to_keep=None):
+    """Filters categories from pair's value list whose descendant categories
+    are in the list as well. If the set @p what_to_keep is specified, all
+    categories not present in in it are discarded."""
+    hierarchy.create_isa_map()
+    for pair in pairs:
+        key, values = pair
+        if what_to_keep is not None:
+            values = [v for v in values if v in what_to_keep]
+        values.sort(key=hierarchy.get_sorted().get, reverse=True)
+        filtered_values = []
+        while len(values) > 0:
+            curr = values.pop()
+            for other in values:
+                if hierarchy.is_a(other, curr):
+                    break
+            else:
+                filtered_values.append(curr)
+        yield (key, filtered_values)
+    return
+
 def filter_type(pairs, type_map):
     """Filters pairs with certain types. Only pairs whose keys are in the keys
     of C{type_map} are retained and their keys are renamed according to the
     mapping in C{type_map}."""
     for pair in pairs:
-        new_type = type_map.get(pair[1])
-        if new_type:
-            yield (pair[0], new_type)
+        new_types = []
+        for type in pair[1]:
+            new_type = type_map.get(type)
+            if new_type is not None:
+                new_types.append(new_type)
+        if len(new_types) > 0:
+            yield (pair[0], new_types)
     return
 
 def decode_title(title):
@@ -78,8 +102,10 @@ def decode_title(title):
     return ret.decode('utf-8')
 
 def __read_map(map_file):
+    """Reads the {DBpedia class: ConLL type} mapping."""
     type_map = {}
-    with open(map_file, 'r', encoding = 'utf-8') as mappings:
+#    with open(map_file, 'r', encoding = 'utf-8') as mappings:
+    with FileReader(map_file, encoding='utf-8').open() as mappings:
         for mapping in mappings:
             try:
                 key, value = mapping.strip().split(' ')
@@ -90,14 +116,21 @@ def __read_map(map_file):
 
 if __name__ == '__main__':
     import sys
-    if not 2 <= len(sys.argv) <= 3:
-        sys.stderr.write('Usage: {0} dbpedia_type_file [NE_mappings]\n'.format(
-            __file__))
+    try:
+        params, args = get_params_sing(sys.argv[1:], 'c:m:', '', 1)
+    except ValueError as ve:
+        sys.stderr.write(ve + "\n")
+        sys.stderr.write('Usage: {0} dbpedia_type_file [-c classes_OWL_file] [-m NE_mappings]\n'.format(__file__))
         sys.exit()
-    with open(sys.argv[1], 'r', encoding = 'utf-8') as type_stream:
-        pairs = extract_dbpedia_type(type_stream)
-        if len(sys.argv) == 3:
-            pairs = filter_type(pairs, __read_map(sys.argv[2]))
-        for pair in merge_pairs(pairs):
-            print('{0}\t{1}'.format(pair[0], ' '.join(pair[1])))
+
+#    with open(sys.argv[1], 'r', encoding = 'utf-8') as type_stream:
+    with FileReader(args[0], encoding='utf-8').open() as type_stream:
+        pairs = merge_pairs(extract_dbpedia_type(type_stream))
+        filter = __read_map(params['m']) if 'm' in params else None
+        if 'c' in params:
+            pairs = filter_general(pairs, OwlClassHierarchy(params['c']), filter)
+        if 'm' in params:
+            pairs = filter_type(pairs, filter)
+        for pair in pairs:
+            print(u'{0}\t{1}'.format(pair[0], ' '.join(pair[1])).encode('utf-8'))
 
