@@ -21,7 +21,7 @@
 \title{XXX}
 
 %\author{Dávid Márk Nemeskey \\
-%  XXX Computer and Automation Research Institute\\
+%  Research Institute for Computer Science and Automation \\
 %  Hungarian Academy of Sciences \\
 %  H-1111 Lágymányosi út 11, Budapest \\
 %  {\tt nemeskey.david@sztaki.hu} \\\And
@@ -38,10 +38,6 @@
 \begin{abstract}
   This document contains the instructions for preparing a camera-ready manuscript for the proceedings of ACL2012. The document itself conforms to its own specifications, and is therefore an example of what your manuscript should look like. These instructions should be used for both papers submitted for review and for final versions of accepted papers. Authors are asked to conform to all the directions reported in this document.
 \end{abstract}
-
-\section{Credits}
-
-This document has been adapted from the instructions for earlier ACL proceedings, including those for ACL-2008 by Johanna D. Moore, Simone Teufel, James Allan, and Sadaoki Furui, those for ACL-2005 by Hwee Tou Ng and Kemal Oflazer, those for ACL-2002 by Eugene Charniak and Dekang Lin, and earlier ACL and EACL formats. Those versions were written by several people, including John Chen, Henry S. Thompson and Donald Walker. Additional elements were taken from the formatting instructions of the {\em International Joint Conference on Artificial Intelligence}.
 
 \section{Introduction}
 
@@ -62,23 +58,118 @@ The applied annotation schema is the CoNLL tagset, which is one of the major sta
 
 The paper is structured as follows. 
 
-\section{Related Work}
-% Ide kell? Vagy Conclusion elé?
-
 \section{Creation of the Corpus}  % Dzsííízösz
-% 1. Parsing Wikipedia (hunpos)
-% 2. The DBpedia -> ConLL mapping
-% 3. Training sentence extraction
-%   a. only known links
-%   b. title parts
-%   c. parts of links mention earlier
-%   d. date regexp
+
+% Introduction: Wikipedia + DBpedia
+The corpora are available in the tab separated format used by ConLL (XXX, CITE). In this format, one line contains one word, its linguistic features and the named entity tags. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word, part-of-speech tag and chunk tag. Two named entity tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the ConLL named entity tag. While the named entity tags can be considered "gold", the linguistic features are provided on a "best-effort" basis (XXX: check the LREC paper to find a better wording for this).
+XXX: past or present tense?
+
+We decided to use Wikipedia because
+
+The categories of Wikipedia are too numerous and ; not a tree;
+
+Wikipedia proves to be a rich source of information about its entities; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Since our goal is to create a NER training corpus, our interest is limited to the article text. Templates are removed from the articles; however, the names of the templates have been retained for XXX, but all data (including infobox) 
+
+Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty and are safe to ignore altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages have been dropped from the corpus as well.
+
+The corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the XXX (Attila) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged with HunPos (CITE). Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
+
+\subsection{Extraction of the Training Sentences}
+
+A NER training corpus consists of sentences that accurately tag named entities occurring in them. In order to automatically prepare such sentences, two tasks need to be performed: identification of entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus. In this section, we describe how these steps were implemented, as well as the post-filtering we employed to dispose of correctly tagged but unusable training sentences.
+
+\subsubsection{Entity identification}
+% TODO: identification and tagging happens in parallel, else the recall oriented approach cannot be explained.
+
+Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity. There are exceptions to this rule, however. Disambiguation pages are used when the page title is ambiguous, and can refer to several entities. If a link points to a disambiguation page, we acknowledge the anchor text as an entity, but mark it unknown. A similar measure is taken if the link target XXX does not exist. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
+
+Not all entities are marked with links, however. Authors may neglect to add XXX references to their text. Furthermore, in a Wikipedia article XXX, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g. family names are used instead of full names. We devised XXX two methods to account for unmarked entities: one that emphasizes XXX precision, and the other, recall. XXX
+
+% Or NPP
+
+The precision-oriented approach seeks to minimize the risk of a word getting incorrectly tagged XXX in the corpus. A short study of the ConLL annotation guidelines reveals that the words in the entities of interest to us all start with capital letter. According to this method XXX, all sentences that contain words that start with capital letter, but are not part of the anchor text of a link, XXX are discarded. The rationale behind this approach is that the sheer size of Wikipedia guarantees that we end up with a sizeable corpus even with such a strict policy. XXX
+
+The recall-oriented method tries to associate unmarked entities with entities already identified on the same page. Only if the attempt fails is the sentence that contains the words discarded. This approach aims to generate more training sentences with as little loss of precision as possible. 
+
+The algorithm maintains a list of entities already indentified on the page. The list includes
+\begin{itemize}
+\item The page title; % if it is in DBpedia
+\item Title of redirect pages that target the current page; % TODO
+\item Entities marked with links in the text thus far.
+\end{itemize}
+
+When an unmarked entity is encountered, the list is consulted to find an item that contains it in its entirety; i.e. all of its words and in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NER tag, the unmarked entity is tagged accordingly. Otherwise the sentence is discarded.
+
+Both approaches are evaluated in the next chapter.
+
+\subsubsection{Tagging}
+
+%TODO: merge with Entity Identification
+We use DBpedia as 
+
+Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. Sentences without any entities are retained as well, so that the corpus mirrors (XXX the distribution of entities in the corpus mirrors their distribution in Wikipedia?) the distribution of entities in Wikipedia as closely as possible; this is also in line with how the ConLL corpus is assembled. (XXX or is it)
+
+\subsubsection{Exceptions}
+
+Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of NER. In this section, we describe the measures taken to avoid errors introduced by these false entities. We shall modify the two approaches -- precision and recall-oriented -- accordingly.
+
+Proper entities that are not deemed NE by ConLL cause XXX little concern: they are either missing from DBpedia altogether, or we can map the classes they belong to to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that we need no adjustment XXX to our original method.
+
+Links to number and common noun pages are handled differently by the two approaches. The precision-oriented method treats them similarly to links to unknown entities and discards the sentences in which they occur. The recall-oriented approach tries to distinguish them from links to entities so that otherwise valid training sentences can be retained XXX. The method is as follows XXX.
+\begin{itemize}
+\item Common nouns are filtered by POS category: links that contain no proper nouns are ignored.
+\item Numbers behave more like proper nouns in that they can refer to entities, such as 737 to the Boeing 737. Therefore, links to number pages are filtered by the surface form of the page title.
+\end{itemize}
+
+Time expressions require special attention due to two reasons. First, Wikipedia has pages for years, months and concrete dates, therefore our algorithm might mistake them for entities. Second, as dates are made up of numbers and proper nouns, they can be mistaken for unmarked entities. To avoid these errors, we have create a set of regular expressions that recognize dates and time expressions and changed the recall-oriented method to not treat them as entities.
+
+% TODO: monetary, etc. units?
+
+\subsubsection{Filtering}
+
+There are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a named entity recognizer for user generated content. We have added a post-filtering step to recognize and label these fragments, so that users of the corpus can decide what to do with them. XXX
+
+Manual inspection has found two conditions that can be used to detect fragments. A sentence is labelled as such if it either lacks a punctuation mark at the end or it contains no finite verbs. Our final corpus contains STAT full sentences and STAT fragments.
+% TODO: Last sentence to evaluation? But then this whole subsection is too short.
+
 % 4. Test sentence extraction?
 %   a. unknown links, no unlinked names
 %   b. might be good for quality evaluation / recursive tagging (next paper?)
 % 5. teaching the original DBpedia categories?
 
+\subsection{The DBpedia -- ConLL mapping}
+
+% Introduction + entity -> class -> category.
+
+The classes in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The ontology contains the 320 most frequent categories of Wikipedia, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes XXX): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
+
+It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the ConLL NER categories \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, MISC is more elusive; according to the ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt), the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other class outside the main sub-hierarchies. 
+
+While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but in the ConLL corpus, sport leagues are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, ConLL does not recognize such entities. To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class -- NER category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to the entity the category of the class that matches it most closely -- i.e. the category of the entity's class, if it is in the list, or that of its closest ancestor. XXX!!! If no match is found, the entity is tagged with \texttt{0}. Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main sub-hierarchies, exceptions of the like XXX mentioned above and the various classes that belong to the MISC category according to the ConLL annotation guideline.
+
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph. This introduces the problem of selecting the right superclass, and hence, ConLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NER mapping for the ambiguous XXX class and adding it to the mapping file. The first approach, unfortunately, already fails to assign the correct ConLL NER tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation; ConLL's LOC. Therefore, only the second, manual approach ensures correct tagging. XXX
+
+The full mapping can be found in LINK Appendix A (XXX or not).
+
+\subsection{Remarks}
+
+In this paper, we describe % not only ConLL? Do we need this?
+
+\section{Creation of the Hungarian Corpus}
+
+% Good for middle-sized languages
+% Inconsistent template names, esp. across languages
+% Comparison of the Hungarian DBpedia vs English + mapping
+% Not all entities are written w/ capital letters => we need lists.
+
 \section{Evaluation}
+
+% vs. ConLL / Szeged
+% Corpus sizes, performance, tagging conventions
+
+\section{Related Work}
+% Wikify!
+% stuff from Mining Meaning from Wikipedia
 
 \section{Conclusions and Future Work}
 
