@@ -108,7 +108,7 @@ def __read_map(map_file):
     with FileReader(map_file, encoding='utf-8').open() as mappings:
         for mapping in mappings:
             try:
-                key, value = mapping.strip().split(' ')
+                key, value = mapping.strip().split("\t")
                 type_map[key] = value
             except (ValueError):
                 continue
