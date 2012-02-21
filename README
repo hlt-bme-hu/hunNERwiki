@@ -7,6 +7,10 @@ Takes the instance file as input and extracts the article - NER category
 pairings. The mapping from DBPedia to ConLL categories can be supplied in
 another file.
 
+ner_filter_incomplete_sentences.py:
+----------------------------------
+Filters incomplete sentences. To be applied on the tagged training corpus.
+
 Data files:
 ==========
 
