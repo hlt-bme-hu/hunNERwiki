@@ -1,7 +1,6 @@
 import sys
 import logging
 from read_wiki_files import read_ids, read_to_set, read_links
-from optparse import OptionParser
 
 """Resolves redirect pages and tags them with the same NER categories as the
 target pages."""
@@ -54,7 +53,7 @@ def main(redirects_file, links_file, pages_file, original_mappings):
     pages_file = file(pages_file)
     original_mappings = file(original_mappings)
 
-    redirects, links, title_to_id, id_to_title = read_all(redirect_pages_file, page_ids_file, links_file)
+    redirects, links, title_to_id, id_to_title = read_all(redirects_file, pages_file, links_file)
     #import cProfile
     #cProfile.run("run(normal_pages, dr_pages, links, title_to_id, id_to_title, is_reverse)")
     run(original_mappings, redirects, links, title_to_id, id_to_title)
