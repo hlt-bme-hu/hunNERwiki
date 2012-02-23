@@ -113,7 +113,7 @@ Only sentences for whose entities the correct category could be obtained from DB
 
 Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of NER. In this section, we describe the measures taken to avoid errors introduced by these false entities. We shall modify the two approaches -- precision and recall-oriented -- accordingly.
 
-Proper entities that are not deemed NE by ConLL cause XXX little concern: they are either missing from DBpedia altogether, or we can map the classes they belong to to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that we need no adjustment XXX to our original method.
+Proper entities that are not deemed NE under the ConLL scheme cause XXX little concern: they are either missing from DBpedia altogether, or we can map the classes they belong to to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that we need no adjustment XXX to our original method.
 
 Links to number and common noun pages are handled differently by the two approaches. The precision-oriented method treats them similarly to links to unknown entities and discards the sentences in which they occur. The recall-oriented approach tries to distinguish them from links to entities so that otherwise valid training sentences can be retained XXX. The method is as follows XXX.
 \begin{itemize}
