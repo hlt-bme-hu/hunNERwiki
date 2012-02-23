@@ -7,7 +7,11 @@ from optparse import OptionParser
 target pages."""
 
 def read_all(redirect_pages_file, page_ids_file, links_file):
-    """Reads the files necessary for the resolution of redirects."""
+    """Reads the files necessary for the resolution of redirects.
+    Returns: - the ids of the redirect pages;
+             - the links map, reversed;
+             - the title to id map;
+             - the id to title map."""
     redirect_pages = read_to_set(redirect_pages_file)
     logging.info("Redirect pages read.")
 
@@ -20,7 +24,7 @@ def read_all(redirect_pages_file, page_ids_file, links_file):
     del redirect_pages
     links = read_links(links_file, title_to_id, id_to_title, True)
     gc.enable()
-    return redirect_ids, links, (title_to_id, id_to_title)
+    return redirect_ids, links, title_to_id, id_to_title
 
 def run(map_file, redirect_ids, links, title_to_id, id_to_title):
     for line in map_file:
@@ -44,24 +48,27 @@ def run(map_file, redirect_ids, links, title_to_id, id_to_title):
                 continue
             print "{0}\t{1}".format(redirect_title, ner)
 
-def main():
-    logging.basicConfig(level=logging.DEBUG, format="%(asctime)s : %(module)s - %(levelname)s - %(message)s")
-    page_ids_file = file(sys.argv[1])
-    links_file = file(sys.argv[2])
-    redirect_pages_file = file(sys.argv[3])
-    disambig_pages_file = file(sys.argv[4])
-    normal_pages_file = file(sys.argv[5])
-    is_reverse = (bool(int(sys.argv[6])) if len(sys.argv) > 6 else False)
+def main(redirects_file, links_file, pages_file, original_mappings):
+    redirects_file = file(redirects_file)
+    links_file = file(links_file)
+    pages_file = file(pages_file)
+    original_mappings = file(original_mappings)
 
-    normal_pages, dr_pages, links, (title_to_id, id_to_title) = read_all(redirect_pages_file, disambig_pages_file, normal_pages_file, page_ids_file, links_file, is_reverse)
+    redirects, links, title_to_id, id_to_title = read_all(redirect_pages_file, page_ids_file, links_file)
     #import cProfile
     #cProfile.run("run(normal_pages, dr_pages, links, title_to_id, id_to_title, is_reverse)")
-    run(normal_pages, dr_pages, links, title_to_id, id_to_title, is_reverse)
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s : %(module)s - %(levelname)s - %(message)s")
-    main()
+    run(original_mappings, redirects, links, title_to_id, id_to_title)
 
 if __name__ == '__main__':
-    parser = OptionParser()
-    parser.add_option("")
+    logging.basicConfig(level=logging.DEBUG, format="%(asctime)s : %(module)s - %(levelname)s - %(message)s")
+
+    if len(sys.argv) != 5:
+        sys.stderr.write("Expands a DBpedia->ConLL mapping file by resolving redirects.\n")
+        sys.stderr.write("Usage: {0} redirects_file links_file page_file original_mapping_file\n".format(__file__))
+        sys.stderr.write("Where: redirects_file is a list of redirect page titles, one per line;")
+        sys.stderr.write("       links_file     is the links file from the Wikipedia dump;")
+        sys.stderr.write("       pages_file     is the pages file from the Wikipedia dump;")
+        sys.exit(1)
+
+    main(sys.argv[1:])
+
