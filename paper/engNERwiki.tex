@@ -36,27 +36,45 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  This document contains the instructions for preparing a camera-ready manuscript for the proceedings of ACL2012. The document itself conforms to its own specifications, and is therefore an example of what your manuscript should look like. These instructions should be used for both papers submitted for review and for final versions of accepted papers. Authors are asked to conform to all the directions reported in this document.
+  
 \end{abstract}
 
 \section{Introduction}
 
-One of the main trends in NLP is the need for reducing the annotation cost. After examining the calls for papers of nowadays conferences and workshops there seems to be three major directions to achieve this aim. 
+Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as Information Retrieval, Information Extraction or Machine Translation. The NER task was introduced with the 6th Message Understanding Conference (MUC) in 1995. In MUC shared tasks the NER consists of three subtasks: entity names, temporal expressions and number expressions. However there is a general agreement in the NER community about the inclusion of temporal expressions and some numerical expressions such as amounts of money and other types of units, the most studied types are names of persons, locations and organizations. The fourth type, called "miscellaneous", is used in the CoNLL NER tasks in 2002 and 2003, and includes proper names falling outside the three classic types. Since then, MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER.    
 
-The first approach is the application of unsupervised and semi-supervised learning techniques. Researchers following this approach try to not only reduce, but avoid the annotation cost with minimizing the need for annotated data. These methods can be applied to any language or genre for which adequate raw text resources are available. 
+The standard datasets are highly domain-specific (mostly newspaper articles about company activities and defense related activities), and are restricted in size, as well. Thus they are not large enough to train and test robust NE-taggers on them. Moreover, merging these datasets to get a bigger training corpus faces NLP researchers with the problem of combining different tagsets and annotation schemes. However, to build a robust supervised machine learning system for NER, large enough, accurately annotated corpora are essential. Annotating large amount of texts with linguistic information is a time-consuming, highly skilled and delicate work. Mainly due to this fact, one of the main challenges in NLP is reducing the annotation cost. 
 
-The second approach is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as the Google 5G 1T collection or DBPedia. Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, as well. 
+One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. An other approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as the Google 5G 1T collection or DBPedia. Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, as well.  
 
-The third approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources or merging existing ones. However merging language resources faces NLP researchers with the problem of combining different annotation schemas. 
+%One of the main trends in NLP is the need for reducing the annotation cost. After examining the calls for papers of nowadays conferences and workshops there seems to be three major directions to achieve this aim. 
 
-Named Entity Recognition (NER) is one of the important subtasks of Information Extraction. NER contains two main substeps: recognizing the Named Entities (NEs) in unstructured text and classifying them into preselected classes
+%The first approach is the application of unsupervised and semi-supervised learning techniques. Researchers following this approach try to not only reduce, but avoid the annotation cost with minimizing the need for annotated data. These methods can be applied to any language or genre for which adequate raw text resources are available. 
 
-mostly newspaper articles, domain-specific
+In this paper we present a kind of combination of the approaches mentioned above. We built NE-tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE-taggers. 
 
-In this article we present a Named Entity tagged corpus for English -- fully automatically generated from Wikipedia. 
-The applied annotation schema is the CoNLL tagset, which is one of the major standards applied in the field of Named Entity Recognition (NER). 
+The paper is structured as follows. XXX
 
-The paper is structured as follows. 
+
+\section{Related Work}
+% Wikify!
+% stuff from Mining Meaning from Wikipedia
+%NER and Wikipedia
+
+Wikipedia is a goldmine of information; it is applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, multilingual Information Retrieval, and Question Answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
+
+Wikipedia is recognized as one of the largest available collection of entities, and also as an external knowledge to improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations \cite{Toral:06}. Creating dictionaries of entities is also a common step of named entity disambiguation \cite{Bunescu:06,Cucerzan:07}. Nadeau et al. \shortcite{Nadeau:06} use similar lists in an unsupervised NER system, while Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE-tagger. 
+
+
+%Exploiting Wikipedia as external knowledge for NER:
+%%-creating entity lists  
+%%-disambiguating named entities
+%%-automatic extraction of category labels from Wikipedia to improve the accuracy of a CRF-based NE-tagger \cite{Kazama:07}
+%-entity ranking
+%-typing named entities
+
+Automatic creation of training data from Wikipedia for NER:
+-classification of articles into CoNLL entity classes \cite{Nothman:08}
 
 \section{Creation of the Corpus}  % Dzsííízösz
 
@@ -167,9 +185,7 @@ In this paper, we describe % not only ConLL? Do we need this?
 % vs. ConLL / Szeged
 % Corpus sizes, performance, tagging conventions
 
-\section{Related Work}
-% Wikify!
-% stuff from Mining Meaning from Wikipedia
+
 
 \section{Conclusions and Future Work}
 
@@ -426,6 +442,49 @@ instead of the opening day of the conference.
 %Do not number the acknowledgment section. Do not include this section when submitting your paper for review.
 
 \begin{thebibliography}{}
+
+\bibitem[\protect\citename{Nothman \bgroup et al.\egroup}2008]{Nothman:08}
+Joel Nothman, James R. Curran, and Tara Murphy.
+\newblock 2008.
+\newblock Transforming Wikipedia into Named Entity Training Data.
+\newblock In: {\em Proceedings of the Australasian Language Technology Workshop}, Vol 6., pages 124--132.
+
+\bibitem[\protect\citename{Kazama and Torisawa}2007]{Kazama:07}
+Jun'ichi Kazama and Kentaro Torisawa.
+\newblock 2007.
+\newblock Exploiting Wikipedia as External Knowledge for Named Entity Recognition.
+\newblock In: {\em Proceedings of the 2007 Joint Conference on Empirical Methods in Natural Language Processing and Computational Natural Language Learning}, pages 698--707.
+
+\bibitem[\protect\citename{Medelyan  \bgroup et al.\egroup}2009]{Medelyan:09}
+Olena Medelyan, David Milne, Catherine Legg, and Ian H. Witten.
+\newblock 2009.
+\newblock Mining meaning from Wikipedia.
+\newblock {\em International Journal of Human-Computer Studies}, 67: 716--754.
+
+\bibitem[\protect\citename{Toral and Munoz}2006]{Toral:06}
+A. Toral and R. Munoz.
+\newblock 2006.
+\newblock A proposal to automatically build and maintain gazetteers for Named Entity Recognition by using Wikipedia.
+\newblock In: {\em EACL 2006}.
+
+\bibitem[\protect\citename{Bunescu and Pasca}2006]{Bunescu:06}
+B. Bunescu and M. Pasca.
+\newblock 2006.
+\newblock Using encyclopedic knowledge for named entity disambiguation.
+\newblock In: {\em Proceedings of the 11th Conference of the European Chapter of the Association for Computational Linguistics}, pages 9--16.
+
+\bibitem[\protect\citename{Cucerzan}2007]{Cucerzan:07}
+S. Cucerzan.
+\newblock 2007.
+\newblock Large-scale named entity disambiguation based on Wikipedia data.
+\newblock In: {\em Proceedings of the 2007 Joint Conference on Empirical Methods in Natural Language Processing and Computational Natural Language Learning}.
+\newblock Prague, Czech Republic, June 2007. pages 708--716.
+
+\bibitem[\protect\citename{Nadeau  \bgroup et al.\egroup}2006]{Nadeau:06} 
+David Nadeau, Peter D. Turney and Stan Matwin.
+\newblock 2006.
+\newblock Unsupervised named entity recognition: Generating gazetteers and resolving ambiguity. 
+\newblock In: {\em Proceedings of the 19th Canadian Conference on Artificial Intelligence}, volume 4013 of {\em LNCS}, pages 266--277.
 
 \bibitem[\protect\citename{Aho and Ullman}1972]{Aho:72}
 Alfred~V. Aho and Jeffrey~D. Ullman.
