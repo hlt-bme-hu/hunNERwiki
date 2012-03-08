@@ -8,6 +8,7 @@ from langtools.utils.cmd_utils import get_params_sing
 from dbpedia_class import OwlClassHierarchy
 
 _type_re = re.compile(r'^\s*<http://dbpedia.org/resource/(.+?)>\s+<http://(.+?)>\s+<http://(.+?)>')
+_dbpedia_prefix = 'dbpedia'
 
 def extract_dbpedia_type(type_stream):
     """A generator that reads type_stream line-by-line and outputs page title - 
@@ -17,7 +18,7 @@ def extract_dbpedia_type(type_stream):
     for line in type_stream:
         match = _type_re.match(line)
         if match:
-            if match.group(2).endswith('#type'):
+            if match.group(2).endswith('#type') and match.group(3).startswith(_dbpedia_prefix):
                 title = match.group(1)
                 slash = match.group(3).rfind('/')
                 if 0 <= slash < len(match.group(3)) - 1:
@@ -29,17 +30,17 @@ def merge_pairs(pairs):
     """Merges subsequent pairs whose key (the first field) is the same. The
     resulting pair will have the same key as the original and a list of the
     values (seconds fields) of the merged pairs as value."""
-    value = []
+    value = set()
     key = ''
     for pair in pairs:
         if key != pair[0]:
             if len(value) > 0:
                 yield (key, value)
             key = pair[0]
-            value = []
-        value.append(pair[1])
+            value = set()
+        value.add(pair[1])
     if len(value) > 0:
-        yield (key, value)
+        yield (key, list(value))
     return
 
 def filter_general(pairs, hierarchy, what_to_keep=None):
@@ -114,14 +115,20 @@ def __read_map(map_file):
                 continue
     return type_map
 
+def print_usage_and_exit():
+    sys.stderr.write('Usage: {0} dbpedia_type_file [-c classes_OWL_file] [-m NE_mappings]\n'.format(__file__))
+    sys.exit()
+
 if __name__ == '__main__':
     import sys
     try:
         params, args = get_params_sing(sys.argv[1:], 'c:m:', '', 1)
     except ValueError as ve:
         sys.stderr.write(ve + "\n")
-        sys.stderr.write('Usage: {0} dbpedia_type_file [-c classes_OWL_file] [-m NE_mappings]\n'.format(__file__))
-        sys.exit()
+        print_usage_and_exit()
+    
+    if len(args) != 1:
+        print_usage_and_exit()
 
 #    with open(sys.argv[1], 'r', encoding = 'utf-8') as type_stream:
     with FileReader(args[0], encoding='utf-8').open() as type_stream:
