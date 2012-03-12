@@ -63,8 +63,21 @@ The paper is structured as follows. XXX
 
 Wikipedia is a goldmine of information; it is applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, multilingual Information Retrieval, and Question Answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
 
-Wikipedia is recognized as one of the largest available collection of entities, and also as an external knowledge to improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations \cite{Toral:06}. Creating dictionaries of entities is also a common step of named entity disambiguation \cite{Bunescu:06,Cucerzan:07}. Nadeau et al. \shortcite{Nadeau:06} use similar lists in an unsupervised NER system, while Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE-tagger. 
+Wikipedia is recognized as one of the largest available collection of entities, and also as an external knowledge to improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations \cite{Toral:06}. Creating dictionaries of entities is also a common step of named entity disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al. \shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
 
+Wikipedia's knowledge may be incorporated as features in NER learning, e.g. Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE-tagger. 
+
+A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE-tags. They used the inherent category structure of Wikipedia to determine the NE-type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE-annotated text in English. They transformed the Wikipedia links into NE-annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
+
+not open access XXX
+
+más nyelvekre is csinálták XXX
+
+domain-specificity: not really
+
+Szeged NER korpusz kicsi, ahhoz képest ez nagy
+
+DBPediát előrébb 
 
 %Exploiting Wikipedia as external knowledge for NER:
 %%-creating entity lists  
@@ -73,8 +86,8 @@ Wikipedia is recognized as one of the largest available collection of entities, 
 %-entity ranking
 %-typing named entities
 
-Automatic creation of training data from Wikipedia for NER:
--classification of articles into CoNLL entity classes \cite{Nothman:08}
+%Automatic creation of training data from Wikipedia for NER:
+%-classification of articles into CoNLL entity classes \cite{Nothman:08}
 
 \section{Creation of the Corpus}  % Dzsííízösz
 
@@ -141,6 +154,8 @@ Links to number and common noun pages are handled differently by the two approac
 
 Time expressions require special attention due to two reasons. First, Wikipedia has pages for years, months and concrete dates, therefore our algorithm might mistake them for entities. Second, as dates are made up of numbers and proper nouns, they can be mistaken for unmarked entities. To avoid these errors, we have create a set of regular expressions that recognize dates and time expressions and changed the recall-oriented method to not treat them as entities.
 
+from \cite{Nothman:09}: Exceptions are made for common titlecase words, e.g. I, Mr., June, and sentence-initial words. 
+
 % TODO: monetary, etc. units?
 
 \subsubsection{Filtering}
@@ -169,11 +184,38 @@ As of version 3.7, the DBpedia ontology allows multiple superclasses, making the
 
 The full mapping can be found in LINK Appendix A (XXX or not).
 
+In Wikipedia the nationalities (e.g. American and Australian) links to the corresponding places (America and Australia, respectively). However, in CoNLL scheme these types of entities take parts of MISC category. XXX Postprocessing: list look-up (nationalities, adjective forms of person who live in the corresponding country); if the name is POS-tagged as adjective, then it is not a NE
+
+%nem biztos, hogy ide kell
+Link boundaries need to be adjusted, e.g. to remove excess punctuation.
+
 \subsection{Remarks}
 
 In this paper, we describe % not only ConLL? Do we need this?
 
 \section{Creation of the Hungarian Corpus}
+
+tokenizálás: built in-house, tailored for Hungarian, because of the specialities of Hungarian (e.g. period after years in date expressions)
+
+ocamorph + hundisambig, a lemmatizálás miatt
+
+a KR-ban nincs jelölve a proper noun külön
+
+DBPedia--CoNLL mapping for Hungarian: az angol oldalak vannak megcímkézve --> csak azok a magyar oldalak vannak letöltve és feldolgozva, amik megvannak angolul is
+	--> future work: kibővíteni azokkal a magyar cikkekkel is, amik nincsenek angolul
+
+filtering: az igés szűrő itt nem lesz
+
+most van: 102 millió szó a disambiguation pages-zel együtt
+az angol: 1,7 milliárd
+
+according to the Szeged NER guideline
+
+a nyelv és népnevek magyarul nem NE-k, vagyis nem kell az annotálásukkal foglalkozni
+
+a tulajdonnevekhez kötőjellel kapcsolódó köznevek kérdésesek (pl. SAP-szoftvercég, Matáv-csoport)
+
+a tulajdonnevekből képzett szavak sem NE-k
 
 % Good for middle-sized languages
 % Inconsistent template names, esp. across languages
@@ -185,9 +227,16 @@ In this paper, we describe % not only ConLL? Do we need this?
 % vs. ConLL / Szeged
 % Corpus sizes, performance, tagging conventions
 
+measuring Wikipedia's inconsistency using n-gram tag variation (\cite{Nothman:09})
+ez jó mérőszám lehet a gold standard korpuszok összehasonlítására
+használhatjuk fordítva is: ha egy adott nucleus ugyanolyan n-gram környezetben nagyon sokszor van X-ként taggelve, és kevésszer Y-ként, akkor az Y-okat is átcsinálhatnánk X-szé
 
 
 \section{Conclusions and Future Work}
+
+az eredeti DBPedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
+
+később majd kirakjuk a scripteket is, és akár újra és újra frissíthető lesz
 
 \section{General Instructions}
 
@@ -442,6 +491,17 @@ instead of the opening day of the conference.
 %Do not number the acknowledgment section. Do not include this section when submitting your paper for review.
 
 \begin{thebibliography}{}
+
+\bibitem[\protect\citename{Nothman \bgroup et al.\egroup}2009]{Nothman:09}
+\newblock 2009.
+\newblock Analysing Wikipedia and Gold-Standard Corpora for NER Training.
+\newblock In: {\em Proceedings of the 12th Conference of the European Chapter of the ACL}, pages 612--620.
+
+\bibitem[\protect\citename{Richman and Schone}2008]{Richman:08}
+Alexander E. Richman and Patrick Schone.
+\newblock 2008.
+\newblock Mining Wiki Resources for Multilingual Named Entity Recognition.
+\newblock In: {\em Proceedings of ACL-08: HLT}, pages 1--9.
 
 \bibitem[\protect\citename{Nothman \bgroup et al.\egroup}2008]{Nothman:08}
 Joel Nothman, James R. Curran, and Tara Murphy.
