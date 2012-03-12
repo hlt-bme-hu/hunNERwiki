@@ -43,13 +43,13 @@ def merge_pairs(pairs):
         yield (key, list(value))
     return
 
-def filter_general(pairs, hierarchy, what_to_keep=None):
-    """Filters categories from pair's value list whose descendant categories
+def filter_general(lines, hierarchy, what_to_keep=None):
+    """Filters categories from lines' value list whose descendant categories
     are in the list as well. If the set @p what_to_keep is specified, all
     categories not present in in it are discarded."""
     hierarchy.create_isa_map()
-    for pair in pairs:
-        key, values = pair
+    for line in lines:
+        key, values = line
         if what_to_keep is not None:
             values = [v for v in values if v in what_to_keep]
         values.sort(key=hierarchy.get_sorted().get, reverse=True)
@@ -61,21 +61,25 @@ def filter_general(pairs, hierarchy, what_to_keep=None):
                     break
             else:
                 filtered_values.append(curr)
-        yield (key, filtered_values)
+        yield [key, filtered_values]
     return
 
-def filter_type(pairs, type_map):
-    """Filters pairs with certain types. Only pairs whose keys are in the keys
-    of C{type_map} are retained and their keys are renamed according to the
-    mapping in C{type_map}."""
-    for pair in pairs:
+def filter_type(lines, type_map, keep=False):
+    """Filters lines with certain types. Only lines whose types are in the keys
+    of C{type_map} are retained and their types are renamed according to the
+    mapping in C{type_map}. If @p keep is @c True, the types are not renamed,
+    but the new types are appended to the line."""
+    for line in lines:
         new_types = []
-        for type in pair[1]:
+        for type in line[1]:
             new_type = type_map.get(type)
             if new_type is not None:
                 new_types.append(new_type)
         if len(new_types) > 0:
-            yield (pair[0], new_types)
+            if keep:
+                yield line + [new_types]
+            else:
+                yield [line[0], new_types]
     return
 
 def decode_title(title):
@@ -122,7 +126,7 @@ def print_usage_and_exit():
 if __name__ == '__main__':
     import sys
     try:
-        params, args = get_params_sing(sys.argv[1:], 'c:m:', '', 1)
+        params, args = get_params_sing(sys.argv[1:], 'c:m:k', '', 1)
     except ValueError as ve:
         sys.stderr.write(ve + "\n")
         print_usage_and_exit()
@@ -132,12 +136,12 @@ if __name__ == '__main__':
 
 #    with open(sys.argv[1], 'r', encoding = 'utf-8') as type_stream:
     with FileReader(args[0], encoding='utf-8').open() as type_stream:
-        pairs = merge_pairs(extract_dbpedia_type(type_stream))
+        lines = merge_pairs(extract_dbpedia_type(type_stream))
         filter = __read_map(params['m']) if 'm' in params else None
         if 'c' in params:
-            pairs = filter_general(pairs, OwlClassHierarchy(params['c']), filter)
+            lines = filter_general(lines, OwlClassHierarchy(params['c']), filter)
         if 'm' in params:
-            pairs = filter_type(pairs, filter)
-        for pair in pairs:
-            print(u'{0}\t{1}'.format(pair[0], ' '.join(pair[1])).encode('utf-8'))
+            lines = filter_type(lines, filter, 'k' in params)
+        for line in lines:
+            print u"{0}\t{1}".format(line[0], "\t".join(' '.join(field) for field in lines[1:]))
 
