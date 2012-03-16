@@ -11,6 +11,25 @@ ner_filter_incomplete_sentences.py:
 ----------------------------------
 Filters incomplete sentences. To be applied on the tagged training corpus.
 
+Scripts to run:
+--------------
+
+To create the entity list:
+python scripts/extract_dbpedia_types.py -c data/dbpedia_3.7.owl -m data/dbpedia_map data/instance_types_hu.nt > nerlist.hu
+pythol extract_langlinks.py -l en -r /home/ndavid/huwiki2/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/en_to_hu_pages
+python extract_redirects.py -r /home/ndavid/huwiki2/huwiki-20120309-redirect.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/normal_to_redir_pages
+
+To parse a Wikipedia dump:
+python parse_insert_into_rows.py < /home/ndavid/huwiki/huwiki-latest-page.sql > /home/ndavid/huwiki/pages
+awk '$2 == 0 {print $3}' pages | sed -e "s/_/ /g" > main_pages
+python /home/ndavid/../zseder/Proj/WP/AutoCorpus/articles.py < huwiki-latest-pages-articles.xml > huwiki-latest-pages-articles.out
+python split_records.py huwiki-latest-pages-articles.out "^%%#PAGE.*" 4
+(modify wiki.conf accordingly)
+python create_morphtable.py -l hu wiki.conf /home/ndavid/huwiki/huwiki-morph.4 /home/ndavid/huwiki/huwiki-latest-pages-articles.out.4 >/home/ndavid/huwiki/morph-log.4 2>&1
+(for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
+python wikitext_to_conll.py -l hu.3 wiki.conf /home/ndavid/huwiki/huwiki-latest-pages-articles.out.3 /home/ndavid/huwiki/huwiki-articles.conll.3 /home/ndavid/huwiki/huwiki-templates.3 > ~/huwiki/log.3 2>&1
+(for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
+
 Data files:
 ==========
 
