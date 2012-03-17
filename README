@@ -30,6 +30,9 @@ python create_morphtable.py -l hu wiki.conf /home/ndavid/huwiki/huwiki-morph.4 /
 python wikitext_to_conll.py -l hu.3 wiki.conf /home/ndavid/huwiki/huwiki-latest-pages-articles.out.3 /home/ndavid/huwiki/huwiki-articles.conll.3 /home/ndavid/huwiki/huwiki-templates.3 > ~/huwiki/log.3 2>&1
 (for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
 
+To extract date pages (NER category 0):
+python extract_date_pages.py -l hu /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /home/ndavid/huwiki/huwiki-articles.conll.* > date_pages
+
 Data files:
 ==========
 
