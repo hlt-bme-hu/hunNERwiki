@@ -143,5 +143,5 @@ if __name__ == '__main__':
         if 'm' in params:
             lines = filter_type(lines, filter, 'k' in params)
         for line in lines:
-            print u"{0}\t{1}".format(line[0], "\t".join(' '.join(field) for field in lines[1:]))
+            print u"{0}\t{1}".format(line[0], u"\t".join(u' '.join(field) for field in line[1:])).encode('utf-8')
 
