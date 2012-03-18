@@ -28,7 +28,8 @@ def expand_ner_list(ner_file, correspondence_mapping, keep=False):
                     print "{0}\t{1}".format(page, cat)
                 new_pages = correspondence_mapping[page]
                 for new_page in new_pages:
-                    print "{0}\t{1}".format(new_page, cat)
+                    if new_page != page:
+                        print "{0}\t{1}".format(new_page, cat)
             except KeyError:
                 sys.stderr.write("Unknown page " + page + "\n")
 
@@ -49,6 +50,6 @@ if __name__ == '__main__':
         sys.stderr.write("To see the options, call the script with the -h flag.\n\n")
         sys.exit()
 
-    lang_mapping = read_interlang_map(args[1])
-    convert_ner_lang(args[0], lang_mapping, options.keep)
+    page_mapping = read_correspondence_map(args[1])
+    expand_ner_list(args[0], page_mapping, options.keep)
 

@@ -33,6 +33,11 @@ python wikitext_to_conll.py -l hu.3 wiki.conf /home/ndavid/huwiki/huwiki-latest-
 To extract date pages (NER category 0):
 python extract_date_pages.py -l hu /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /home/ndavid/huwiki/huwiki-articles.conll.* > date_pages
 
+To expand the entity list:
+cat nerlist.hu date_pages > nerlist2.hu
+python scripts/ner_list_to_hu.py -k data/nerlist2.hu data/en_to_hu_pages > nerlist3.hu
+python scripts/ner_list_to_hu.py -k data/nerlist3.hu data/normal_to_redir_pages > nerlist4.hu
+
 Data files:
 ==========
 
