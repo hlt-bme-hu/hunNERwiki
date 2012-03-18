@@ -12,7 +12,9 @@ def read_correspondence_map(correspondence_file):
         for line in infile:
             try:
                 orig, others = line.strip().split("\t", 1)
-                ret[orig] = others.split("\t")
+                data = ret.get(orig, [])
+                data.extend(others.split("\t"))
+                ret[orig] = data
             except Exception:
                 sys.stderr.write("Invalid line: " + line)
     gc.enable()

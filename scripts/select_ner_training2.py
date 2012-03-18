@@ -18,15 +18,15 @@ from langtools.utils.language_config import LanguageTools
 
 # Functionality needed:
 # - lowercase link to uppercase LOC (Hun?)
-# - language selection (English is different from Hungarian)
 # - from Nothman et al, 2008 (and our ideas, which they blantantly stole in
 #   their paper :)):
-#   .link inference (article title, redirects, words in links); trie; digit - cas only
-#   .capitalization (first words, dates, personal titles) - last two English only
-#   .adjectival forms (nationalities) - English only
+#   .capitalization (personal titles)
 #   .lowercase links: drop / analyse incoming link capitalization (won't work
 #   for Hungarian, as LOCs can become lowercased (case?))
-# We need:
+# Done:
+# - from Nothman et al, 2008 (and our ideas, which they blantantly stole in
+#   .link inference (article title, redirects, words in links); trie; digit - cas only
+#   .capitalization (first words)
 # - redirect mapping
 
 class SentenceData(object):
@@ -49,7 +49,7 @@ class SentenceData(object):
     def append(self, attributes):
         """Appends the word and its data to the sentence."""
         s = u'{0}\t{1}'.format(u"\t".join(attributes), self.ner_bi())
-        print "APPEND", s.encode('utf-8')
+#        print "APPEND", s.encode('utf-8')
         self.sentence.append(s)
 
 #    def add_ner(self, ner_type, new=False):
@@ -118,9 +118,9 @@ class Tries(object):
         """Returns the word tuple and its category."""
         if type(words[0]) == list:
             # Last words: raw or lemma
-            words_raw = [word[NERTrainingCallback.RAW] for word in words]
+            words_raw = [word[NERTrainingCallback.RAW].lower() for word in words]
             tpl1 = tuple(words_raw)
-            tpl2 = tuple(words_raw[:-1] + [words[-1][NERTrainingCallback.LEMMA]])
+            tpl2 = tuple(words_raw[:-1] + [words[-1][NERTrainingCallback.LEMMA].lower()])
             try:
                 return tpl1, self.paths[tpl1]
             except KeyError:
@@ -159,11 +159,12 @@ class NERTrainingCallback(DefaultConllCallback):
         """
         DefaultConllCallback.__init__(self)
         self._sent = SentenceData()
-        self._title = []
-        self._cat = None
-        self._gold_map = {}
-        self._trie = trie
-        self._mode = NERTrainingCallback.NO_LINK
+        self._title = []         # title of the current page
+        self._cat = None         # category of the current page
+        self._gold_map = {}      # page: category
+        self._redirect_map = {}  # page: redirects
+        self._trie = trie        # the NERs mentioned on the page
+        self._mode = NERTrainingCallback.NO_LINK  # state machine state
         
     def read_gold(self, gold_file):
         """Reads the gold file and fills the {page -> category} map from them.
@@ -172,10 +173,24 @@ class NERTrainingCallback(DefaultConllCallback):
         for line in gold:
             kv = line.strip().split("\t")
             if len(kv) == 2:
-                self._gold_map[kv[0]] = kv[1]
+                self._gold_map[kv[0].lower()] = kv[1]
         gold.close()
         # TODO: logging
         #print len(self._gold_map)
+
+    def read_redirects(self, redirects_file):
+        """Reads the redirects file and fills the {page -> redirect} map from
+        it. Only pages in the gold map are retained."""
+        with FileReader(redirects_file, 'utf-8').open() as redirects: 
+            import gc
+            gc.disable()
+            for line in redirects:
+                kv = line.strip().split("\t")
+                if len(kv) >= 2 and kv[0].lower() in self._gold_map:
+                    redirs = self._redirect_map.get(kv[0].lower(), [])
+                    redirs.extend(l.lower() for l in kv[1:])
+                    self._redirect_map[kv[0].lower()] = redirs
+            gc.enable()
 
     # ConllCallback methods
     def fileStart(self, file_name):
@@ -199,6 +214,7 @@ class NERTrainingCallback(DefaultConllCallback):
             self._cat = self._gold_map.get(self.cc_title, None)
             if self._cat is not None:
                 self._trie.add_title(self.cc_title, self._cat)
+                self.__add_redirects(self.cc_title, self._cat)
         elif self.cc_field.lower() == 'body':
             self.first = True
             self._mode = NERTrainingCallback.NO_LINK
@@ -228,14 +244,14 @@ class NERTrainingCallback(DefaultConllCallback):
                     #print "ATTR", attributes
                     if self._mode == NERTrainingCallback.NER_LINK:
                         if attributes[1] == 'B-link':
-                            print "NER -> NER"
+#                            print "NER -> NER"
                             self.__add_tmp()
                             self.__start_link(attributes)
                         elif attributes[1] == 'I-link':
-                            print "NER -> sNER"
+#                            print "NER -> sNER"
                             self._sent.bi = 'I'
                         else:
-                            print "NER -> NO/NNP"
+#                            print "NER -> NO/NNP"
                             self.__add_tmp()
                             self._sent.ner_type = 0
                             if self.__is_NNP(attributes):
@@ -244,27 +260,27 @@ class NERTrainingCallback(DefaultConllCallback):
                                 self._mode = NERTrainingCallback.NO_LINK
                     elif self._mode == NERTrainingCallback.NNP_LINK:
                         if attributes[1] == 'B-link':
-                            print "NNP -> NER"
+#                            print "NNP -> NER"
                             self.__add_tmp()
                             self.__start_link(attributes)
                         elif not self.__is_NNP(attributes):
-                            print "NNP -> NO"
+#                            print "NNP -> NO"
                             self.__add_tmp()
                             self._mode = NERTrainingCallback.NO_LINK
                             self._sent.ner_type = 0
-                        else:
-                            print "NNP -> NNP"
+#                        else:
+#                            print "NNP -> NNP"
                     elif self._mode == NERTrainingCallback.NO_LINK:
                         if attributes[1] == 'B-link':
-                            print "NO -> NER"
+#                            print "NO -> NER"
                             self.__add_tmp()
                             self.__start_link(attributes)
                         elif self.__is_NNP(attributes):
-                            print "NO -> NNP"
+#                            print "NO -> NNP"
                             self.__add_tmp()
                             self._mode = NERTrainingCallback.NNP_LINK
-                        else:
-                            print "NO -> NO"
+#                        else:
+#                            print "NO -> NO"
 
                     self.tmp.append(attributes)
                 else:
@@ -333,15 +349,30 @@ class NERTrainingCallback(DefaultConllCallback):
         return any(attr[NERTrainingCallback.POS].startswith(u'NOUN')
                    for attr in chunk)
 
+    def __get_gold(self, link):
+        return self._gold_map.get(link.lower(), 0)
+
+    def __add_redirects(self, link, category):
+        """Adds the redirects of a link to the trie."""
+        for redirect in self._redirect_map.get(link, []):
+            self._trie.add_title(redirect, category)
 
     def __start_link(self, attributes):
         """Temporary, to refactor."""
-        self._sent.ner_type = self._gold_map.get(attributes[NERTrainingCallback.LINK], 0)
+        self._sent.ner_type = self.__get_gold(attributes[NERTrainingCallback.LINK])
         if self._sent.ner_type != 0:
+            print "LINK", attributes, self._sent.ner_type
             self._mode = NERTrainingCallback.NER_LINK
             self._sent.bi = 'B'
             self._sent.links_found += 1
+            self.__add_redirects(attributes[NERTrainingCallback.LINK], self._sent.ner_type)
+            # Hungarian: budapesti is not LOC (not even NER)
+            if (self._sent.ner_type == 'LOC' and
+                attributes[NERTrainingCallback.RAW][0].islower()):
+                self._sent.ner_type = 0
+                print "NOT LOC", attributes
         else:
+            print "LINK LOST", attributes
             self._mode = NERTrainingCallback.NO_LINK
             self._sent.links_lost += 1
 
@@ -359,8 +390,9 @@ class NERTrainingCallback(DefaultConllCallback):
                 # TODO: POS?
                 # TODO: maybe_NNP
 #                return False  # TODO: sentences CAN start w/ entities
-            if (attributes[NERTrainingCallback.RAW].istitle() or
-                  attributes[NERTrainingCallback.RAW].isupper()):
+            if attributes[NERTrainingCallback.RAW][0].isupper():
+#            if (attributes[NERTrainingCallback.RAW].istitle() or
+#                  attributes[NERTrainingCallback.RAW].isupper()):
                 return True
     
     def sentenceEnd(self):
@@ -391,11 +423,13 @@ if __name__ == '__main__':
     option_parser = OptionParser()
     option_parser.add_option("-l", "--language", dest="language",
             help="the Wikipedia language code. Default is en.", default="en")
+    option_parser.add_option("-r", "--redirects", dest="redirects",
+            help="normal -> redirect page mapping.", default=None)
     options, args = option_parser.parse_args()
 
     if len(args) < 3:
         print('Creates NER training corpus from Wikipedia pages.\n')
-        print('Usage: {0} config_file gold_file input_files+')
+        print('Usage: {0} [options] config_file gold_file input_files+')
         print('       config_file: the configuration file. Must contain a section' +
               ' called <language option>-ner')
         print('       gold_file: the entity -> NER category mapping file\n')
@@ -408,8 +442,10 @@ if __name__ == '__main__':
 
     lt = LanguageTools(args[0], options.language)
     trie = Tries(lt)
-    ntc = NERTrainingCallback(trie)
+    ntc = NERTrainingCallback(trie, options.redirects)
     ntc.read_gold(args[1])
+    if options.redirects is not None:
+        ntc.read_redirects(options.redirects)
     
     cr = ConllReader([ntc])
     for wiki_file in args[2:]:
