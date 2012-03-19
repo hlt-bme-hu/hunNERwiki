@@ -342,45 +342,53 @@ class NERTrainingCallback(DefaultConllCallback):
                 self._sent.append(attributes)
         elif self._mode == NERTrainingCallback.NNP_LINK:
 #            print "NNP", self.tmp, self._sent.ner_type, len(self.tmp)
-            sys.stdout.flush()
+#            sys.stdout.flush()
 #            print "TRIE", self._trie.paths
-            sentence_start_non_nnp = False
-            for partition in all_partitions(self.tmp):
-                categories = [self._trie.get_category(part)[1] for part in partition]
-#                print "PC", partition, categories
-                for i, category in enumerate(categories):
-                    if category is None or category is 'UNK':
-                        # Invalid NNP, UNLESS the first word is sentence starter
-                        if (len(self._sent.sentence) == 0 and i == 0 and
-                            len(partition[i]) == 1 and
-                            not self.__has_noun(partition[i])):
-                            sentence_start_non_nnp = True
-                        else:
-                            break
-                else:
-                    for i, part in enumerate(partition):
-                        if i == 0 and sentence_start_non_nnp:
-                            self._sent.ner_type = 0
-                            for word in part:
-                                self._sent.append(word)
-                        else:
-                            self._sent.ner_type = categories[i]
-                            was_B = False
-                            for word in part:
-                                if not was_B:
-                                    self._sent.bi = 'B'
-                                    was_B = True
-                                else:
-                                    self._sent.bi = 'I'
-                                self._sent.append(word)
-                    break
-            else:
-#                print "NO NNP FOUND!"
-                self._sent.ner_type = 'UNK'
-                for attributes in self.tmp:
-                    self._sent.append(attributes)
-                self._sent.links_lost += 1
+
+            if len(self.tmp) <= 8:
+                sentence_start_non_nnp = False
+                for partition in all_partitions(self.tmp):
+                    categories = [self._trie.get_category(part)[1] for part in partition]
+    #                print "PC", partition, categories
+                    for i, category in enumerate(categories):
+                        if category is None or category is 'UNK':
+                            # Invalid NNP, UNLESS the first word is sentence starter
+                            if (len(self._sent.sentence) == 0 and i == 0 and
+                                len(partition[i]) == 1 and
+                                not self.__has_noun(partition[i])):
+                                sentence_start_non_nnp = True
+                            else:
+                                break
+                    else:
+                        for i, part in enumerate(partition):
+                            if i == 0 and sentence_start_non_nnp:
+                                self._sent.ner_type = 0
+                                for word in part:
+                                    self._sent.append(word)
+                            else:
+                                self._sent.ner_type = categories[i]
+                                was_B = False
+                                for word in part:
+                                    if not was_B:
+                                        self._sent.bi = 'B'
+                                        was_B = True
+                                    else:
+                                        self._sent.bi = 'I'
+                                    self._sent.append(word)
+                        break
+                else:  # for
+                    self.__unknown_nnp_link()
+            else:  # if len <= 8
+                self.__unknown_nnp_link()
+
         self.tmp = []
+
+    def __unknown_nnp_link(self):
+#        print "NO NNP FOUND!"
+        self._sent.ner_type = 'UNK'
+        for attributes in self.tmp:
+            self._sent.append(attributes)
+        self._sent.links_lost += 1
 
     def __has_noun(self, chunk):
         """Returns @c True, if there is at least one noun in chunk."""
