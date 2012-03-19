@@ -3,6 +3,7 @@ considered a training sentence, all links in it are leading to wikipedia pages
 whose NE category is known."""
 
 import sys
+import re
 import os
 import os.path
 if sys.version_info[0] >= 3:
@@ -17,16 +18,16 @@ from langtools.utils.useful import all_partitions
 from langtools.utils.language_config import LanguageTools
 
 # Functionality needed:
-# - lowercase link to uppercase LOC (Hun?)
 # - from Nothman et al, 2008 (and our ideas, which they blantantly stole in
 #   their paper :)):
-#   .capitalization (personal titles)
-#   .lowercase links: drop / analyse incoming link capitalization (won't work
-#   for Hungarian, as LOCs can become lowercased (case?))
+#   .capitalization (personal titles) (not really needed in Hun?)
 # Done:
 # - from Nothman et al, 2008 (and our ideas, which they blantantly stole in
 #   .link inference (article title, redirects, words in links); trie; digit - cas only
 #   .capitalization (first words)
+#   .lowercase links: not NEs, if they don't point to a NER.
+#   for Hungarian, as LOCs can become lowercased (case?))
+# - lowercase link to uppercase LOC (Hun)
 # - redirect mapping
 
 class SentenceData(object):
@@ -59,7 +60,7 @@ class SentenceData(object):
 
     def ner_bi(self):
         """Prints the ner type and also converts 0 to O."""
-        return '{0}-{1}'.format(self.bi, self.ner_type) if self.ner_type != 0 else 'O'
+        return '{0}-{1}'.format(self.bi, self.ner_type) if str(self.ner_type) != '0' else 'O'
     
     def write(self, out):
         """Writes the sentence to the output file."""
@@ -148,13 +149,18 @@ class NERTrainingCallback(DefaultConllCallback):
     NO_LINK, NER_LINK, NNP_LINK = xrange(3)
     # The field indices
     RAW, STYLE, LINK, POS, LEMMA = xrange(5)
+
+    LINK_PATTERN = re.compile('^(?:w[:])(?:[a-zA-Z][a-z][A-Z]:)?(.+)$')
     
-    def __init__(self, trie, outs=None):
+    def __init__(self, trie, keep_discarded=False, outs=None):
         """
         Initializes the callback. If specified, the training sentences are
         written to @c outs; otherwise they are written to a separate output
         file for each input file called <input_file_name>.ner.
         
+        @param trie the trie (not) that stores links seen in the page so far.
+        @param keep_discarded if @c True, the discarded sentences will be
+                              written to a file called <input_file_name>.discarded.
         @param outs the output stream to write the data to.
         """
         DefaultConllCallback.__init__(self)
@@ -165,6 +171,10 @@ class NERTrainingCallback(DefaultConllCallback):
         self._redirect_map = {}  # page: redirects
         self._trie = trie        # the NERs mentioned on the page
         self._mode = NERTrainingCallback.NO_LINK  # state machine state
+        self._keep_discarded = keep_discarded
+
+        self._out = None
+        self._discarded = None
         
     def read_gold(self, gold_file):
         """Reads the gold file and fills the {page -> category} map from them.
@@ -197,6 +207,8 @@ class NERTrainingCallback(DefaultConllCallback):
         """Opens the output file."""
         DefaultConllCallback.fileStart(self, file_name)
         self._out = FileWriter(file_name + '.ner').open()
+        if self._keep_discarded:
+            self._discarded = FileWriter(file_name + '.discarded').open()
             
     def fieldStart(self, field):
         DefaultConllCallback.fieldStart(self, field.lower())
@@ -229,8 +241,6 @@ class NERTrainingCallback(DefaultConllCallback):
                 if self._title_pars > 0:
                     self._title.append(attributes[NERTrainingCallback.LEMMA])
             elif self.cc_field.lower() == 'body':
-                if self._sent.links_lost > 0:
-                    return
 
                 if len(attributes) >= 5:
                     # Redirect check
@@ -293,7 +303,7 @@ class NERTrainingCallback(DefaultConllCallback):
         if len(self.tmp) == 0:
             return
 
-        print "TMP", self.tmp
+        print "TMP", self.tmp, self._sent.ner_type
         """Adds the temporary chunk to the output sentence."""
         if self._mode == NERTrainingCallback.NER_LINK:
             for i, attributes in enumerate(self.tmp):
@@ -307,12 +317,11 @@ class NERTrainingCallback(DefaultConllCallback):
             for attributes in self.tmp:
                 self._sent.append(attributes)
         elif self._mode == NERTrainingCallback.NNP_LINK:
-            print "TRIE", self._trie.paths
-            print "NNP!!!"
+#            print "TRIE", self._trie.paths
             sentence_start_non_nnp = False
             for partition in all_partitions(self.tmp):
                 categories = [self._trie.get_category(part)[1] for part in partition]
-                print "PC", partition, categories
+#                print "PC", partition, categories
                 for i, category in enumerate(categories):
                     if category is None or category is 'UNK':
                         # Invalid NNP, UNLESS the first word is sentence starter
@@ -340,7 +349,10 @@ class NERTrainingCallback(DefaultConllCallback):
                                 self._sent.append(word)
                     break
             else:
-                print "NO NNP FOUND!"
+#                print "NO NNP FOUND!"
+                self._sent.ner_type = 'UNK'
+                for attributes in self.tmp:
+                    self._sent.append(attributes)
                 self._sent.links_lost += 1
         self.tmp = []
 
@@ -360,21 +372,26 @@ class NERTrainingCallback(DefaultConllCallback):
     def __start_link(self, attributes):
         """Temporary, to refactor."""
         self._sent.ner_type = self.__get_gold(attributes[NERTrainingCallback.LINK])
+        self._mode = NERTrainingCallback.NER_LINK
+        self._sent.bi = 'B'
         if self._sent.ner_type != 0:
-            print "LINK", attributes, self._sent.ner_type
-            self._mode = NERTrainingCallback.NER_LINK
-            self._sent.bi = 'B'
+#            print "LINK", attributes, self._sent.ner_type
             self._sent.links_found += 1
             self.__add_redirects(attributes[NERTrainingCallback.LINK], self._sent.ner_type)
             # Hungarian: budapesti is not LOC (not even NER)
             if (self._sent.ner_type == 'LOC' and
                 attributes[NERTrainingCallback.RAW][0].islower()):
                 self._sent.ner_type = 0
-                print "NOT LOC", attributes
+ #               print "NOT LOC", attributes
         else:
-            print "LINK LOST", attributes
-            self._mode = NERTrainingCallback.NO_LINK
-            self._sent.links_lost += 1
+ #           print "LINK LOST", attributes
+            # Lowercase links point to common nouns
+            if attributes[NERTrainingCallback.RAW][0].islower():
+                print "HAHA", attributes
+                self._sent.ner_type = 0
+            else:
+                self._sent.ner_type = 'UNK'
+                self._sent.links_lost += 1
 
     def __is_NNP(self, attributes):
         """Decides if word is NNP. Also, if a title-cased word occurs in the
@@ -399,10 +416,14 @@ class NERTrainingCallback(DefaultConllCallback):
         """If the sentence contains links only to entities whose types are
         known, it is written to the output file."""
         if self.cc_field.lower() == 'body':
-            print "SEND"
+#            print "SEND"
             self.__add_tmp()
-            if self._sent.links_found > 0 and self._sent.links_lost == 0:
+            if self._sent.links_lost == 0:
+#                print "NO LOST FOUND"
                 self._sent.write(self._out)
+            elif self._keep_discarded:
+#                print "DISCARDED + LOST FOUND"
+                self._sent.write(self._discarded)
             self._sent.next_sentence()
     
     def fileEnd(self):
@@ -416,6 +437,9 @@ class NERTrainingCallback(DefaultConllCallback):
         DefaultConllCallback.fileEnd(self)
         self._out.close()
         self._out = None
+        if self._discarded is not None:
+            self._discarded.close()
+            self._discarded = None
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -425,6 +449,9 @@ if __name__ == '__main__':
             help="the Wikipedia language code. Default is en.", default="en")
     option_parser.add_option("-r", "--redirects", dest="redirects",
             help="normal -> redirect page mapping.", default=None)
+    option_parser.add_option("-d", "--discarded", dest="discarded",
+            action="store_true", default=False,
+            help="also generate .discarded files.")
     options, args = option_parser.parse_args()
 
     if len(args) < 3:
@@ -435,14 +462,13 @@ if __name__ == '__main__':
         print('       gold_file: the entity -> NER category mapping file\n')
         sys.exit(1)
 
-    config_parser = CascadingConfigParser(args[0])
+    #config_parser = CascadingConfigParser(args[0])
 
 #    config = dict(config_parser.items(options.language + '-ner'))
 
-
     lt = LanguageTools(args[0], options.language)
     trie = Tries(lt)
-    ntc = NERTrainingCallback(trie, options.redirects)
+    ntc = NERTrainingCallback(trie, options.discarded)
     ntc.read_gold(args[1])
     if options.redirects is not None:
         ntc.read_redirects(options.redirects)
