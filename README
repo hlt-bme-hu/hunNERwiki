@@ -38,6 +38,9 @@ cat nerlist.hu date_pages > nerlist2.hu
 python scripts/ner_list_to_hu.py -k data/nerlist2.hu data/en_to_hu_pages > nerlist3.hu
 python scripts/ner_list_to_hu.py -k data/nerlist3.hu data/normal_to_redir_pages > nerlist4.hu
 
+To Extract the training sentences:
+for i in `seq 4`; do python scripts/select_ner_training2.py -d -l hu -r data/normal_to_redir_pages /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf data/nerlist2.hu /home/ndavid/huwiki/huwiki-articles.conll.$i > out.$i 2>&1 & done
+
 Data files:
 ==========
 
