@@ -337,6 +337,13 @@ class NERTrainingCallback(DefaultConllCallback):
         self.tmp.append(attributes)
 
     def __is_NNP_prefix(self, attributes):
+        """
+        Trie functionality... maybe I should have implemented it correctly.
+        Anyway, this method is here to handle not titlecase words in
+        a NE (Harry Potter and the Deathly Hollows). If such words are met,
+        but the chunk read so far is a prefix to a known entity, we do
+        not throw it away just then.
+        """
         for i in xrange(len(self.tmp)):
             if self._trie.is_prefix(self.tmp[i:], attributes):
                 return True
