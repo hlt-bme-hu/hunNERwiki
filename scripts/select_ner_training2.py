@@ -66,7 +66,7 @@ class SentenceData(object):
     def write(self, out):
         """Writes the sentence to the output file."""
         for word in self.sentence:
-            out.write(word + '\n')
+            out.write(word.encode('iso-8859-2', 'xmlcharrefreplace') + '\n')
         out.write('\n')
         self.num_words += len(self.sentence)
         self.num_train += 1
@@ -85,7 +85,8 @@ class Tries(object):
         """
         self.lt = lt
         self.paths = {}
-        self.words = set()
+        self.words = set()     # The words that occur in paths
+        self.prefixes = set()  # Prefixes for the entries in paths
 
     def add_title(self, title, category):
         """
@@ -94,7 +95,7 @@ class Tries(object):
         """
         par = title.rfind('(')
         if par != -1 and par != 0:
-            title = title[par - 1:]
+            title = title[0 : par]
         words = self.lt.word_tokenize(title)
         self.add_anchor(words, category)
 
@@ -110,10 +111,11 @@ class Tries(object):
 
     def add_path(self, words, category):
         """Adds a path (words of an entity)."""
-        if type(words) == list:
-            words = tuple(words)
+        words = tuple(word.lower() for word in words)
         for word in words:
             self.words.add(word)
+        for i in xrange(len(words)):
+            self.prefixes.add(tuple(words[0 : i + 1]))
         self.paths[words] = category
 
     def get_category(self, words):
@@ -130,6 +132,14 @@ class Tries(object):
         else:
             tpl = tuple(words)
             return tpl, self.paths.get(tpl, None)  # lower() ?
+
+    def is_prefix(self, words, word):
+        """Checks if words + word is a prefix to an entity."""
+        # Last words: raw or lemma
+        words_raw = [token[NERTrainingCallback.RAW].lower() for token in words]
+        tpl1 = tuple(words_raw + [word[NERTrainingCallback.RAW].lower()])
+        tpl2 = tuple(words_raw + [word[NERTrainingCallback.LEMMA].lower()])
+        return tpl1 in self.prefixes or tpl2 in self.prefixes
 
     def clear(self):
         """Clears the trie."""
@@ -212,11 +222,11 @@ class NERTrainingCallback(DefaultConllCallback):
     def fileStart(self, file_name):
         """Opens the output file."""
         DefaultConllCallback.fileStart(self, file_name)
-        self._out = FileWriter(file_name + '.ner').open()
+        self._out = open(file_name + '.ner', 'w')
         if self._keep_discarded:
-            self._discarded = FileWriter(file_name + '.discarded').open()
+            self._discarded = open(file_name + '.discarded', 'w')
         if self._keep_filtered:
-            self._filtered = FileWriter(file_name + '.filtered').open()
+            self._filtered = open(file_name + '.filtered', 'w')
             
     def fieldStart(self, field):
 #        print "NERTrainingCallback:fieldStart"
@@ -233,7 +243,7 @@ class NERTrainingCallback(DefaultConllCallback):
                 self._title_pars = 1
 
             self._trie.clear()
-            self._cat = self._gold_map.get(self.cc_title, None)
+            self._cat = self._gold_map.get(self.cc_title.lower(), None)
             if self._cat is not None:
                 self._trie.add_title(self.cc_title, self._cat)
                 self.__add_redirects(self.cc_title, self._cat)
@@ -302,11 +312,15 @@ class NERTrainingCallback(DefaultConllCallback):
                 self.__add_tmp()
                 self.__start_link(attributes)
             elif not self.__is_NNP(attributes):
+                if not self.__is_NNP_prefix(attributes):
 #                            print "NNP -> NO"
-                self.__add_tmp()
-                self._mode = NERTrainingCallback.NO_LINK
-                self._sent.ner_type = 0
-#                        else:
+                    self.__add_tmp()
+                    self._mode = NERTrainingCallback.NO_LINK
+                    self._sent.ner_type = 0
+#            elif len(self.tmp) == 8:  # Too long
+#                self.__add_tmp()
+#                self._mode = NERTrainingCallback.NO_LINK
+#                self._sent.ner_type = 0
 #                            print "NNP -> NNP"
         elif self._mode == NERTrainingCallback.NO_LINK:
             if attributes[1] == 'B-link':
@@ -321,6 +335,12 @@ class NERTrainingCallback(DefaultConllCallback):
 #                            print "NO -> NO"
 
         self.tmp.append(attributes)
+
+    def __is_NNP_prefix(self, attributes):
+        for i in xrange(len(self.tmp)):
+            if self._trie.is_prefix(self.tmp[i:], attributes):
+                return True
+        return False
 
     def __add_tmp(self):
 #        print "NERTrainingCallback:__add_tmp"
@@ -458,7 +478,8 @@ class NERTrainingCallback(DefaultConllCallback):
         sys.stdout.flush()
         if self.cc_field.lower() == 'body':
             if len(self.sentence_words) > 1:
-                if self.__ends_in_punct():
+                if (self.__ends_in_punct() and self.__starts_with_uppercase() and
+                    self.__not_enumeration()):
                     for attributes in self.sentence_words:
                         self.word2(attributes)
         #            print "SEND"
@@ -473,10 +494,33 @@ class NERTrainingCallback(DefaultConllCallback):
                 elif self._keep_filtered:
     #                print "FILTERED"
                     for attributes in self.sentence_words:
-                        self._filtered.write(u"\t".join(attributes) + u"\n")
-                    self._filtered.write(u"\n")
+                        self._filtered.write(u"\t".join(attributes).encode('iso-8859-2', 'xmlcharrefreplace') + "\n")
+                    self._filtered.write("\n")
             self.sentence_words = []
 
+    def __not_enumeration(self):
+        """
+        Returns @c True, if the current sentence is not just a number and a dot.
+        """
+        return not (len(self.sentence_words) == 2 and
+                    self.sentence_words[0][NERTrainingCallback.LEMMA].isdigit() and
+                    self.sentence_words[1][NERTrainingCallback.LEMMA] == '.')
+
+    def __starts_with_uppercase(self):
+        """
+        Returns @c True, if the current sentence starts with an uppercase letter
+        or a digit.
+        """
+        for token in self.sentence_words:
+            if (token[NERTrainingCallback.RAW][0].isdigit() or 
+                token[NERTrainingCallback.RAW][0].isupper()):
+                return True
+            elif token[NERTrainingCallback.LEMMA] in self._quot:
+                continue
+            else:
+                break
+        return False
+        
     def __ends_in_punct(self):
         """
         Returns @c True, if the current sentence is valid, i.e. ends with one
