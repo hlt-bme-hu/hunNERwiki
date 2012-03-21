@@ -189,6 +189,7 @@ class NERTrainingCallback(DefaultConllCallback):
         self._trie = trie        # the NERs mentioned on the page
         self._mode = NERTrainingCallback.NO_LINK  # state machine state
         self._punct = set(u'.?!:')  # Sentences should end with one of these
+        self._link_punct = set(u'.?!:,;')  # To strip from the end of links
         self._keep_discarded = keep_discarded
         self._keep_filtered = keep_filtered
 
@@ -368,7 +369,7 @@ class NERTrainingCallback(DefaultConllCallback):
             # The link may end with punctuation marks -- let's remove them!
             puncts = 0
             for token in reversed(self.tmp):
-                if token[NERTrainingCallback.LEMMA] in self._punct:
+                if token[NERTrainingCallback.LEMMA] in self._link_punct:
                     puncts += 1
                 else:
                     break
