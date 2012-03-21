@@ -15,8 +15,12 @@ Scripts to run:
 --------------
 
 To create the entity list:
-python scripts/extract_dbpedia_types.py -c data/dbpedia_3.7.owl -m data/dbpedia_map data/instance_types_hu.nt > nerlist.hu
-pythol extract_langlinks.py -l en -r /home/ndavid/huwiki2/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/en_to_hu_pages
+python2.7 scripts/extract_dbpedia_types.py -c data/dbpedia_3.7.owl -m data/dbpedia_map data/instance_types_hu.nt > data/nerlist.hu.en
+# Interlanguage links: hu -> all (to resolve 
+python extract_langlinks.py /home/ndavid/huwiki/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/hu_to_all_pages
+# Interlanguage links: en -> hu
+python extract_langlinks.py -l en -r /home/ndavid/huwiki2/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/en_to_hu_pages
+# Redirects (hu)
 python extract_redirects.py -r /home/ndavid/huwiki2/huwiki-20120309-redirect.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/normal_to_redir_pages
 
 To parse a Wikipedia dump:
@@ -34,12 +38,18 @@ To extract date pages (NER category 0):
 python extract_date_pages.py -l hu /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /home/ndavid/huwiki/huwiki-articles.conll.* > date_pages
 
 To expand the entity list:
-cat nerlist.hu date_pages > nerlist2.hu
-python scripts/ner_list_to_hu.py -k data/nerlist2.hu data/en_to_hu_pages > nerlist3.hu
-python scripts/ner_list_to_hu.py -k data/nerlist3.hu data/normal_to_redir_pages > nerlist4.hu
+# To Hungarian pages
+python scripts/ner_list_to_hu.py data/nerlist.hu.en data/en_to_hu_pages > data/nerlist.hu.hu
+# Get the corresponding pages in all languages
+python scripts/ner_list_to_hu.py data/nerlist.hu.hu data/hu_to_all_pages > data/nerlist.hu.all
+# Hungarian redirects
+python scripts/ner_list_to_hu.py data/nerlist.hu.hu data/normal_to_redir_pages > nerlist.hu.redirects
+# Now to round it up...
+export LC_ALL=C
+cat data/nerlist.hu.en data/nerlist.hu.hu data/nerlist.hu.all data/nerlist.hu.redirects data/date_pages | sort -u > data/nerlist.hu
 
 To Extract the training sentences:
-for i in `seq 4`; do python scripts/select_ner_training2.py -d -f -l hu -r data/normal_to_redir_pages /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf data/nerlist2.hu /home/ndavid/huwiki/huwiki-articles.conll.$i > out.$i 2>&1 & done
+for i in `seq 4`; do python scripts/select_ner_training2.py -d -f -l hu -r data/normal_to_redir_pages -r data/hu_to_all_pages /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf data/nerlist.hu /home/ndavid/huwiki/huwiki-articles.conll.$i > out.$i 2>&1 & done
 
 Data files:
 ==========
