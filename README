@@ -14,15 +14,6 @@ Filters incomplete sentences. To be applied on the tagged training corpus.
 Scripts to run:
 --------------
 
-To create the entity list:
-python2.7 scripts/extract_dbpedia_types.py -c data/dbpedia_3.7.owl -m data/dbpedia_map data/instance_types_hu.nt > data/nerlist.hu.en
-# Interlanguage links: hu -> all (to resolve 
-python extract_langlinks.py /home/ndavid/huwiki/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/hu_to_all_pages
-# Interlanguage links: en -> hu
-python extract_langlinks.py -l en -r /home/ndavid/huwiki2/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/en_to_hu_pages
-# Redirects (hu)
-python extract_redirects.py -r /home/ndavid/huwiki2/huwiki-20120309-redirect.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/normal_to_redir_pages
-
 To parse a Wikipedia dump:
 python parse_insert_into_rows.py < /home/ndavid/huwiki/huwiki-latest-page.sql > /home/ndavid/huwiki/pages
 awk '$2 == 0 {print $3}' pages | sed -e "s/_/ /g" > main_pages
@@ -33,6 +24,15 @@ python create_morphtable.py -l hu wiki.conf /home/ndavid/huwiki/huwiki-morph.4 /
 (for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
 python wikitext_to_conll.py -l hu.3 wiki.conf /home/ndavid/huwiki/huwiki-latest-pages-articles.out.3 /home/ndavid/huwiki/huwiki-articles.conll.3 /home/ndavid/huwiki/huwiki-templates.3 > ~/huwiki/log.3 2>&1
 (for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
+
+To create the entity list:
+python2.7 scripts/extract_dbpedia_types.py -c data/dbpedia_3.7.owl -m data/dbpedia_map data/instance_types_hu.nt > data/nerlist.hu.en
+# Interlanguage links: hu -> all (to resolve 
+python extract_langlinks.py /home/ndavid/huwiki/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/hu_to_all_pages
+# Interlanguage links: en -> hu
+python extract_langlinks.py -l en -r /home/ndavid/huwiki2/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/en_to_hu_pages
+# Redirects (hu)
+python extract_redirects.py -r /home/ndavid/huwiki2/huwiki-20120309-redirect.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/normal_to_redir_pages
 
 To extract date pages (NER category 0):
 python extract_date_pages.py -l hu /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /home/ndavid/huwiki/huwiki-articles.conll.* > date_pages
@@ -49,7 +49,7 @@ export LC_ALL=C
 cat data/nerlist.hu.en data/nerlist.hu.hu data/nerlist.hu.all data/nerlist.hu.redirects data/date_pages | sort -u > data/nerlist.hu
 
 To Extract the training sentences:
-for i in `seq 4`; do python scripts/select_ner_training2.py -d -f -l hu -r data/normal_to_redir_pages -r data/hu_to_all_pages /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf data/nerlist.hu /home/ndavid/huwiki/huwiki-articles.conll.$i > out.$i 2>&1 & done
+for i in `seq 4`; do python scripts/select_ner_training_hu.py -d -f -l hu -r data/normal_to_redir_pages -r data/hu_to_all_pages /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf data/nerlist.hu /home/ndavid/huwiki/huwiki-articles.conll.$i > out.$i 2>&1 & done
 
 Data files:
 ==========
@@ -81,4 +81,11 @@ Abbreviations:
 -------------
 http://www.learn-english-today.com/business-english/abbreviations.html
 http://www.indiana.edu/~letrs/help-services/QuickGuides/oed-abbr.html
+
+Files we need from Wikipedia:
+----------------------------
+- all pages (hu: Articles only!)
+- huwiki-20120309-page.sql.gz
+- huwiki-20120309-langlinks.sql.gz
+- huwiki-20120309-redirect.sql.gz
 
