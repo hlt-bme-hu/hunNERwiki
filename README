@@ -76,3 +76,9 @@ dbpedia_entities:
 ----------------
 Output of the extract_dbpedia_types.py when run on instance_types_en.nt.
 Used in generation of the NER training corpus.
+
+Abbreviations:
+-------------
+http://www.learn-english-today.com/business-english/abbreviations.html
+http://www.indiana.edu/~letrs/help-services/QuickGuides/oed-abbr.html
+

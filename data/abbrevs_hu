@@ -1,0 +1,194 @@
+## Hungarian abbreviations
+## Format is: <word>[\t1]
+## If the line contains the optional part, the abbreviation will join sentence
+## chunks even if the second one starts with an uppercase letter.
+A.	1
+Á.	1
+B.	1
+C.	1
+Cs.	1
+D.	1
+Dz.	1
+Dzs.	1
+E.	1
+É.	1
+F.	1
+G.	1
+Gy.	1
+H.	1
+I.	1
+Í.	1
+J.	1
+K.	1
+L.	1
+M.	1
+N.	1
+Ny.	1
+O.	1
+Ó.	1
+Ö.	1
+Ő.	1
+P.	1
+Q.	1
+R.	1
+S.	1
+Sz.	1
+T.	1
+Ty.	1
+U.	1
+Ú.	1
+Ü.	1
+Ű.	1
+V.	1
+W.	1
+X.	1
+Y.	1
+Z.	1
+Zs.	1
+a.
+á. é.
+áll.
+ált.
+Ált.	1
+a. m.
+ápr.
+aug.
+Bp.	1
+B. ú. é. k.
+B.ú.é.k.
+c.
+csüt.
+de.
+dec.
+Dr.	1
+dr.	1
+du.
+ell.
+em.
+érk.
+évf.
+f. é.
+febr.
+fej.
+felv.
+f. h.
+ford.	1
+fszla.
+fszt.	1
+gimn.
+h.
+hiv.
+honv.
+Id.	1
+id.	1
+i. e.	1
+Ifj.	1
+ifj.	1
+ig.
+igh.
+ill.	1
+i. m.	1
+ind.
+isk.
+Isk.
+i.sz.	1
+jan.
+jegyz.
+júl.
+jún.
+k.
+kb.	1
+ker.
+kk.
+K.m.f.
+K. m. f.
+köv.
+krt.
+l.
+ltp.
+m.
+máj.
+márc.
+mb.
+m. é.
+megh.
+min.
+N. N.
+NB.
+nov.
+ny.
+o.
+okl.	1
+okt.
+olv.
+Özv.	1
+özv.	1
+p.
+pl.	1
+pu.
+r.
+s. k.
+stb.
+sz.
+szept.
+szerk.	1
+Szt.	1
+szül.	1
+t.	1
+tc.
+ti.	1
+tvr.
+u.
+ua.
+ui.	1
+Ui.
+úm.	1
+ún.	1
+uo.
+v.	1
+vö.	1
+vsz.
+X. Y.
+a/c
+a/o
+attn.
+approx.
+cc.
+c/o
+Bros.
+Co.
+Corp.
+dept.
+e.g.	1
+etc.
+i.e.	1
+Inc.
+Jr.
+lb.
+Lb.
+Lbs.
+Ltd.
+mo.
+Mr.	1
+Mrs.	1
+Ms.	1
+no.
+No.	1
+p.a.
+Plc.
+pls.
+p.m.
+p.p.
+PR.
+p.s.
+ps.
+Ps.
+PS.
+pto.
+p.w.
+qty.
+R & D
+re.
+s.a.e.
+...
+;
