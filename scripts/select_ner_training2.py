@@ -31,6 +31,12 @@ from langtools.utils import misc
 # - lowercase link to uppercase LOC (Hun)
 # - redirect mapping
 
+__zero_ner_types = set([0, '0', 'O'])
+def zero_ner_type():
+    return 'O'
+def is_ner_type_zero(ner):
+    return ner in __zero_ner_types
+
 class SentenceData(object):
     def __init__(self):
         self.clear_sentence()
@@ -61,7 +67,7 @@ class SentenceData(object):
 
     def ner_bi(self):
         """Prints the ner type and also converts 0 to O."""
-        return '{0}-{1}'.format(self.bi, self.ner_type) if str(self.ner_type) != '0' else 'O'
+        return '{0}-{1}'.format(self.bi, self.ner_type) if not is_ner_type_zero(self.ner_type) else zero_ner_type()
     
     def write(self, out):
         """Writes the sentence to the output file."""
@@ -213,8 +219,10 @@ class NERTrainingCallback(DefaultConllCallback):
             for line in redirects:
                 kv = line.strip().split("\t")
                 if len(kv) >= 2 and kv[0].lower() in self._gold_map:
-                    redirs = self._redirect_map.get(kv[0].lower(), [])
-                    redirs.extend(l.lower() for l in kv[1:])
+                    redirs = self._redirect_map.get(kv[0].lower(), set())
+                    for l in kv[1:]:
+                        redirs.add(l.lower())
+#                    redirs.add(l.lower() for l in kv[1:])
                     self._redirect_map[kv[0].lower()] = redirs
             gc.enable()
 
@@ -301,7 +309,7 @@ class NERTrainingCallback(DefaultConllCallback):
             else:
 #                            print "NER -> NO/NNP"
                 self.__add_tmp()
-                self._sent.ner_type = 0
+                self._sent.ner_type = zero_ner_type()
                 if self.__is_NNP(attributes):
                     self._mode = NERTrainingCallback.NNP_LINK
                 else:
@@ -316,7 +324,7 @@ class NERTrainingCallback(DefaultConllCallback):
 #                            print "NNP -> NO"
                     self.__add_tmp()
                     self._mode = NERTrainingCallback.NO_LINK
-                    self._sent.ner_type = 0
+                    self._sent.ner_type = zero_ner_type()
 #            elif len(self.tmp) == 8:  # Too long
 #                self.__add_tmp()
 #                self._mode = NERTrainingCallback.NO_LINK
@@ -357,13 +365,28 @@ class NERTrainingCallback(DefaultConllCallback):
 #        print "TMP", self.tmp, self._sent.ner_type
         """Adds the temporary chunk to the output sentence."""
         if self._mode == NERTrainingCallback.NER_LINK:
-            for i, attributes in enumerate(self.tmp):
+            # The link may end with punctuation marks -- let's remove them!
+            puncts = 0
+            for token in reversed(self.tmp):
+                if token[NERTrainingCallback.LEMMA] in self._punct:
+                    puncts += 1
+                else:
+                    break
+
+            # Add the link stripped of punctuation marks
+            for i, attributes in enumerate(self.tmp[0 : len(self.tmp) - puncts]):
                 if i == 0:
                     self._sent.bi = 'B'
                 else:
                     self._sent.bi = 'I'
                 self._sent.append(attributes)
-            self._trie.add_anchor(self.tmp, self._sent.ner_type)
+            self._trie.add_anchor(self.tmp[0 : len(self.tmp) - puncts], self._sent.ner_type)
+
+            # And the rest as regular text
+            self._sent.ner_type = zero_ner_type()
+            for attributes in self.tmp[len(self.tmp) - puncts:]:
+                self._sent.append(attributes)
+
         elif self._mode == NERTrainingCallback.NO_LINK:
             for attributes in self.tmp:
                 self._sent.append(attributes)
@@ -389,7 +412,7 @@ class NERTrainingCallback(DefaultConllCallback):
                     else:
                         for i, part in enumerate(partition):
                             if i == 0 and sentence_start_non_nnp:
-                                self._sent.ner_type = 0
+                                self._sent.ner_type = zero_ner_type()
                                 for word in part:
                                     self._sent.append(word)
                             else:
@@ -429,9 +452,10 @@ class NERTrainingCallback(DefaultConllCallback):
 
     def __add_redirects(self, link, category):
         """Adds the redirects of a link to the trie."""
-#        print "NERTrainingCallback:__add_redirects"
-        for redirect in self._redirect_map.get(link, []):
-            self._trie.add_title(redirect, category)
+#        print "NERTrainingCallback:__add_redirects", link.encode('utf-8'), category
+        if category != 0 and category != '0':
+            for redirect in self._redirect_map.get(link.lower(), []):
+                self._trie.add_title(redirect, category)
 
     def __start_link(self, attributes):
         """Temporary, to refactor."""
@@ -439,22 +463,24 @@ class NERTrainingCallback(DefaultConllCallback):
         self._sent.ner_type = self.__get_gold(attributes[NERTrainingCallback.LINK])
         self._mode = NERTrainingCallback.NER_LINK
         self._sent.bi = 'B'
-        if self._sent.ner_type != 0:
-#            print "LINK", attributes, self._sent.ner_type
-            self._sent.links_found += 1
-            self.__add_redirects(attributes[NERTrainingCallback.LINK], self._sent.ner_type)
-            # Hungarian: budapesti is not LOC (not even NER)
-            if (self._sent.ner_type == 'LOC' and
-                attributes[NERTrainingCallback.RAW][0].islower()):
-                self._sent.ner_type = 0
- #               print "NOT LOC", attributes
+
+        # Lowercase links point to common nouns, or are non-NER pointers, such
+        # as "azonos ci'mu""
+        if attributes[NERTrainingCallback.RAW][0].islower():
+            # All lower-case links are of type 0
+            self._sent.ner_type = zero_ner_type()
         else:
- #           print "LINK LOST", attributes
-            # Lowercase links point to common nouns
-            if attributes[NERTrainingCallback.RAW][0].islower():
-#                print "HAHA", attributes
-                self._sent.ner_type = 0
+            if not is_ner_type_zero(self._sent.ner_type):
+    #            print "LINK", attributes, self._sent.ner_type
+                self._sent.links_found += 1
+                self.__add_redirects(attributes[NERTrainingCallback.LINK], self._sent.ner_type)
+                # Hungarian: budapesti is not LOC (not even NER)
+#                if (self._sent.ner_type == 'LOC' and
+#                    attributes[NERTrainingCallback.RAW][0].islower()):
+#                    self._sent.ner_type = 0
+     #               print "NOT LOC", attributes
             else:
+     #           print "LINK LOST", attributes
                 self._sent.ner_type = 'UNK'
                 self._sent.links_lost += 1
 
@@ -569,6 +595,7 @@ if __name__ == '__main__':
     option_parser.add_option("-l", "--language", dest="language",
             help="the Wikipedia language code. Default is en.", default="en")
     option_parser.add_option("-r", "--redirects", dest="redirects",
+            action="append",
             help="normal -> redirect page mapping.", default=None)
     option_parser.add_option("-d", "--discarded", dest="discarded",
             action="store_true", default=False,
@@ -595,7 +622,8 @@ if __name__ == '__main__':
     ntc = NERTrainingCallback(trie, options.discarded, options.filtered)
     ntc.read_gold(args[1])
     if options.redirects is not None:
-        ntc.read_redirects(options.redirects)
+        for redirect_file in options.redirects:
+            ntc.read_redirects(redirect_file)
     
     cr = ConllReader([ntc])
     for wiki_file in args[2:]:
