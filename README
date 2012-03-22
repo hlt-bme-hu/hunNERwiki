@@ -32,7 +32,7 @@ python extract_langlinks.py /home/ndavid/huwiki/huwiki-20120309-langlinks.sql /h
 # Interlanguage links: en -> hu
 python extract_langlinks.py -l en -r /home/ndavid/huwiki2/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/en_to_hu_pages
 # Redirects (hu)
-python extract_redirects.py -r /home/ndavid/huwiki2/huwiki-20120309-redirect.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/normal_to_redir_pages
+python extract_redirects.py -l hu -r /home/ndavid/huwiki2/huwiki-20120309-redirect.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/normal_to_redir_pages
 
 To extract date pages (NER category 0):
 python extract_date_pages.py -l hu /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /home/ndavid/huwiki/huwiki-articles.conll.* > date_pages
