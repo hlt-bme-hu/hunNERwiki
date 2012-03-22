@@ -1,23 +1,34 @@
-from langtools.io.conll2.conll_reader import DefaultConllCallback, ConllReader
+"""Extracts the date pages from the .templates file. Should be faster than
+from the content files."""
+
+from langtools.utils.file_utils import FileReader
 from langtools.utils.cascading_config import CascadingConfigParser
 import sys
+import re
 
-class DateTemplateCallback(DefaultConllCallback):
+class DateTemplateFinder(object):
+    PAGE_PATTERN = re.compile("^%%#PAGE\s(.+)$")
+
     def __init__(self, date_templates):
         self.date_templates = set(t.strip() for t in date_templates.decode('utf-8').split(','))
-        self.docs = 0
+        self.page = None
 
-    def documentStart(self, title):
-        DefaultConllCallback.documentStart(self, title)
-        self.docs += 1
-        if self.docs % 1000 == 0:
-            sys.stderr.write("{0}\n".format(self.docs))
-    
-    def templates(self, templates):
-        DefaultConllCallback.templates(self, templates)
-
-        if len(self.date_templates & set(templates)) > 0:
-            print "{0}\t{1}".format(self.cc_title.encode('utf-8'), 0)
+    def read(self, template_file):
+        with FileReader(template_file).open() as infile:
+            for line in infile:
+                line = line.strip()
+                m = DateTemplateFinder.PAGE_PATTERN.match(line)
+                if m is not None:
+                    self.page = m.group(1)
+                elif self.page is not None:
+                    if line.startswith("Template\t"):
+                        template = line[9:]
+                        if template in self.date_templates:
+                            print "{0}\t{1}".format(self.page.encode('utf-8'), 0)
+                            self.page = None
+        sys.stderr.write("File {0} parsed.\n".format(template_file))
+        sys.stderr.flush()
+        sys.stdout.flush()
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -40,8 +51,7 @@ if __name__ == '__main__':
     config_parser = CascadingConfigParser(args[0])
     config = dict(config_parser.items(options.language + '-wikimedia'))
 
-    dtc = DateTemplateCallback(config['date-templates'])
-    cr = ConllReader([dtc])
+    dtc = DateTemplateFinder(config['date-templates'])
     for wiki_file in args[1:]:
-        cr.read(wiki_file)
+        dtc.read(wiki_file)
 

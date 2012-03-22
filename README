@@ -36,6 +36,8 @@ python extract_redirects.py -l hu -r /home/ndavid/huwiki2/huwiki-20120309-redire
 
 To extract date pages (NER category 0):
 python extract_date_pages.py -l hu /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /home/ndavid/huwiki/huwiki-articles.conll.* > date_pages
+or
+python scripts/extract_date_pages_from_templates.py -l en /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /mnt/store/home/ndavid/enwiki/templates/wikipedia.*.conll.templates > /mnt/store/home/ndavid/enwiki/date_pages 2> log
 
 To expand the entity list:
 # To Hungarian pages
