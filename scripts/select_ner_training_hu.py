@@ -261,7 +261,7 @@ class NERTrainingCallback(DefaultConllCallback):
             self._mode = NERTrainingCallback.NO_LINK
             self.tmp = []
             self.sentence_words = []
-    
+
     def word(self, attributes):
         """
         Puts all tokens to self.sentence_words, so that we can do sentence-
@@ -509,7 +509,6 @@ class NERTrainingCallback(DefaultConllCallback):
         """If the sentence contains links only to entities whose types are
         known, it is written to the output file."""
 #        print "NERTrainingCallback:sentenceEnd"
-        sys.stdout.flush()
         if self.cc_field.lower() == 'body':
             if len(self.sentence_words) > 1:
                 if (self.__ends_in_punct() and self.__starts_with_uppercase() and
