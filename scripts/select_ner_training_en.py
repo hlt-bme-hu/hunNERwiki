@@ -320,6 +320,7 @@ class NERTrainingCallback(DefaultConllCallback):
         #print "ATTR", attributes
         if self._mode == NERTrainingCallback.NER_LINK:
             if attributes[1] == 'B-link':
+                print "B-link1", attributes
 #                            print "NER -> NER"
                 self.__add_tmp()
                 self.__start_link(attributes)
@@ -337,6 +338,7 @@ class NERTrainingCallback(DefaultConllCallback):
         elif self._mode == NERTrainingCallback.NNP_LINK:
             if attributes[1] == 'B-link':
 #                            print "NNP -> NER"
+                print "B-link2", attributes
                 self.__add_tmp()
                 self.__start_link(attributes)
             elif not self.__is_NNP(attributes):
@@ -352,6 +354,7 @@ class NERTrainingCallback(DefaultConllCallback):
 #                            print "NNP -> NNP"
         elif self._mode == NERTrainingCallback.NO_LINK:
             if attributes[1] == 'B-link':
+                print "B-link3", attributes
 #                            print "NO -> NER"
                 self.__add_tmp()
                 self.__start_link(attributes)
@@ -518,10 +521,11 @@ class NERTrainingCallback(DefaultConllCallback):
 
     def __start_link(self, attributes):
         """Temporary, to refactor."""
-#        print "NERTrainingCallback:__start_link"
+        print "NERTrainingCallback:__start_link", attributes
         self._sent.ner_type = self.__get_gold(attributes[NERTrainingCallback.LINK])
         self._mode = NERTrainingCallback.NER_LINK
         self._sent.bi = 'B'
+        print "NER", self._sent.ner_type
 
         # Lowercase links point to common nouns, or are non-NER pointers, such
         # as "azonos ci'mu""
