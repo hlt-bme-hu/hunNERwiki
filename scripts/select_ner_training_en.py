@@ -22,7 +22,6 @@ from trie import *
 # Functionality needed:
 # - from Nothman et al, 2008 (and our ideas, which they blantantly stole in
 #   their paper :)):
-#   .capitalization (personal titles)
 #   .lowercase links: drop / analyse incoming link capitalization
 # Done:
 # - from Nothman et al, 2008 (and our ideas, which they blantantly stole in
@@ -30,6 +29,7 @@ from trie import *
 #   .capitalization (first words, dates)
 #   .link inference (article title, redirects, words in links)
 #   .adjectival forms (nationalities) - English only
+#   .capitalization (personal titles)
 # - redirect mapping
 
 __zero_ner_types = set([0, '0', 'O'])
@@ -107,7 +107,7 @@ class Tries(object):
         self.add_anchor(words, category)
 
     def add_anchor(self, words, category):
-        tpl, old_category = self.get_category(words)
+        tpl, old_category = self.get_category_or_none(words)
         if old_category is None:
             self.add_path(tpl, category)
             if category == 'PER':
@@ -125,7 +125,7 @@ class Tries(object):
             self.prefixes.add(tuple(words[0 : i + 1]))
         self.paths[words] = category
 
-    def get_category(self, words):
+    def get_category_or_none(self, words):
         """Returns the word tuple and its category."""
         if type(words[0]) == list:
             # Last words: raw or lemma
@@ -139,6 +139,12 @@ class Tries(object):
         else:
             tpl = tuple(words)
             return tpl, self.paths.get(tpl, None)  # lower() ?
+
+    def get_category(self, words):
+        tpl, cat = self.get_category_or_none(words)
+        if cat is None:
+            cat = 'UNK'
+        return tpl, cat
 
     def is_prefix(self, words, word):
         """Checks if words + word is a prefix to an entity."""
@@ -320,7 +326,6 @@ class NERTrainingCallback(DefaultConllCallback):
         #print "ATTR", attributes
         if self._mode == NERTrainingCallback.NER_LINK:
             if attributes[1] == 'B-link':
-                print "B-link1", attributes
 #                            print "NER -> NER"
                 self.__add_tmp()
                 self.__start_link(attributes)
@@ -338,7 +343,6 @@ class NERTrainingCallback(DefaultConllCallback):
         elif self._mode == NERTrainingCallback.NNP_LINK:
             if attributes[1] == 'B-link':
 #                            print "NNP -> NER"
-                print "B-link2", attributes
                 self.__add_tmp()
                 self.__start_link(attributes)
             elif not self.__is_NNP(attributes):
@@ -354,7 +358,6 @@ class NERTrainingCallback(DefaultConllCallback):
 #                            print "NNP -> NNP"
         elif self._mode == NERTrainingCallback.NO_LINK:
             if attributes[1] == 'B-link':
-                print "B-link3", attributes
 #                            print "NO -> NER"
                 self.__add_tmp()
                 self.__start_link(attributes)
@@ -391,6 +394,27 @@ class NERTrainingCallback(DefaultConllCallback):
         length, valid = self._titles.get_length(lemma_entity)
         return length if valid else 0
 
+    def __partition_candidate(self, candidate, ner_type):
+        """
+        Partitions the candidate into personal title (PER and UNK), entity and
+        punctuation parts. Returns the two indexing partitioning the candidate.
+        """
+        # The link may end with punctuation marks -- let's remove them!
+        begin, last = 0, len(candidate)
+        for token in reversed(candidate):
+            if token[NERTrainingCallback.LEMMA] in self._link_punct:
+                last -= 1
+            else:
+                break
+
+        if last != 0:
+            if ner_type == 'PER' or ner_type == 'UNK':
+                title_length = self.__title_in_entity(candidate[0 : last])
+                if title_length > 0:
+                    begin = title_length
+
+        return begin, last
+
     def __add_tmp(self):
 #        print "NERTrainingCallback:__add_tmp"
         if len(self.tmp) == 0:
@@ -399,20 +423,9 @@ class NERTrainingCallback(DefaultConllCallback):
 #        print "TMP", self.tmp, self._sent.ner_type
         """Adds the temporary chunk to the output sentence."""
         if self._mode == NERTrainingCallback.NER_LINK:
-            # The link may end with punctuation marks -- let's remove them!
-            begin, last = 0, len(self.tmp)
-            for token in reversed(self.tmp):
-                if token[NERTrainingCallback.LEMMA] in self._link_punct:
-                    last -= 1
-                else:
-                    break
+            begin, last = self.__partition_candidate(self.tmp, self._sent.ner_type)
 
             if last != 0:
-                if self._sent.ner_type == 'PER' or self._sent.ner_type == 'UNK':
-                    title_length = self.__title_in_entity(self.tmp[0 : last])
-                    if title_length > 0:
-                        begin = title_length
-
                 # Add the title as regular text
                 if begin != 0:
                     tmp_type = self._sent.ner_type
@@ -427,8 +440,8 @@ class NERTrainingCallback(DefaultConllCallback):
                     # occur in the link target, then it is a derivative form of the
                     # entity and must be a MISC according to ConLL guidelines
                     if (self.tmp[last - 1][NERTrainingCallback.POS].startswith(u'J')
-                        and not self.tmp[last - 1][NERTrainingCallback.RAW]
-                            in self.tmp[last - 1][NERTrainingCallback.LINK]
+                        and not self.tmp[last - 1][NERTrainingCallback.RAW].lower()
+                            in self.tmp[last - 1][NERTrainingCallback.LINK].lower()
                         and self._sent.ner_type != 'UNK'):
                         sys.stderr.write("Adj entity: {0}\n".format(self.tmp[0 : last]))
                         self._sent.ner_type = 'MISC'
@@ -453,40 +466,79 @@ class NERTrainingCallback(DefaultConllCallback):
             for attributes in self.tmp:
                 self._sent.append(attributes)
         elif self._mode == NERTrainingCallback.NNP_LINK:
-            print "NNP", self.tmp, self._sent.ner_type, len(self.tmp)
+#            print "NNP", self.tmp, self._sent.ner_type, len(self.tmp)
 #            sys.stdout.flush()
-            print "TRIE", self._trie.paths
+#            print "TRIE", self._trie.paths
 
             if len(self.tmp) <= 8:
                 sentence_start_non_nnp = False
                 for partition in all_partitions(self.tmp):
                     categories = [self._trie.get_category(part)[1] for part in partition]
-                    print "PC", partition, categories
+#                    print "PC", partition, categories
                     for i, category in enumerate(categories):
-                        if category is None or category is 'UNK':
+                        if category == 'UNK':
                             # Invalid NNP, UNLESS the first word is sentence starter
                             if (len(self._sent.sentence) == 0 and i == 0 and
                                 len(partition[i]) == 1 and
                                 not self.__has_noun(partition[i])):
                                 sentence_start_non_nnp = True
                             else:
-                                break
+                                begin, last = self.__partition_candidate(partition[i], category)
+                                if begin != last:
+                                    category = self._trie.get_category(partition[i][begin : last])[1]
+                                    if category == 'UNK' or (begin > 0 and category != 'PER'):
+                                        break
                     else:
                         for i, part in enumerate(partition):
+                            # At the beginning of a sentence, and the first word
+                            # is not an NN(P)
                             if i == 0 and sentence_start_non_nnp:
                                 self._sent.ner_type = zero_ner_type()
                                 for word in part:
                                     self._sent.append(word)
+                            # The rest of the partitions
                             else:
                                 self._sent.ner_type = categories[i]
-                                was_B = False
-                                for word in part:
-                                    if not was_B:
-                                        self._sent.bi = 'B'
-                                        was_B = True
-                                    else:
-                                        self._sent.bi = 'I'
-                                    self._sent.append(word)
+                                begin, last = self.__partition_candidate(part, category)
+
+                                # Add the title as regular text
+                                if begin != 0:
+                                    self._sent.ner_type = zero_ner_type()
+                                    for attributes in self.tmp[0 : begin]:
+                                        self._sent.append(attributes)
+
+                                # Add the real entity part
+                                if begin != last:
+                                    link, category = self._trie.get_category(partition[i][begin : last])
+                                    link = u" ".join(link)
+                                    # If the anchor link is an adjective, and the last word does not
+                                    # occur in the link target, then it is a derivative form of the
+                                    # entity and must be a MISC according to ConLL guidelines
+                                    if (part[last - 1][NERTrainingCallback.POS].startswith(u'J')
+                                        and not part[last - 1][NERTrainingCallback.RAW].lower()
+                                            in link.lower()
+                                        and category != 'UNK'):
+                                        sys.stderr.write("Adj entity: {0}\n".format(self.tmp[0 : last]))
+                                        category = 'MISC'
+
+                                    self._sent.ner_type = category
+                                    # Add the link stripped of punctuation marks
+                                    for i, attributes in enumerate(part[begin : last]):
+                                        if i == 0:
+                                            self._sent.bi = 'B'
+                                        else:
+                                            self._sent.bi = 'I'
+                                        self._sent.append(attributes)
+
+                                    if self._sent.ner_type == 'UNK':
+                                        self.links_lost += 1
+
+                                # And the rest as regular text
+                                self._sent.ner_type = zero_ner_type()
+                                for attributes in self.tmp[last:]:
+                                    self._sent.append(attributes)
+
+                        # We are done, let's break
                         break
                 else:  # for
                     self.__unknown_nnp_link()
@@ -521,11 +573,10 @@ class NERTrainingCallback(DefaultConllCallback):
 
     def __start_link(self, attributes):
         """Temporary, to refactor."""
-        print "NERTrainingCallback:__start_link", attributes
+#        print "NERTrainingCallback:__start_link", attributes
         self._sent.ner_type = self.__get_gold(attributes[NERTrainingCallback.LINK])
         self._mode = NERTrainingCallback.NER_LINK
         self._sent.bi = 'B'
-        print "NER", self._sent.ner_type
 
         # Lowercase links point to common nouns, or are non-NER pointers, such
         # as "azonos ci'mu""
