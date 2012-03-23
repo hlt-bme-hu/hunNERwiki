@@ -442,7 +442,8 @@ class NERTrainingCallback(DefaultConllCallback):
                     if (self.tmp[last - 1][NERTrainingCallback.POS].startswith(u'J')
                         and not self.tmp[last - 1][NERTrainingCallback.RAW].lower()
                             in self.tmp[last - 1][NERTrainingCallback.LINK].lower()
-                        and self._sent.ner_type != 'UNK'):
+                        and self._sent.ner_type != 'UNK'
+                        and self._sent.ner_type != zero_ner_type()):
                         sys.stderr.write("Adj entity: {0}\n".format(self.tmp[0 : last]))
                         self._sent.ner_type = 'MISC'
                     # Add the link stripped of punctuation marks
@@ -454,14 +455,15 @@ class NERTrainingCallback(DefaultConllCallback):
                         self._sent.append(attributes)
                     self._trie.add_anchor(self.tmp[begin : last], self._sent.ner_type)
 
+                # Unknown link: we must throw the sentence away
+                if self._sent.ner_type == 'UNK':
+                    self._sent.links_lost += 1
+
             # And the rest as regular text
             self._sent.ner_type = zero_ner_type()
             for attributes in self.tmp[last:]:
                 self._sent.append(attributes)
 
-            # Unknown link: we must throw the sentence away
-            if self._sent.ner_type == 'UNK':
-                self.links_lost += 1
         elif self._mode == NERTrainingCallback.NO_LINK:
             for attributes in self.tmp:
                 self._sent.append(attributes)
@@ -531,7 +533,7 @@ class NERTrainingCallback(DefaultConllCallback):
                                         self._sent.append(attributes)
 
                                     if self._sent.ner_type == 'UNK':
-                                        self.links_lost += 1
+                                        self._sent.links_lost += 1
 
                                 # And the rest as regular text
                                 self._sent.ner_type = zero_ner_type()
@@ -581,11 +583,13 @@ class NERTrainingCallback(DefaultConllCallback):
         # Lowercase links point to common nouns, or are non-NER pointers, such
         # as "azonos ci'mu""
         if attributes[NERTrainingCallback.RAW][0].islower():
+            print "ISLOWER", attributes, self._sent.ner_type
             # All lower-case links are of type 0
             self._sent.ner_type = zero_ner_type()
-        else:
-            if not is_ner_type_zero(self._sent.ner_type):
-    #            print "LINK", attributes, self._sent.ner_type
+
+        if not is_ner_type_zero(self._sent.ner_type):
+#            print "LINK", attributes, self._sent.ner_type
+            if self._sent.ner_type != 'UNK':
                 self._sent.links_found += 1
             self.__add_redirects(attributes[NERTrainingCallback.LINK], self._sent.ner_type)
 

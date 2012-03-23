@@ -14,18 +14,18 @@ Filters incomplete sentences. To be applied on the tagged training corpus.
 Scripts to run:
 --------------
 
-To parse a Wikipedia dump:
+## To parse a Wikipedia dump:
 python parse_insert_into_rows.py < /home/ndavid/huwiki/huwiki-latest-page.sql > /home/ndavid/huwiki/pages
 awk '$2 == 0 {print $3}' pages | sed -e "s/_/ /g" > main_pages
 python /home/ndavid/../zseder/Proj/WP/AutoCorpus/articles.py < huwiki-latest-pages-articles.xml > huwiki-latest-pages-articles.out
 python split_records.py huwiki-latest-pages-articles.out "^%%#PAGE.*" 4
-(modify wiki.conf accordingly)
+# (modify wiki.conf accordingly)
 python create_morphtable.py -l hu wiki.conf /home/ndavid/huwiki/huwiki-morph.4 /home/ndavid/huwiki/huwiki-latest-pages-articles.out.4 >/home/ndavid/huwiki/morph-log.4 2>&1
-(for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
+# (for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
 python wikitext_to_conll.py -l hu.3 wiki.conf /home/ndavid/huwiki/huwiki-latest-pages-articles.out.3 /home/ndavid/huwiki/huwiki-articles.conll.3 /home/ndavid/huwiki/huwiki-templates.3 > ~/huwiki/log.3 2>&1
-(for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
+# (for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
 
-To create the entity list:
+## To create the entity list:
 python2.7 scripts/extract_dbpedia_types.py -c data/dbpedia_3.7.owl -m data/dbpedia_map data/instance_types_hu.nt > data/nerlist.hu.en
 # Interlanguage links: hu -> all (to resolve 
 python extract_langlinks.py /home/ndavid/huwiki/huwiki-20120309-langlinks.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/hu_to_all_pages
@@ -34,12 +34,15 @@ python extract_langlinks.py -l en -r /home/ndavid/huwiki2/huwiki-20120309-langli
 # Redirects (hu)
 python extract_redirects.py -l hu -r /home/ndavid/huwiki2/huwiki-20120309-redirect.sql /home/ndavid/huwiki/pages > /home/ndavid/huwiki/normal_to_redir_pages
 
-To extract date pages (NER category 0):
+## To extract date pages (NER category 0):
+# Hungarian
 python extract_date_pages.py -l hu /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /home/ndavid/huwiki/huwiki-articles.conll.* > date_pages
 or
+# English
 python scripts/extract_date_pages_from_templates.py -l en /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /mnt/store/home/ndavid/enwiki/templates/wikipedia.*.conll.templates > /mnt/store/home/ndavid/enwiki/date_pages 2> log
 
-To expand the entity list:
+## To expand the entity list:
+# Hungarian
 # To Hungarian pages
 python scripts/ner_list_to_hu.py data/nerlist.hu.en data/en_to_hu_pages > data/nerlist.hu.hu
 # Get the corresponding pages in all languages
@@ -49,9 +52,21 @@ python scripts/ner_list_to_hu.py data/nerlist.hu.hu data/normal_to_redir_pages >
 # Now to round it up...
 export LC_ALL=C
 cat data/nerlist.hu.en data/nerlist.hu.hu data/nerlist.hu.all data/nerlist.hu.redirects data/date_pages | sort -u > data/nerlist.hu
+# English
+# Get the corresponding pages in all languages
+python scripts/ner_list_to_hu.py /mnt/store/home/ndavid/enwiki/nerlist.en.en /mnt/store/home/ndavid/enwiki/en_to_all_pages > /mnt/store/home/ndavid/enwiki/nerlist.en.all
+# Redirects
+python scripts/ner_list_to_hu.py /mnt/store/home/ndavid/enwiki/nerlist.en.en /mnt/store/home/ndavid/enwiki/normal_to_redir_pages > /mnt/store/home/ndavid/enwiki/nerlist.en.redirects
+# Now to round it up...
+export LC_ALL=C
+cat /mnt/store/home/ndavid/enwiki/nerlist.en.en /mnt/store/home/ndavid/enwiki/nerlist.en.all /mnt/store/home/ndavid/enwiki/nerlist.en.redirects /mnt/store/home/ndavid/enwiki/date_pages | sort -u > /mnt/store/home/ndavid/enwiki/nerlist.en
 
-To Extract the training sentences:
+
+## To Extract the training sentences:
+# Hungarian
 for i in `seq 4`; do python scripts/select_ner_training_hu.py -d -f -l hu -r data/normal_to_redir_pages -r data/hu_to_all_pages /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf data/nerlist.hu /home/ndavid/huwiki/huwiki-articles.conll.$i > out.$i 2>&1 & done
+# English
+python scripts/select_ner_training_en.py -d -f -l en -r /mnt/store/home/ndavid/enwiki/normal_to_redir_pages -r /mnt/store/home/ndavid/enwiki/en_to_all_pages -t /mnt/store/home/ndavid/enwiki/titles.en /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /mnt/store/home/ndavid/enwiki/nerlist.en /mnt/store3/zseder/WP/2011/Conll.new/wikipedia.211.conllnew > out.211 2>&1
 
 Data files:
 ==========
