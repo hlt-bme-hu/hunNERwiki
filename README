@@ -66,7 +66,7 @@ cat /mnt/store/home/ndavid/enwiki/nerlist.en.en /mnt/store/home/ndavid/enwiki/ne
 # Hungarian
 for i in `seq 4`; do python scripts/select_ner_training_hu.py -d -f -l hu -r data/normal_to_redir_pages -r data/hu_to_all_pages /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf data/nerlist.hu /home/ndavid/huwiki/huwiki-articles.conll.$i > out.$i 2>&1 & done
 # English
-python scripts/select_ner_training_en.py -d -f -l en -r /mnt/store/home/ndavid/enwiki/normal_to_redir_pages -r /mnt/store/home/ndavid/enwiki/en_to_all_pages -t /mnt/store/home/ndavid/enwiki/titles.en /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /mnt/store/home/ndavid/enwiki/nerlist.en /mnt/store3/zseder/WP/2011/Conll.new/wikipedia.211.conllnew > out.211 2>&1
+python scripts/select_ner_training_en.py -d -f -l en -r /mnt/store/home/ndavid/enwiki/normal_to_redir_pages -r /mnt/store/home/ndavid/enwiki/en_to_all_pages -t /mnt/store/home/ndavid/enwiki/titles.en /home/ndavid/git/langtools/Scripts/langtools/wikipedia/wiki.conf /mnt/store/home/ndavid/enwiki/nerlist.en /mnt/store3/zseder/WP/2011/Conll.new/wikipedia.211.conllnew > out.211 2>&1 &
 
 Data files:
 ==========
