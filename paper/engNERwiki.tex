@@ -53,7 +53,7 @@ One approach to reduce the manual intervention required in language resource pro
 
 In this paper we present a kind of combination of the approaches mentioned above. We built NE-tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE-taggers. 
 
-The paper is structured as follows. XXX
+The paper is structured as follows. XXX In section~\ref{sec:hun}, we show how the algorithm was adapted to Hungarian.
 
 
 \section{Related Work}
@@ -192,6 +192,15 @@ In Wikipedia the nationalities (e.g. American and Australian) links to the corre
 Link boundaries need to be adjusted, e.g. to remove excess punctuation.
 
 \section{Creation of the Hungarian Corpus}
+\label{sec:hun}
+
+The procedure described in the last section was used to generate the Hungarian corpus as well. However, the differences between English and Hungarian prompted XXX several modifications in its steps. In this section we describe how the algorithm was adapted to Hungarian. XXX!!!
+
+in tool a
+
+\subsection{Data availability}
+
+For some of the bigger languages, DBpedia has internationalized "chapters" -- data dumps based on the Wikipedia of that particular language. Hungarian, being a relatively small language XXX, does not have a separate chapter. Instead, the Hungarian entity list comprises of the pages in the English list that have their equivalents in the Hungarian Wikipedia. Two consequences follow. First, in order to identify which pages denote entities in the Hungarian Wikipedia, an additional step is required, in which the Hungarian equivalents of the English pages are added to the entity list. The English titles are retained, as due to the relatively small size of the Hungarian Wikipedia, in-article links sometimes point to English articles. Second, entities without a page in the English Wikipedia are absent from the entity list. This gives rise to two potential problems. One is that compared to English, the list is relatively shorter: the entity/page ratio is 12.12\%, as opposed to the 37.66\% of the English Wikipedia. The other, since mostly Hungarian people, places and organizations are missing, a NER tagger that takes the surface forms of words into account might be mislead as to the language model of entity names. To overcome these problems, the list has to be extended with Hungarian entity pages that do not have a corresponding English page. We leave this for future work.
 
 In addition to differences in grammar, 
 
@@ -203,6 +212,8 @@ Thus, the following concepts are not considered named entities in Hungarian XXX:
 \item Adjectival form of location names
 \item Months % angolban sem
 \end{itemize}
+
+
 
 tokenizálás: built in-house, tailored for Hungarian, because of the specialities of Hungarian (e.g. period after years in date expressions)
 
