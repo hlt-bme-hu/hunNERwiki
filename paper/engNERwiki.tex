@@ -45,7 +45,7 @@ Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in 
 
 The standard datasets are highly domain-specific (mostly newspaper articles about company activities and defense related activities), and are restricted in size, as well. Thus they are not large enough to train and test robust NE-taggers on them. Moreover, merging these datasets to get a bigger training corpus faces NLP researchers with the problem of combining different tagsets and annotation schemes. However, to build a robust supervised machine learning system for NER, large enough, accurately annotated corpora are essential. Annotating large amount of texts with linguistic information is a time-consuming, highly skilled and delicate work. Mainly due to this fact, one of the main challenges in NLP is reducing the annotation cost. 
 
-One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. An other approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as the Google 5G 1T collection or DBPedia. Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, as well.  
+One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. An other approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as the Google 5G 1T collection or DBPedia.  
 
 %One of the main trends in NLP is the need for reducing the annotation cost. After examining the calls for papers of nowadays conferences and workshops there seems to be three major directions to achieve this aim. 
 
@@ -69,66 +69,66 @@ Wikipedia's knowledge may be incorporated as features in NER learning, e.g. Kaza
 
 A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE-tags. They used the inherent category structure of Wikipedia to determine the NE-type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE-annotated text in English. They transformed the Wikipedia links into NE-annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
 
-To our knowledge, such type of automatically built corpora are not freely available, with the only one exception of the Semantically Annotated Snapshot of the English Wikipedia \cite{Zaragoza:07}. It provides a wide range of linguistic information: POS tags, dependency labels, WordNet super senses and NE annotation according to WSJ and CoNLL tagsets. However, automatically NE-annotated corpus for Hungarian does not exist. Now we present freely available, automatically NE-tagged corpora for English and Hungarian. 
+Despite the aforementioned methods, we applied a new approach to recognize and classify NEs in the corpora generated from Wikipedia. We used the DBpedia ontology classes to map Wikipedia categories to standard NE tags (see more details in section \ref{dbpedia}). 
 
-%Szeged NER korpusz kicsi, ahhoz képest ez nagy
+To our knowledge, such type of automatically built corpora are not freely available, with the only one exception of the Semantically Annotated Snapshot of the English Wikipedia \cite{Zaragoza:07}. It provides a wide range of linguistic information: POS tags, dependency labels, WordNet super senses and NE annotation according to WSJ and CoNLL tagsets. However, they followed a different way: the NEs were tagged by open source softwares. Our corpora will be available under the same license as Wikipedia's one (Creative Commons Attribution-Sharealike 3.0 Unported License).
 
-%DBPediát előrébb 
+Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, as well. Since our method is mainly language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities detailed later in section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but this presented here is the first large enough automatically NE-annotated corpus for Hungarian. 
 
-
-\section{Corpus Description}
-
-% TODO: pls írd meg az első pár mondatot és nevezd át a sectiont! 
-
-The corpora are available in the tab separated format used by ConLL (XXX, CITE). In this format, one line contains one word, its linguistic features and the named entity tags. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word, its part-of-speech and chunk tags. Two named entity tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the ConLL named entity tag. While the named entity tags can be considered "silver", the linguistic features are provided on a "best-effort" basis.
-
-The corpus is available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from ...\footnote{To be filled in in the camera-ready version.}.
-
-\section{Creation of the Corpus}  % Dzsííízösz
+\section{Creating the English Corpus}  % Dzsííízösz
 \label{sec:create}
 
 % Introduction: Wikipedia + DBpedia
 
-Wikipedia proves to be a rich source of information about its entities; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Since our goal is to create a NER training corpus, our interest is limited to the article text. Templates are removed from the articles; however, the names of the templates have been retained for XXX, but all data (including infobox) 
+Wikipedia proves to be a rich source of information about its entities; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Since our goal is to create a NE-annotated corpus containing large amount of texts, our interest is limited to the article text. Templates are removed from the articles; however, the names of the templates have been retained for XXX, but all data (including infobox) 
 
-Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty and are safe to ignore altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages have been dropped from the corpus as well.
+Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty, and are safe to ignore altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce, and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages are dropped from the corpus, as well.
 
-The English corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the mwlib (CITE) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged with HunPos (CITE). Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
+The English corpus is based on the Wikipedia snapshot as of XXX. The XML files were parsed with the mwlib (CITE) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged with HunPos \cite{Halacsy:07}. 
 
-\subsection{Extraction of the Training Sentences}
+%Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
 
-A NER training corpus consists of sentences that accurately tag named entities occurring in them. In order to automatically prepare such sentences, two tasks need to be performed: identification of entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus. In this section, we describe how these steps were implemented, as well as the post-filtering we employed to dispose of correctly tagged but unusable training sentences.
+\subsection{Extracting and Filtering Sentences}
 
-\subsubsection{Entity identification}
+A NER corpus consists of sentences that accurately tag NEs occurring in them. In order to automatically prepare such sentences, two tasks need to be performed: identifying the entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus. In this section, we describe how these steps were implemented, as well as the post-filtering we employed to dispose of correctly tagged, but unusable training sentences.
+
+\subsubsection{Identifying the entities}
 % TODO: identification and tagging happens in parallel, else the recall oriented approach cannot be explained.
 
-Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity. There are exceptions to this rule, however. Disambiguation pages are used when the page title is ambiguous, and can refer to several entities. If a link points to a disambiguation page, we acknowledge the anchor text as an entity, but mark it unknown. A similar measure is taken if the link target XXX does not exist. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
+Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity. However, there are exceptions to this rule. Disambiguation pages are used when the page title is ambiguous, and can refer to several entities. If a link points to a disambiguation page, we acknowledge the anchor text as an entity, but mark it unknown. A similar measure is taken if the link target XXX does not exist. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
 
-Not all entities are marked with links, however. Authors may neglect to add XXX references to their text. Furthermore, in a Wikipedia article XXX, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g. family names are used instead of full names. We devised XXX two methods to account for unmarked entities: one that emphasizes XXX precision, and the other, recall. XXX
+However, not all entities are marked with links. Authors may neglect to add XXX references to their text. Furthermore, in a Wikipedia article XXX, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. We devised XXX two methods to account for unmarked entities: one that emphasizes XXX precision, and the other, recall. XXX
 
 % Or NPP
 
-The precision-oriented approach seeks to minimize the risk of a word getting incorrectly tagged XXX in the corpus. A short study of the ConLL annotation guidelines reveals that the words in the entities of interest to us all start with capital letter. According to this method XXX, all sentences that contain words that start with capital letter, but are not part of the anchor text of a link, XXX are discarded. The rationale behind this approach is that the sheer size of Wikipedia guarantees that we end up with a sizeable corpus even with such a strict policy. XXX
+The precision-oriented approach seeks to minimize the risk of words getting incorrectly tagged XXX in the corpus. Names and their parts mostly start with capital letter, thus 
+%A short study of the CoNLL annotation guidelines reveals that the words in the entities of interest to us all start with capital letter. According to this method XXX, 
+all sentences that contain capitalized words, but are not part of the anchor text of a link, XXX were discarded. The rationale behind this approach is that the sheer size of Wikipedia guarantees that we end up with a sizeable corpus even with such a strict policy. XXX
 
-The recall-oriented method tries to associate unmarked entities with entities already identified on the same page. Only if the attempt fails is the sentence that contains the words discarded. This approach aims to generate more training sentences with as little loss of precision as possible. 
+The recall-oriented method tries to associate unmarked entities with entities already identified on the same page. Only if the attempt fails is the sentence that contains the words discarded. 
+%Ez utóbbi biztosan jó mondat?
+This approach aims to generate more sentences with as little loss of precision as possible. 
 
-The algorithm maintains a list of entities already indentified on the page. The list includes
+The algorithm maintains a list of entities already indentified on the page. The list includes:
 \begin{itemize}
 \item The page title; % if it is in DBpedia
 \item Title of redirect pages that target the current page; % TODO
 \item Entities marked with links in the text thus far.
 \end{itemize}
 
-When an unmarked entity is encountered, the list is consulted to find an item that contains it in its entirety; i.e. all of its words and in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NER tag, the unmarked entity is tagged accordingly. Otherwise the sentence is discarded.
+When an unmarked entity is encountered, the list is consulted to find an item that contains it in its entirety; i.e.~all of its words, in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NE tag, the unmarked entity is tagged accordingly. Otherwise the sentence is discarded.
 
-Both approaches are evaluated in the next chapter.
+%Both approaches are evaluated in the next chapter.
 
-\subsubsection{Tagging}
-
-%TODO: merge with Entity Identification
+%Szerintem ide kéne a DBpedia--CoNLL mapping
 We use DBpedia as 
 
-Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. Sentences without any entities are retained as well, so that the corpus mirrors (XXX the distribution of entities in the corpus mirrors their distribution in Wikipedia?) the distribution of entities in Wikipedia as closely as possible; this is also in line with how the ConLL corpus is assembled. (XXX or is it)
+Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. 
+
+%\subsubsection{Tagging}
+
+%TODO: merge with Entity Identification
+%megtörtént
 
 \subsubsection{Exceptions}
 
@@ -164,7 +164,6 @@ Manual inspection has found two conditions that can be used to detect fragments.
 \label{dbpedia}
 % Introduction + entity -> class -> category.
 
-%Despite the aforementioned methods, we applied a new approach to recognize and classify NEs in the corpora generated from Wikipedia. We used the DBpedia ontology classes to map Wikipedia categories to standard NE tags (see more details in section \ref{dbpedia}). 
 
 The classes in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The ontology contains the 320 most frequent categories of Wikipedia, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes XXX): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
 
@@ -224,6 +223,15 @@ a tulajdonnevekhez kötőjellel kapcsolódó köznevek kérdésesek (pl. SAP-szo
 % Comparison of the Hungarian DBpedia vs English + mapping
 % Not all entities are written w/ capital letters => we need lists.
 
+\section{Corpus Description}
+
+% TODO: pls írd meg az első pár mondatot és nevezd át a sectiont! 
+
+The corpora are available in the tab separated format used by ConLL (XXX, CITE). In this format, one line contains one word, its linguistic features and the named entity tags. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word, its part-of-speech and chunk tags. Two named entity tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the ConLL named entity tag. While the named entity tags can be considered "silver", the linguistic features are provided on a "best-effort" basis.
+
+The corpus is available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from ...\footnote{To be filled in in the camera-ready version.}.
+
+
 \section{Evaluation}
 
 % vs. ConLL / Szeged
@@ -232,6 +240,8 @@ a tulajdonnevekhez kötőjellel kapcsolódó köznevek kérdésesek (pl. SAP-szo
 % Hun -> not utf-8, loss of precision?
 
 Having the obvious advantages, an automatically generated corpus can not serve as a gold standard dataset. Then what can we do with these so called "silver standard corpora" (SSC)? They can be very useful for improving NER in more ways: (a) for less commonly used languages, they can serve as training corpora in absence of gold standard datasets; (b) they can serve as (supplementary or independent) training sets for domains differing from newswire; (c) they can be sources of huge entity lists, and (d) feature extraction. 
+
+Sentences without any entities are retained as well, so that the corpus mirrors (XXX the distribution of entities in the corpus mirrors their distribution in Wikipedia?) the distribution of entities in Wikipedia as closely as possible; this is also in line with how the ConLL corpus is assembled. (XXX or is it)
 
 measuring Wikipedia's inconsistency using n-gram tag variation (\cite{Nothman:09})
 ez jó mérőszám lehet a gold standard korpuszok összehasonlítására
@@ -250,6 +260,12 @@ később majd kirakjuk a scripteket is, és akár újra és újra frissíthető 
 % + CE(A?)SAR
 
 \begin{thebibliography}{}
+
+\bibitem[\protect\citename{Halácsy \bgroup et al.\egroup}2007]{Halacsy:07}
+P. Halácsy, A. Kornai and Cs. Oravecz.
+\newblock 2007.
+\newblock Hunpos -- an open source trigram tagger. 
+\newblock In: {\em Proceedings of the 45th Annual Meeting of the Association for Computational Linguistics}, pages 209--212.
 
 \bibitem[\protect\citename{Zaragoza \bgroup et al.\egroup}2007]{Zaragoza:07}
 H. Zaragoza and J. Atserias and M. Ciaramita and G. Attardi.
