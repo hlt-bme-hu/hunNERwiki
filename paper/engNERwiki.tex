@@ -105,7 +105,7 @@ Wikipedia proves to be a rich source of information about its entities; aside fr
 
 Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty and are safe to ignore altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages have been dropped from the corpus as well.
 
-The corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the XXX (Attila) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged with HunPos (CITE). Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
+The English corpus is based on the Wikipedia snapshot as of XXX. The xml files were parsed with the mwlib (CITE) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged with HunPos (CITE). Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
 
 \subsection{Extraction of the Training Sentences}
 
@@ -198,6 +198,12 @@ The procedure described in the last section was used to generate the Hungarian c
 
 in tool a
 
+\subsection{Tools}
+
+While NLTK has excellent tools for English, Hungarian is not supported. Therefore, we worked with the tools developed by the Hungarian computational linguist community. For sentence tokenization we used an in-house statistical chunker tailored for Hungarian. It has been trained on the Szeged corpus and it handles the peculiarities of Hungarian ortography, such as the periods placed after numbers in date expressions. Although HunPos, as its name implies, is fully capable of POS tagging Hungarian text, we opted for Hunmorph (CITE), a morphological analyzer that also XXX lemmatizes the words. Hundisambig (CITE) was used to select the right analysis based on the word context\footnote{Incidentally, Hundisambig relies on HunPos for its HMM model.}.
+
+The Hungarian part-of-speech taggers output KR codes (CITE). In addition to the POS category, the KR code also includes inflection information, such as the number, person and case XXX, which makes it much better suited to agglutinative languages than Penn Treebank POS tags. One shortcoming of the KR code is that it does not differenciate between common and proper nouns. Since in Hungarian only proper nouns are capitalized, we can usually decide whether a noun is proper or not based on its ortography. However, this rule cannot be used if the noun is at the beginning of a sentence, as words at the beginning of sentences are always capitalized. Hence, all sentences that begin with nouns have been removed from the corpus.
+
 \subsection{Data availability}
 
 For some of the bigger languages, DBpedia has internationalized "chapters" -- data dumps based on the Wikipedia of that particular language. Hungarian, being a relatively small language XXX, does not have a separate chapter. Instead, the Hungarian entity list comprises of the pages in the English list that have their equivalents in the Hungarian Wikipedia. Two consequences follow. First, in order to identify which pages denote entities in the Hungarian Wikipedia, an additional step is required, in which the Hungarian equivalents of the English pages are added to the entity list. The English titles are retained, as due to the relatively small size of the Hungarian Wikipedia, in-article links sometimes point to English articles. Second, entities without a page in the English Wikipedia are absent from the entity list. This gives rise to two potential problems. One is that compared to English, the list is relatively shorter: the entity/page ratio is 12.12\%, as opposed to the 37.66\% of the English Wikipedia. The other, since mostly Hungarian people, places and organizations are missing, a NER tagger that takes the surface forms of words into account might be mislead as to the language model of entity names. To overcome these problems, the list has to be extended with Hungarian entity pages that do not have a corresponding English page. We leave this for future work.
@@ -212,17 +218,6 @@ Thus, the following concepts are not considered named entities in Hungarian XXX:
 \item Adjectival form of location names
 \item Months % angolban sem
 \end{itemize}
-
-
-
-tokenizálás: built in-house, tailored for Hungarian, because of the specialities of Hungarian (e.g. period after years in date expressions)
-
-ocamorph + hundisambig, a lemmatizálás miatt
-
-a KR-ban nincs jelölve a proper noun külön
-
-DBPedia--CoNLL mapping for Hungarian: az angol oldalak vannak megcímkézve --> csak azok a magyar oldalak vannak letöltve és feldolgozva, amik megvannak angolul is
-	--> future work: kibővíteni azokkal a magyar cikkekkel is, amik nincsenek angolul
 
 filtering: az igés szűrő itt nem lesz
 
