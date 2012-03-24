@@ -184,7 +184,8 @@ Link boundaries need to be adjusted, e.g. to remove excess punctuation.
 \section{Creation of the Hungarian Corpus}
 \label{sec:hun}
 
-The procedure described in the last section was used to generate the Hungarian corpus as well. However, the differences between English and Hungarian prompted XXX several modifications in its steps. In this section we describe how the algorithm was adapted to Hungarian. XXX!!!
+Hungarian differs from English not only as a language, but in data and tool coverage and NER practices as well.
+The procedure described in the previous section was used to generate the Hungarian corpus as well. However, the differences between English and Hungarian prompted XXX several modifications in its steps. In this section we describe how the algorithm was adapted to Hungarian. XXX!!!
 
 in tool a
 
@@ -197,6 +198,8 @@ The Hungarian part-of-speech taggers output KR codes (CITE). In addition to the 
 \subsection{Data Availability}
 
 For some of the bigger languages, DBpedia has internationalized "chapters" -- data dumps based on the Wikipedia of that particular language. Hungarian, being a relatively small language XXX, does not have a separate chapter. Instead, the Hungarian entity list comprises of the pages in the English list that have their equivalents in the Hungarian Wikipedia. Two consequences follow. First, in order to identify which pages denote entities in the Hungarian Wikipedia, an additional step is required, in which the Hungarian equivalents of the English pages are added to the entity list. The English titles are retained, as due to the relatively small size of the Hungarian Wikipedia, in-article links sometimes point to English articles. Second, entities without a page in the English Wikipedia are absent from the entity list. This gives rise to two potential problems. One is that compared to English, the list is relatively shorter: the entity/page ratio is 12.12\%, as opposed to the 37.66\% of the English Wikipedia. The other, since mostly Hungarian people, places and organizations are missing, a NER tagger that takes the surface forms of words into account might be mislead as to the language model of entity names. To overcome these problems, the list has to be extended with Hungarian entity pages that do not have a corresponding English page. We leave this for future work.
+
+\subsection{Training Corpus}
 
 In addition to differences in grammar, 
 
@@ -213,8 +216,6 @@ filtering: az igés szűrő itt nem lesz
 
 most van: 102 millió szó a disambiguation pages-zel együtt
 az angol: 1,7 milliárd
-
-according to the Szeged NER guideline
 
 a tulajdonnevekhez kötőjellel kapcsolódó köznevek kérdésesek (pl. SAP-szoftvercég, Matáv-csoport)
 
