@@ -183,9 +183,7 @@ Link boundaries need to be adjusted, e.g. to remove excess punctuation.
 \section{Creating the Hungarian Corpus}
 \label{sec:hun}
 
-The procedure described in the last section was used to generate the Hungarian corpus as well. However, the differences between English and Hungarian prompted XXX several modifications in its steps. In this section we describe how the algorithm was adapted to Hungarian. XXX!!!
-
-in tool a
+The procedure described in the previous section was used to generate the Hungarian corpus as well. However, Hungarian differs from English in several aspects: as a language, in data and tool coverage and NER practices. In this section we describe these differences and the changes they prompted in the algorithm.
 
 \subsection{Tools}
 
@@ -195,32 +193,33 @@ The Hungarian part-of-speech taggers output KR codes (CITE). In addition to the 
 
 \subsection{Data Availability}
 
-For some of the bigger languages, DBpedia has internationalized "chapters" -- data dumps based on the Wikipedia of that particular language. Hungarian, being a relatively small language XXX, does not have a separate chapter. Instead, the Hungarian entity list comprises of the pages in the English list that have their equivalents in the Hungarian Wikipedia. Two consequences follow. First, in order to identify which pages denote entities in the Hungarian Wikipedia, an additional step is required, in which the Hungarian equivalents of the English pages are added to the entity list. The English titles are retained, as due to the relatively small size of the Hungarian Wikipedia, in-article links sometimes point to English articles. Second, entities without a page in the English Wikipedia are absent from the entity list. This gives rise to two potential problems. One is that compared to English, the list is relatively shorter: the entity/page ratio is 12.12\%, as opposed to the 37.66\% of the English Wikipedia. The other, since mostly Hungarian people, places and organizations are missing, a NER tagger that takes the surface forms of words into account might be mislead as to the language model of entity names. To overcome these problems, the list has to be extended with Hungarian entity pages that do not have a corresponding English page. We leave this for future work.
+For some of the bigger languages, DBpedia has internationalized "chapters" -- data dumps based on the Wikipedia of that particular language. Hungarian, being a relatively small language XXX, does not have a separate chapter. Instead, the Hungarian entity list comprises of the pages in the English list that have their equivalents in the Hungarian Wikipedia. Two consequences follow.
 
-In addition to differences in grammar, 
+First, in order to identify which pages denote entities in the Hungarian Wikipedia, an additional step is required, in which the Hungarian equivalents of the English pages are added to the entity list. The English titles are retained, as due to the relatively small size of the Hungarian Wikipedia, in-article links sometimes point to English articles.
 
-The Szeged NER guideline relies heavily on the rules of capitalization to decide which words should be marked as named entities. In Hungarian, apart from the first word in the sentence, only proper nouns are capitalized.
-Thus, the following concepts are not considered named entities in Hungarian XXX:
+Second, entities without a page in the English Wikipedia are absent from the entity list. This gives rise to two potential problems. One is that compared to English, the list is relatively shorter: the entity/page ratio is 12.12\%, as opposed to the 37.66\% of the English Wikipedia. The other, since mostly Hungarian people, places and organizations are missing, a NER tagger that takes the surface forms of words into account might be mislead as to the language model of entity names. To overcome these problems, the list has to be extended with Hungarian entity pages that do not have a corresponding English page. We leave this for future work.
+
+\subsection{NER Conventions}
+
+% Eszter
+The largest (?, the only?, most cited?) NER corpus in Hungarian is the Szeged NER corpus, which will be described by Eszter. :) The Szeged corpus uses the same named entity categories as ConLL; however, the convention of what constitutes an entity is slightly different.
+
+The Szeged NER guideline relies heavily on the rules of capitalization to decide which words should be marked as named entities. As mentioned earlier, in Hungarian, apart from the first word in the sentence, only proper nouns are capitalized. The following concepts are not proper nouns in Hungarian and thus are not considered named entities according to the Szeged guideline:
 \begin{itemize}
 \item Names of languages and ethnic groups
-\item Words created from proper nouns through derivation, most prominently
+\item Words created from proper nouns through derivation; most prominently
 \item Adjectival form of location names
-\item Months % angolban sem
+\item Months
 \end{itemize}
 
-filtering: az igés szűrő itt nem lesz
+The strong correlation between capitalization and named entities makes recognition of entities in text relatively simple: a word is part of an entity if it is capitalized.
+% Eszter
+a tulajdonnevekhez kötőjellel kapcsolódó köznevek kérdésesek (pl. SAP-szoftvercég, Matáv-csoport)
 
+% Ezt hová?
 most van: 102 millió szó a disambiguation pages-zel együtt
 az angol: 1,7 milliárd
 
-according to the Szeged NER guideline
-
-a tulajdonnevekhez kötőjellel kapcsolódó köznevek kérdésesek (pl. SAP-szoftvercég, Matáv-csoport)
-
-% Good for middle-sized languages
-% Inconsistent template names, esp. across languages
-% Comparison of the Hungarian DBpedia vs English + mapping
-% Not all entities are written w/ capital letters => we need lists.
 
 \section{Corpus Description}
 
