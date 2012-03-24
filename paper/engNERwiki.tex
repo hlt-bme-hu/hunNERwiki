@@ -46,7 +46,7 @@ Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in 
 
 The standard datasets are highly domain-specific (mostly newspaper articles about company activities and defense related activities), and are restricted in size, as well. Thus they are not large enough to train and test robust NE-taggers on them. Moreover, merging these datasets to get a bigger training corpus faces NLP researchers with the problem of combining different tagsets and annotation schemes. However, to build a robust supervised machine learning system for NER, large enough, accurately annotated corpora are essential. Annotating large amount of texts with linguistic information is a time-consuming, highly skilled and delicate work. Mainly due to this fact, one of the main challenges in NLP is reducing the annotation cost. 
 
-One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. An other approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as Google's Web 1T 5-gram collection or DBPedia.  
+One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. An other approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as Google's Web 1T 5-gram collection or DBpedia.  
 
 %One of the main trends in NLP is the need for reducing the annotation cost. After examining the calls for papers of nowadays conferences and workshops there seems to be three major directions to achieve this aim. 
 
@@ -73,7 +73,7 @@ Wikipedia's knowledge may be incorporated as features in NER learning, e.g. Kaza
 
 A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE-tags. They used the inherent category structure of Wikipedia to determine the NE-type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE-annotated text in English. They transformed the Wikipedia links into NE-annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
 
-Despite the aforementioned methods, we applied a new approach to recognize and classify NEs in the corpora generated from Wikipedia. We used the DBpedia ontology classes to map Wikipedia categories to standard NE tags (see more details in section \ref{dbpedia}). 
+In contrast to the aforementioned methods, we applied a new approach to recognize and classify NEs in the corpora generated from Wikipedia. We mapped the DBpedia ontology classes to standard NE tags and assigned them to Wikipedia entities (see more details in section \ref{dbpedia}).
 
 To our knowledge, such type of automatically built corpora are not freely available, with the one exception of the Semantically Annotated Snapshot of the English Wikipedia \cite{Zaragoza:07}. It provides a wide range of linguistic information: POS tags, dependency labels, WordNet super senses and NE annotation according to WSJ and CoNLL tagsets. However, they followed a different way: the NEs were tagged by open source softwares. Our corpora is available under the same license as Wikipedia's one (Creative Commons Attribution-Sharealike 3.0 Unported License).
 
@@ -105,9 +105,13 @@ The English corpus is based on the Wikipedia snapshot as of January 15, 2011. Th
 \subsection{Articles as Entities}
 \label{dbpedia}
 
-Most authors 
+Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et al \shortcite{Nothman:09} used unsupervised methods based on Wikipedia categories and text to classify articles into entity categories. To avoid the inevitable classification errors, we obtain entity type information from the DBpedia knowledge base \cite{Bizer:09}. This enables us to have high precision information about entity types at the expense of recall: out of the 3,903,467 English Wikipedia pages, 1,470,293 are covered by DBpedia.
 
-The classes in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The ontology contains the 320 most frequent categories of Wikipedia, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes XXX): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
+DBpedia is an open database that presents information about entities in Wikipedia in structured form. Each entity corresponds to a Wikipedia article. DBpedia provides various information about entities including type, properties, home pages, etc. Here we limit our interest to the type system.
+
+The types in DBpedia are organized into a class hierarchy, available as an OWL (CITE) ontology. The ontology contains the 320 most frequent entity categories, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes XXX): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
+
+The type of entities is extracted automatically from Wikipedia categories. However, the mapping between Wikipedia categories and classes in the DBpedia ontology is manually defined. This, together with the fact that the existance of the reference ontology prevents the proliferation of categories observable in Wikipedia \cite{Bizer:09}, ensures that type information in DBpedia can be considered gold quality.
 
 It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the ConLL NER categories \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, MISC is more elusive; according to the ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt), the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other class outside the main sub-hierarchies. 
 
@@ -115,8 +119,7 @@ While the correspondence described above holds for most classes in the XXX sub-h
 
 As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph (CITE). This introduces the problem of selecting the right superclass, and hence, ConLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NER mapping for the ambiguous XXX class and adding it to the mapping file. The first approach, unfortunately, already fails to assign the correct ConLL NER tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation; ConLL's LOC. Therefore, only the second, manual approach ensures correct tagging. XXX
 
-The full mapping can be found in LINK Appendix A (XXX or not).
-
+The full mapping can be found in Appendix~\ref{sec:appa}.
 
 \subsection{Extracting and Filtering Sentences}
 
@@ -189,7 +192,6 @@ Manual inspection has found two conditions that can be used to detect fragments.
 %   a. unknown links, no unlinked names
 %   b. might be good for quality evaluation / recursive tagging (next paper?)
 % 5. teaching the original DBpedia categories?
-
 
 In Wikipedia the nationalities (e.g. American and Australian) links to the corresponding places (America and Australia, respectively). However, in CoNLL scheme these types of entities take parts of MISC category. XXX Postprocessing: list look-up (nationalities, adjective forms of person who live in the corresponding country); if the name is POS-tagged as adjective, then it is not a NE
 
@@ -423,6 +425,31 @@ Tibor Kiss, Jan Strunk.
 \newblock In: {\em Computational Linguistics}, 32 (4): pages 485--525.
 
 \end{thebibliography}
+
+\pagebreak
+% HEEEEELP!
+\appendix
+\section{DBpedia to ConLL Mapping}
+\label{sec:appa}
+
+\begin{table*}[ht]
+\begin{center}
+\begin{tabular}{llll}
+\hline DBpedia & \bf CoNLL & \bf DBpedia & \bf CoNLL \\ \hline
+Person & PER & Library & LOC \\
+Place & LOC & MeanOfTransportation & MISC \\
+Organization & ORG & PeriodicalLiterature & ORG \\
+Organisation & ORG & ProgrammingLanguage & MISC \\
+Award & MISC & Project & MISC \\
+EthnicGroup & MISC & SportsLeague & MISC \\
+Event & MISC & SportsTeamSeason & O \\
+Holiday & MISC & Weapon & MISC \\
+Ideology & MISC & Work & MISC \\
+Language & MISC & & \\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
 
 \end{document}
 
