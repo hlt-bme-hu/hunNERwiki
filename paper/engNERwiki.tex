@@ -40,12 +40,13 @@
 \end{abstract}
 
 \section{Introduction}
+\label{sec:intro}
 
-Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as Information Retrieval, Information Extraction or Machine Translation. The NER task was introduced with the 6th Message Understanding Conference (MUC) in 1995 \cite{Grishman:96}. In MUC shared tasks the NER consists of three subtasks: entity names, temporal expressions and number expressions. However there is a general agreement in the NER community about the inclusion of temporal expressions and some numerical expressions such as amounts of money and other types of units, the most studied types are names of persons, locations and organizations. The fourth type, called "miscellaneous'', is used in the CoNLL NER tasks in 2002 \cite{Tjong:02} and 2003 \cite{Tjong:03}, and includes proper names falling outside the three classic types. Since then, MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
+Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as Information Retrieval, Information Extraction or Machine Translation. The NER task was introduced with the 6th Message Understanding Conference (MUC) in 1995 \cite{Grishman:96}. In MUC shared tasks the NER consists of three subtasks: entity names, temporal expressions and number expressions. Although there is a general agreement in the NER community about the inclusion of temporal expressions and some numerical expressions such as amounts of money and other types of units, the most studied types are names of persons, locations and organizations. The fourth type, called "miscellaneous'', was introduced in the CoNLL NER tasks in 2002 \cite{Tjong:02} and 2003 \cite{Tjong:03}, and includes proper names falling outside the three classic types. Since then, MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
 
 The standard datasets are highly domain-specific (mostly newspaper articles about company activities and defense related activities), and are restricted in size, as well. Thus they are not large enough to train and test robust NE-taggers on them. Moreover, merging these datasets to get a bigger training corpus faces NLP researchers with the problem of combining different tagsets and annotation schemes. However, to build a robust supervised machine learning system for NER, large enough, accurately annotated corpora are essential. Annotating large amount of texts with linguistic information is a time-consuming, highly skilled and delicate work. Mainly due to this fact, one of the main challenges in NLP is reducing the annotation cost. 
 
-One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. An other approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as the Google 5G 1T collection or DBPedia.  
+One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. An other approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as Google's Web 1T 5-gram collection or DBPedia.  
 
 %One of the main trends in NLP is the need for reducing the annotation cost. After examining the calls for papers of nowadays conferences and workshops there seems to be three major directions to achieve this aim. 
 
@@ -57,11 +58,14 @@ The paper is structured as follows. XXX In section~\ref{sec:hun}, we show how th
 
 
 \section{Wikipedia and NER}
+\label{sec:related}
 % Wikify!
 % stuff from Mining Meaning from Wikipedia
 %NER and Wikipedia
 
-Wikipedia is a goldmine of information; it is applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, multilingual Information Retrieval, and Question Answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
+Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers. (CITE http://en.wikipedia.org/wiki/Wikipedia). It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English and 212,120 are Hungarian. XXX
+
+Wikipedia has been applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, multilingual Information Retrieval, and Question Answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
 
 Wikipedia is recognized as one of the largest available collection of entities, and also as an external knowledge to improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations (e.g. Toral and Munoz \shortcite{Toral:06}). Creating dictionaries of entities is also a common step of named entity disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al. \shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
 
@@ -71,22 +75,48 @@ A third approach to improve NER with Wikipedia is the automatic creation of trai
 
 Despite the aforementioned methods, we applied a new approach to recognize and classify NEs in the corpora generated from Wikipedia. We used the DBpedia ontology classes to map Wikipedia categories to standard NE tags (see more details in section \ref{dbpedia}). 
 
-To our knowledge, such type of automatically built corpora are not freely available, with the only one exception of the Semantically Annotated Snapshot of the English Wikipedia \cite{Zaragoza:07}. It provides a wide range of linguistic information: POS tags, dependency labels, WordNet super senses and NE annotation according to WSJ and CoNLL tagsets. However, they followed a different way: the NEs were tagged by open source softwares. Our corpora will be available under the same license as Wikipedia's one (Creative Commons Attribution-Sharealike 3.0 Unported License).
+To our knowledge, such type of automatically built corpora are not freely available, with the one exception of the Semantically Annotated Snapshot of the English Wikipedia \cite{Zaragoza:07}. It provides a wide range of linguistic information: POS tags, dependency labels, WordNet super senses and NE annotation according to WSJ and CoNLL tagsets. However, they followed a different way: the NEs were tagged by open source softwares. Our corpora is available under the same license as Wikipedia's one (Creative Commons Attribution-Sharealike 3.0 Unported License).
 
-Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, as well. Since our method is mainly language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities detailed later in section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but this presented here is the first large enough automatically NE-annotated corpus for Hungarian. 
+Thanks for the huge amount of Wikipedia articles, the possibility of building large enough (XXX ez mit jelent?) corpora is given for less resourced languages, as well. Since our method is mainly XXX language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities XXX detailed later in section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but the one presented here is the first large enough automatically NE-annotated corpus for Hungarian. 
 
 \section{Creating the English Corpus}  % Dzsííízösz
 \label{sec:create}
 
-% Introduction: Wikipedia + DBpedia
+Our goal is to create a large NE-annotated corpus, automatically generated from Wikipedia articles. We follow a similar path XXX to \cite{Nothman:08}, who broke up XXX the process into four steps:
+\begin{enumerate}
+\item Classify all articles into entity classes
+\item Split Wikipedia articles into sentences
+\item Label \texttt{NE}s according to link targets
+\item Select sentences for inclusion in a corpus
+\end{enumerate}
 
-Wikipedia proves to be a rich source of information about its entities; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Since our goal is to create a NE-annotated corpus containing large amount of texts, our interest is limited to the article text. Templates are removed from the articles; however, the names of the templates have been retained for XXX, but all data (including infobox) 
+In this section, we describe how these steps were implemented. While the approach in essence is language-agnostic, the exact details XXX have to be accomodated to the target language. This section explains the general idea and its execution for English; the next section describes how the idea can be adapted to Hungarian.
 
-Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty, and are safe to ignore altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce, and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages are dropped from the corpus, as well.
+\subsection{Parsing Wikipedia}
 
-The English corpus is based on the Wikipedia snapshot as of XXX. The XML files were parsed with the mwlib (CITE) parser. The raw text was tokenized with a modified version of the XXX sentence tokenizer in NLTK (CITE). The words were lemmatized with XXX and POS tagged with HunPos \cite{Halacsy:07}. 
+Wikipedia is very rich source of information; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Our task requires the use of only the links between the articles and the article text. In addition to in-article links, our method takes advantage of the redirect and interlanguage links, available as SQL dumps.
+
+Beside regular articles, Wikipedia also contains redirect and disambiguation pages, which require special treatment. Redirect pages are empty, and are safe to ignore altogether. Disambiguation pages contain text, usually in the form of an enumeration of page links with a short description. Full sentences are scarce, and the structure of these pages makes it hard to extract valid training sentences from them. Therefore, disambiguation pages are dropped from the corpus as well.
+
+The English corpus is based on the Wikipedia snapshot as of January 15, 2011. The XML files were parsed with the \texttt{mwlib} (CITE http://code.pediapress.com) parser. The raw text was tokenized with a modified version of the Punkt sentence and word tokenizers \cite{Kiss:06} in NLTK \cite{Loper:02}. The words were lemmatized with the Wordnet lemmatizer, also in NLTK, and POS tagged with HunPos \cite{Halacsy:07}.
 
 %Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
+
+\subsection{Articles as Entities}
+\label{dbpedia}
+
+Most authors 
+
+The classes in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The ontology contains the 320 most frequent categories of Wikipedia, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes XXX): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
+
+It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the ConLL NER categories \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, MISC is more elusive; according to the ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt), the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other class outside the main sub-hierarchies. 
+
+While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but in the ConLL corpus, sport leagues are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, ConLL does not recognize such entities. To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class -- NER category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to the entity the category of the class that matches it most closely -- i.e. the category of the entity's class, if it is in the list, or that of its closest ancestor. XXX!!! If no match is found, the entity is tagged with \texttt{O}. Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main sub-hierarchies, exceptions of the like XXX mentioned above and the various classes that belong to the MISC category according to the ConLL annotation guideline.
+
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph (CITE). This introduces the problem of selecting the right superclass, and hence, ConLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NER mapping for the ambiguous XXX class and adding it to the mapping file. The first approach, unfortunately, already fails to assign the correct ConLL NER tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation; ConLL's LOC. Therefore, only the second, manual approach ensures correct tagging. XXX
+
+The full mapping can be found in LINK Appendix A (XXX or not).
+
 
 \subsection{Extracting and Filtering Sentences}
 
@@ -162,20 +192,6 @@ Manual inspection has found two conditions that can be used to detect fragments.
 %   b. might be good for quality evaluation / recursive tagging (next paper?)
 % 5. teaching the original DBpedia categories?
 
-\subsection{The DBpedia -- ConLL mapping}
-\label{dbpedia}
-% Introduction + entity -> class -> category.
-
-
-The classes in DBpedia are organized into a type hierarchy, available as an OWL (CITE) ontology. The ontology contains the 320 most frequent categories of Wikipedia, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes XXX): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
-
-It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the ConLL NER categories \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, MISC is more elusive; according to the ConLL NER annotation guide (CITE?: http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt), the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other class outside the main sub-hierarchies. 
-
-While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but in the ConLL corpus, sport leagues are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, ConLL does not recognize such entities. To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class -- NER category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to the entity the category of the class that matches it most closely -- i.e. the category of the entity's class, if it is in the list, or that of its closest ancestor. XXX!!! If no match is found, the entity is tagged with \texttt{O}. Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main sub-hierarchies, exceptions of the like XXX mentioned above and the various classes that belong to the MISC category according to the ConLL annotation guideline.
-
-As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph (CITE). This introduces the problem of selecting the right superclass, and hence, ConLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NER mapping for the ambiguous XXX class and adding it to the mapping file. The first approach, unfortunately, already fails to assign the correct ConLL NER tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation; ConLL's LOC. Therefore, only the second, manual approach ensures correct tagging. XXX
-
-The full mapping can be found in LINK Appendix A (XXX or not).
 
 In Wikipedia the nationalities (e.g. American and Australian) links to the corresponding places (America and Australia, respectively). However, in CoNLL scheme these types of entities take parts of MISC category. XXX Postprocessing: list look-up (nationalities, adjective forms of person who live in the corresponding country); if the name is POS-tagged as adjective, then it is not a NE
 
@@ -421,8 +437,21 @@ Christian Bizer, Jens Lehmann, Georgi Kobilarov, Sören Auer, Christian Becker, 
 \newblock DBpedia -- A Crystallization Point for the Web of Data. 
 \newblock In: {\em Journal of Web Semantics: Science, Services and Agents on the World Wide Web}, Issue 7, pages 154--165.
 
+\bibitem[\protect\citename{Loper \bgroup et al.\egroup}2002]{Loper:02}
+Edward Loper, Steven Bird.
+\newblock 2002.
+\newblock NLTK: the Natural Language Toolkit. 
+\newblock In: {\em Proceedings of the ACL-02 Workshop on Effective tools and methodologies for teaching natural language processing and computational linguistics}, Volume 1, pages 63--70.
 
+\bibitem[\protect\citename{Loper \bgroup et al.\egroup}2002]{Kiss:06}
+Tibor Kiss, Jan Strunk.
+\newblock 2006.
+\newblock Unsupervised Multilingual Sentence Boundary Detection. 
+\newblock In: {\em Computational Linguistics}, 32 (4): pages 485--525.
 
 \end{thebibliography}
 
 \end{document}
+
+% Jobban ki kell hangsúlyozni az introductionben, és a related worksben, hogy szabadon elérhető training korpuszt építettünk
+% És azt, hogy Hungarian middle, English nagy.
