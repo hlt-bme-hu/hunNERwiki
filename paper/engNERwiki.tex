@@ -65,7 +65,7 @@ Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively
 
 Wikipedia has been applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, and question answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
 
-Wikipedia is recognized as one of the largest available collection of entities, and also as a resource that can improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations (e.g.~Toral and Mu\~noz \shortcite{Toral:06}). Creating dictionaries of entities is also a common step of named entity disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al.~\shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
+Wikipedia is recognized as one of the largest available collection of entities, and also as a resource that can improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations (e.g.~Toral and Mu\~noz \shortcite{Toral:06}). Creating dictionaries of entities is also a common step of NE disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al.~\shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
 
 The knowledge in Wikipedia may be incorporated as features in NER learning, e.g.~Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE-tagger. 
 
@@ -119,13 +119,11 @@ To account for these misclassification, as well as the miscellaneous classes out
 
 As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. This introduces the problem of selecting the right superclass, and hence, CoNLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. Hence, we picked the right NE mapping manually, and added it to the mapping file.
 
-
-
 %DBpedia guidelines suggest that only the first parent is retained. Unfortunately, this approach already fails to assign the correct CoNLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefer \texttt{Organisation}; CoNLL's prefer LOCATION. Hence, we picked the right NE mapping manually and added it to the mapping file.
 
 %The full mapping can be found in Appendix~\ref{sec:appa}.
 
-Using the mapping described above, we compile an entity list that contains all entities in DBpedia tagged with the appropriate CoNLL named entity category.
+Using the mapping described above, we compile a NE list that contains all entities in DBpedia tagged with the appropriate CoNLL category.
 
 We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a named entity tagset themselves. We leave the exploration of these possibilities for future work.
 
@@ -133,7 +131,7 @@ We would like to note that even though we use CoNLL categories, our method can b
 
 A NER corpus consists of sentences where NEs are accurately tagged. In order to automatically prepare such sentences, two tasks need to be performed: identifying the entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus.
 
-Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity.
+Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity.
 
 Discovered entities are tagged with the CoNLL category assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity and tag it as \texttt{UNK}. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
 
@@ -141,12 +139,12 @@ There are several ways to improve the method described above to increase precisi
 
 \subsubsection{Non-entity Links}
 
-Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), calendar-related concepts (March 15, 2007), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
+Strictly speaking, our original assumption of equating Wikipedia articles with NEs is not valid: many pages describe common nouns (Book, Aircraft), calendar-related concepts (March 15, 2007), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
 
 \begin{description}
 \item[Common nouns] Links to common nouns are filtered by POS tags; if a link contains no \texttt{NNP}s, it is ignored.
 \item[Dates] Time expressions require special attention, because dates and months are often linked to the respective Wikipedia pages. We circumvented this problem by compiling a list of calendar-related pages and adding them to the main entity list tagged with the CoNLL category \texttt{O}. 
-\item[Lowercase links] Entities are sometimes referred to by common nouns, such as \textit{republic} to \textit{Roman Republic}, \texttt{LOC}, which results in a lowercase link. These references are not considered named entities and are ignored.
+\item[Lowercase links] Entities are sometimes referred to by common nouns, such as \textit{republic} to \textit{Roman Republic}, \texttt{LOC}, which results in a lowercase link. These references are not considered NEs and are ignored.
 \end{description}
 
 \subsubsection{Unmarked Entities}
@@ -216,14 +214,14 @@ To annotate our corpus with NE-tags, we chose to follow the annotation guideline
 
 \subsubsection{Special cases}
 
-The Szeged NER guideline relies heavily on the rules of capitalization to decide which words should be marked as NEs. As mentioned earlier, in Hungarian, apart from the first word in the sentence, only proper nouns are capitalized. The following concepts are not proper nouns in Hungarian, and thus are not considered as NEs according to the Szeged NER guideline:
+The Szeged NER guideline relies heavily on the rules of capitalization to decide which words should be marked as NEs. As mentioned earlier, in Hungarian, apart from the first word in the sentence, only proper nouns are capitalized. The following concepts are not proper nouns in Hungarian, and thus are not considered as NEs according to the Szeged NER guideline: names of languages, nationalities, religions, political ideologies; adjectives derived from a NE; names of months, days, holidays; names of special events and wars.
 
-\begin{itemize}
-\item names of languages, nationalities, religions, political ideologies;
-\item adjectives derived from a NE;
-\item names of months, days, holidays;
-\item names of special events and wars.
-\end{itemize}
+%\begin{itemize}
+%\item names of languages, nationalities, religions, political ideologies;
+%\item adjectives derived from a NE;
+%\item names of months, days, holidays;
+%\item names of special events and wars.
+%\end{itemize}
 
 There is another special case in Hungarian: opposite to English, the number of compund words is quite large and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. The solution of this problem is not obvious, and needs more investigation.
 
@@ -315,11 +313,11 @@ Due to the quite good F-measure of training on the Hungarian Wikipedia train cor
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08} the process can be divided into four main steps: (1) classifying all articles into entity classes; (2) splitting Wikipedia articles into sentences; (3) labeling NEs according to link targets; and (4) selecting sentences for inclusion in the corpus. 
+We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08}, the process can be divided into four main steps: (1) classifying all articles into entity classes; (2) splitting Wikipedia articles into sentences; (3) labeling NEs according to link targets; and (4) selecting sentences for inclusion in the corpus. 
 
 Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of the Hungarian language, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
 
-Automatically generated, so called "silver standard corpora" can be very useful for improving NER in more ways. We showed that huge gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves overall F-measure. Moreover, our Hungarian corpus can serve as a training corpus to build NE-taggers for more general domains, than the classic newswire.  
+Automatically generated, so called "silver standard corpora" can be very useful for improving NER in more ways. We showed that huge gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves overall F-measure. Moreover, our Hungarian corpus can serve as a training corpus to build NE taggers for more general domains, than the classic newswire.  
 
 %az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
 
