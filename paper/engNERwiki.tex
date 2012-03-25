@@ -124,7 +124,7 @@ As of version 3.7, the DBpedia ontology allows multiple superclasses, making the
 
 The first approach, unfortunately, already fails to assign the correct ConLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation, while ConLL's one refers it as a Location. Therefore, only the second, manual approach ensures correct tagging. XXX
 
-The full mapping can be found in Appendix~\ref{sec:appa}.
+%The full mapping can be found in Appendix~\ref{sec:appa}.
 
 Using the mapping described above, we compile an entity list that contains all entities in DBpedia tagged with the appropriate CoNLL named entity category.
 
@@ -322,21 +322,17 @@ Szeged NER with wikitags & Szeged NER & 95.38 & 94.92 & 95.15 \\
 
 We evaluated our English corpus against (a) itself (divided into train and test sets); and (b) a manually annotated English corpus. Since the filtered English Wikipedia corpus -- containing only the sentences with NEs -- is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
 
-For the English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied (e.g. XXX) that cross-checking between different corpora does not lead to F-measure improvement. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see table \ref{enresults} and \ref{huresults} for results). 
+For the English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied that cross-checking between different corpora leads to F-measure decrease. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see table \ref{enresults} for results). 
 
 However, Wikipedia-derived corpora can also be used for improving NER performance in other ways. First, like e.g.~\cite{Toral:06} we collected huge gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE-tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved overall F-measure on CoNLL test set.  
 
-Results of experiments done on the Hungarian corpus look similar.  
+Since in the subtask of NE labeling for Hungarian we followed the Szeged NER corpus annotation guidelines, it is obvious to perform the experiments on this dataset, as well. Hungarian results are quite similar to the English ones (see table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher, than ones for English. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency and diversity of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was highly accurately annotated with an inter-annotator agreement over 99\%.  
 
-Although two human-annotated NER corpora exist for Hungarian, we chose the Szeged NER corpus \cite{}, which follows the CoNLL annotation scheme. It contains ca. 
-
-The strong correlation between capitalization and named entities makes recognition of entities in text relatively simple: a word is part of an entity if it is capitalized.
-
-training corpora in absence of gold standard datasets
-
-training sets for domains differing from newswire
+Due to the quite good F-measure of training on the Hungarian Wikipedia train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE-taggers for domains falling out of newswire. 
 
 \section{Conclusions and Future Work}
+
+
 
 az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
 
@@ -350,11 +346,11 @@ később majd kirakjuk a scripteket is, és akár újra és újra frissíthető 
 
 \begin{thebibliography}{}
 
-\bibitem[\protect\citename{Balasuriya \bgroup et al.\egroup}2009]{Balasuriya:09}
-Dominic Balasuriya, Nicky Ringland, Joel Nothman, Tara Murphy, James R. Curran
-\newblock 2009.
-\newblock Named Entity Recognition in Wikipedia.
-\newblock In: {\em Proceedings of the 2009 Workshop on the People's Web Meets NLP, ACL-IJCNLP}, pages 10--18.
+%\bibitem[\protect\citename{Balasuriya \bgroup et al.\egroup}2009]{Balasuriya:09}
+%Dominic Balasuriya, Nicky Ringland, Joel Nothman, Tara Murphy, James R. Curran
+%\newblock 2009.
+%\newblock Named Entity Recognition in Wikipedia.
+%\newblock In: {\em Proceedings of the 2009 Workshop on the People's Web Meets NLP, ACL-IJCNLP}, pages 10--18.
 
 \bibitem[\protect\citename{Bizer \bgroup et al.\egroup}2009]{Bizer:09} 
 Christian Bizer, Jens Lehmann, Georgi Kobilarov, Sören Auer, Christian Becker, Richard Cyganiak, Sebastian Hellmann.
