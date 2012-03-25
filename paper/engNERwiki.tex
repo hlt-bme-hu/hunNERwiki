@@ -124,8 +124,8 @@ As of version 3.7, the DBpedia ontology allows multiple superclasses, making the
 
 The first approach, unfortunately, already fails to assign the correct ConLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation, while ConLL's one refers it as a Location. Therefore, only the second, manual approach ensures correct tagging. XXX
 
-The full mapping can be found in Appendix~\ref{sec:appa}.
-
+% The full mapping can be found in Appendix~\ref{sec:appa}.
+%
 Using the mapping described above, we compile an entity list that contains all entities in DBpedia tagged with the appropriate CoNLL named entity category.
 
 We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a named entity tagset themselves. We leave the exploration of these possibilities for future work.
@@ -188,18 +188,9 @@ To tackle personal titles, we extracted a list from the Wikipedia page \textit{L
 \item[Incidental capitalization] Various non-\texttt{NNP} words in English are capitalized: names of months, the \textit{I} pronoun and non-entity acronyms, such as \textit{RSVP}. While the latter two group is unlikely to appear in Wikipedia text, we assembled a list of these words and tag them as \texttt{O} unless they are part of the alias set.
 \end{description}
 
-\subsubsection{Filtering}
+\subsubsection{Sentence Filtering}
 
-There are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is well known to be noisy and fragmented. We have added a post-filtering step to recognize and label these fragments, so that users of the corpus can decide what to do with them. XXX
-
-Manual inspection has found two conditions that can be used to detect fragments. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs. Our final corpus contains XXXSTAT full sentences and STAT fragments.
-%Ezeket leméred, vagy mérjem én? Ha utóbbi, akkor melyikben kell mérni?
-% TODO: Last sentence to evaluation? But then this whole subsection is too short.
-
-In Wikipedia the nationalities (e.g. American and Australian) links to the corresponding places (America and Australia, respectively). However, in CoNLL scheme these types of entities take parts of MISC category. XXX Postprocessing: list look-up (nationalities, adjective forms of person who live in the corresponding country); if the name is POS-tagged as adjective, then it is not a NE
-
-%nem biztos, hogy ide kell
-Link boundaries need to be adjusted, e.g.~to remove excess punctuation.
+Certain types of sentences were filtered from the corpus. As mentioned above, sentences with words tagged as \texttt{UNK} are discarded. Furthermore, there are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is known to be noisy and fragmented. As a compromise solution, we included these fragments in the corpus, but labelled them as "low quality", so that users of the corpus can decide whether they want to use them or not. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs.
 
 \section{Creating the Hungarian Corpus}
 \label{sec:hun}
