@@ -167,7 +167,6 @@ For each article, we build a set that contains all entities discovered so far, a
 
 When an unmarked entity is encountered, the set is consulted to find an item that contains it in its entirety; i.e.~all of its words, in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NE tag, the unmarked entity is tagged accordingly; otherwise it is tagged as \texttt{UNK}.
 
-% Eszter: ehhez a felső listához hivatkozzam Nothmant? A fele tőle jön, viszont mi máshogy csináltuk kicsit.
 Our solution is similar to Nothman's \shortcite{Nothman:08}. Instead of a trie, however, we use a set, albeit with more alias types. We expect more precise tagging from our slightly more rigorous solution.
 
 \subsubsection{Special Cases}
