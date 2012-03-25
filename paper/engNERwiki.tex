@@ -129,7 +129,7 @@ We would like to note that even though we use CoNLL categories, our method can b
 
 \subsection{Named Entity Labeling}
 
-A NER corpus consists of sentences where NEs are accurately tagged. In order to automatically prepare such sentences, two tasks need to be performed: identifying entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus.
+In order to automatically prepare sentences where NEs are accurately tagged, two tasks need to be performed: identifying entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus.
 
 Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular NE.
 
@@ -174,7 +174,7 @@ Our solution is similar to Nothman's \shortcite{Nothman:08}. Instead of a trie, 
 
 \subsubsection{Special Cases}
 
-There are some special cases to the algorithm described thus far. These are detailed below.
+%There are some special cases to the method, which are detailed below.
 
 \begin{description}
 \item[Derived words] According to the CoNLL guidelines, word derived from NEs are tagged as \texttt{MISC}. We complied with this rule by tagging each entity whose head is not a noun, as well as when the link's anchor text is not contained in the entity's name, as \texttt{MISC}. The most prominent example for such entities are nationalities, which can be linked to their home country, a \texttt{LOC}; e.g.~\textit{Turkish} to \textit{Turkey}. Our solution assigns the correct tag to these entities.
@@ -219,7 +219,7 @@ Hungarian is called a synthetic language: for the most part, it expresses gramma
 
 \subsection{Named Entity Labeling in Hungarian}
 
-For some of the well-resourced languages, DBpedia has internationalized "chapters" -- data dumps based on the Wikipedia of those particular languages. Hungarian does not have a separate chapter. Instead, the Hungarian entity list comprises of the pages in the English list that have their equivalents in the Hungarian Wikipedia. Two consequences follow.
+For well-resourced languages, DBpedia has internationalized chapters; data dumps based on Wikipedia. Hungarian does not have a separate chapter. Instead, the Hungarian entity list comprises of the pages in the English list that have their equivalents in the Hungarian Wikipedia. Two consequences follow.
 
 First, in order to identify which pages denote entities in the Hungarian Wikipedia, an additional step is required, in which the Hungarian equivalents of the English pages are added to the entity list. The English titles are retained, as due to the medium size of the Hungarian Wikipedia, in-article links sometimes point to English articles.
 
@@ -247,7 +247,7 @@ There is another special case in Hungarian: opposite to English, the number of c
 
 The corpora are available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from ...\footnote{To be filled in in the camera-ready version.}.
 
-The files are in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its part-of-speech tag. Two NE tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
+The files are in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its part-of-speech tag. Two NE tags are included with each word: the most specific DBpedia category it belongs to and the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
 
 \begin{table*}[ht]
 \begin{center}
@@ -296,28 +296,29 @@ We used the CoNLL standard method for evaluation. According to this, an automati
 
 \subsection{Wikipedia data}
 
-Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our Wikipedia corpora and gold standard corpora (see Table \ref{size}), we decided not to include the sentences without NEs in evaluation datasets. 
+Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our corpora and gold standard corpora (see Table \ref{size}), we decided not to include the sentences without NEs in evaluation datasets. 
 
 \subsection{Experiments and results}
 
 The English train corpus was evaluated against itself and a manually annotated English corpus. Since the filtered English Wikipedia corpus, containing only the sentences with NEs, is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
 
-For English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied that cross-checking between different corpora decrease F-measure. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see Table \ref{enresults} for results). 
+For English cross-corpus evaluation the CoNLL-2003 corpus was chosen. It is well-studied that cross-checking between different corpora decrease F-measure. Domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own train set (see Table \ref{enresults}). 
 
-However, Wikipedia-derived corpora can also be used for improving NER performance in other ways. First, like e.g.~\cite{Toral:06} we collected huge gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE-tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved overall F-measure on CoNLL test set.  
+However, Wikipedia-derived corpora can also be used for improving NER accuracy in other ways. First, we collected gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE-tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved F-measure on CoNLL test set.  
 
-Since in NE labeling for Hungarian we followed the Szeged NER corpus annotation guidelines, it is obvious to perform the experiments on this dataset, as well. Hungarian results are quite similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher, than ones for English. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency and diversity of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was highly accurately annotated with an inter-annotator agreement over 99\%.  
+Since in Hungarian NE tagging we followed the Szeged NER corpus annotation guidelines, we performed the experiments on this dataset. Hungarian results are similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was accurately annotated with an inter-annotator agreement over 99\%.  
 
-Due to the quite good F-measure of training on the Hungarian Wikipedia train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE-taggers for domains falling out of newswire. 
+Due to the quite good F-measure of training on our Hungarian train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE-taggers for domains falling out of newswire. 
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08}, the process can be divided into four main steps:  classifying all articles into entity classes; splitting Wikipedia articles into sentences; labeling NEs according to link targets; and selecting sentences for inclusion in the corpus. 
 
-Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of the Hungarian language, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
+Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of Hungarian, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
 
-Automatically generated, silver standard corpora can be very useful for improving NER in more ways. We showed that huge gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves overall F-measure. Moreover, our Hungarian corpus can serve as a training corpus to build NE taggers for more general domains, than the classic newswire.  
+Automatically generated corpora can be useful for improving NER in more ways. We showed that gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves F-measure. Moreover, our Hungarian corpus can serve as a training corpus for more general domains. 
+%than the classic newswire.  
 
 %az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
 
