@@ -229,13 +229,13 @@ To annotate our corpus with NE-tags, we chose to follow the annotation guideline
 The Szeged NER guideline relies heavily on the rules of capitalization to decide which words should be marked as NEs. As mentioned earlier, in Hungarian, apart from the first word in the sentence, only proper nouns are capitalized. The following concepts are not proper nouns in Hungarian, and thus are not considered as NEs according to the Szeged NER guideline:
 
 \begin{itemize}
-\item names of languages, nationalities, religions, poltical ideologies;
+\item names of languages, nationalities, religions, political ideologies;
 \item adjectives derived from a NE;
 \item names of months, days, holidays;
 \item names of special events and wars.
 \end{itemize}
 
-There is an other special case in Hungarian: opposite to English, the number of compund words is quite large in Hungarian, and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. 
+There is another special case in Hungarian: opposite to English, the number of compund words is quite large in Hungarian, and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. 
 
 Inflections of acronyms and foreign names ending with non-pronounced vowel have similar surface forms to the aforementioned compounds, e.g.~\textit{MTI-t} ['MTI'+ACC], \textit{Shakespeare-rel} ['with Shakespeare']. It is important to distinguish these types of hyphenated NEs, because inflections do not change NE labeling in contrast to some type of compounds. Due to the surface similarity of these phenomena the solution of this problem is not obvious, and needs more investigation. 
 
@@ -271,8 +271,6 @@ To evaluate our corpora we used a maximum entropy NE-tagger \cite{Varga:07}, whi
 \item string-valued surface properties of the word form;
 \item morphological information.
 \end{itemize}
-
-
 
 We used the CoNLL standard method for evaluation. According to this, an automatic labeling is correct if it gives the same start and end position, and the same NE class, as the gold standard. Based on this, precision and recall can be calculated, and the F-measure, as usual, the harmonic mean of these two values.  
 
@@ -492,29 +490,28 @@ H. Zaragoza and J. Atserias and M. Ciaramita and G. Attardi.
 
 \end{thebibliography}
 
-% HEEEEELP!
-\appendix
-\section{DBpedia to ConLL Mapping}
-\label{sec:appa}
-
-\begin{table*}[ht]
-\begin{center}
-\begin{tabular}{llll}
-\hline DBpedia & \bf CoNLL & \bf DBpedia & \bf CoNLL \\ \hline
-Person & PER & Library & LOC \\
-Place & LOC & MeanOfTransportation & MISC \\
-Organization & ORG & PeriodicalLiterature & ORG \\
-Organisation & ORG & ProgrammingLanguage & MISC \\
-Award & MISC & Project & MISC \\
-EthnicGroup & MISC & SportsLeague & MISC \\
-Event & MISC & SportsTeamSeason & O \\
-Holiday & MISC & Weapon & MISC \\
-Ideology & MISC & Work & MISC \\
-Language & MISC & & \\
-\hline
-\end{tabular}
-\end{center}
-\end{table*}
+%\appendix
+%\section{DBpedia to ConLL Mapping}
+%\label{sec:appa}
+%
+%\begin{table*}[ht]
+%\begin{center}
+%\begin{tabular}{llll}
+%\hline DBpedia & \bf CoNLL & \bf DBpedia & \bf CoNLL \\ \hline
+%Person & PER & Library & LOC \\
+%Place & LOC & MeanOfTransportation & MISC \\
+%Organization & ORG & PeriodicalLiterature & ORG \\
+%Organisation & ORG & ProgrammingLanguage & MISC \\
+%Award & MISC & Project & MISC \\
+%EthnicGroup & MISC & SportsLeague & MISC \\
+%Event & MISC & SportsTeamSeason & O \\
+%Holiday & MISC & Weapon & MISC \\
+%Ideology & MISC & Work & MISC \\
+%Language & MISC & & \\
+%\hline
+%\end{tabular}
+%\end{center}
+%\end{table*}
 
 \end{document}
 
