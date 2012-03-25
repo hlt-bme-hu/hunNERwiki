@@ -187,16 +187,7 @@ To tackle personal titles, we extracted a list from the Wikipedia page \textit{L
 
 \subsubsection{Filtering}
 
-There are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is well known to be noisy and fragmented. We have added a post-filtering step to recognize and label these fragments, so that users of the corpus can decide what to do with them. XXX
-
-Manual inspection has found two conditions that can be used to detect fragments. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs. Our final corpus contains XXXSTAT full sentences and STAT fragments.
-%Ezeket leméred, vagy mérjem én? Ha utóbbi, akkor melyikben kell mérni?
-% TODO: Last sentence to evaluation? But then this whole subsection is too short.
-
-In Wikipedia the nationalities (e.g. American and Australian) links to the corresponding places (America and Australia, respectively). However, in CoNLL scheme these types of entities take parts of MISC category. XXX Postprocessing: list look-up (nationalities, adjective forms of person who live in the corresponding country); if the name is POS-tagged as adjective, then it is not a NE
-
-%nem biztos, hogy ide kell
-Link boundaries need to be adjusted, e.g.~to remove excess punctuation.
+Certain types of sentences were filtered from the corpus. As mentioned above, sentences with words tagged as \texttt{UNK} are discarded. Furthermore, there are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is known to be noisy and fragmented. As a compromise solution, we included these fragments in the corpus, but labelled them as "low quality", so that users of the corpus can decide whether they want to use them or not. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs.
 
 \section{Creating the Hungarian Corpus}
 \label{sec:hun}
