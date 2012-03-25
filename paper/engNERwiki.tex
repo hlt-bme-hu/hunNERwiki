@@ -126,7 +126,9 @@ The first approach, unfortunately, already fails to assign the correct ConLL NE 
 
 The full mapping can be found in Appendix~\ref{sec:appa}.
 
-Using the mapping described above, we compile an entity list that contains all entities in DBpedia tagged with the appropriate XXX CoNLL NE category.
+Using the mapping described above, we compile an entity list that contains all entities in DBpedia tagged with the appropriate CoNLL named entity category.
+
+We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a named entity tagset themselves. We leave the exploration of these possibilities for future work.
 
 \subsection{Named Entity Labeling}
 
@@ -134,62 +136,57 @@ A NER corpus consists of sentences where NEs are accurately tagged. In order to 
 
 Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity.
 
-Discovered entities are tagged with the CoNLL category assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity and tag it as \texttt{UNK}. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
+Discovered entities are tagged with the CoNLL category assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity and tag it as \texttt{UNK}. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
 
-There are several 
+There are several ways to improve the method described above to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines. These are detailed in the next sub-sections.
 
 \subsubsection{Non-entity Links}
 
-Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity. However, there are exceptions to this rule. Disambiguation pages are used when the page title is ambiguous, and can refer to several entities. If a link points to a disambiguation page, we acknowledge the anchor text as an entity, but mark it unknown. A similar measure is taken if the link target XXX does not exist. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
-
-%Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of NER.
+Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), calendar-related concepts (March 15, 2007), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
 
 \begin{description}
 \item[Common nouns] Links to common nouns are filtered by POS tags; if a link contains no \texttt{NNP}s, it is ignored.
-\item[Dates] Wikipedia has pages for years, months and concrete dates, therefore our algorithm might mistake them for entities. To prevent this problem, we compiled a list of calendar-related entities and added them to the main entity list tagged with the CoNLL category \texttt{O}.
-\item[Lowercase links] 
+\item[Dates] Time expressions require special attention, because dates and months are often linked to the respective Wikipedia pages. We circumvented this problem by compiling a list of calendar-related pages and adding them to the main entity list tagged with the CoNLL category \texttt{O}. 
+\item[Lowercase links] Entities are sometimes referred to by common nouns, such as \textit{republic} to \textit{Roman Republic}, \texttt{LOC}, which results in a lowercase link. These references are not considered named entities and are ignored.
 \end{description}
 
 \subsubsection{Unmarked Entities}
 
+Not all entities are marked with links. Authors may neglect to add references to their text. Furthermore, in a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. To account for such mentions, we try to associate capitalized words in the article text with entities we have tagged thus far.
+
+For each article, we build a set that contains all entities discovered so far, as well as their aliases:
+\begin{itemize}
+\item If the current page is a NE:
+  \begin{itemize}
+  \item The page title, with Wikipedia antics, such as a category name in parentheses removed
+  \item Title of redirect pages that target the current page
+  \item Title of the current page in other languages, extracted from the interlanguage link file, as Wikipedia usually mentions the original name of foreign entities
+  \end{itemize}
+\item Entities marked with links in the text thus far
+\item Certain subsets of the above:
+  \begin{itemize}
+  \item First and last names of \texttt{PER} entities
+  \item Numbers, such as \textit{737} in \textit{Boeing 737}
+  \end{itemize}
+\end{itemize}
+
+When an unmarked entity is encountered, the set is consulted to find an item that contains it in its entirety; i.e.~all of its words, in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NE tag, the unmarked entity is tagged accordingly; otherwise it is tagged as \texttt{UNK}.
+
+% Eszter: ehhez a felső listához hivatkozzam Nothmant? A fele tőle jön, viszont mi máshogy csináltuk kicsit.
+Our solution is similar to Nothman's \shortcite{Nothman:08}. Instead of a trie, however, we use a set, albeit with more alias types. We expect more precise tagging from our slightly more rigorous solution.
+
 \subsubsection{Special Cases}
 
-Not all entities are marked with links. Authors may neglect to add references to their text. Furthermore, in a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. To account for such entities, 
+There are some special cases to the algorithm described thus far. These are detailed below.
 
-The recall-oriented method tries to associate unmarked entities with entities already identified on the same page. Only if the attempt fails is the sentence that contains the words discarded. 
-This approach aims to generate more sentences with as little loss of precision as possible. 
+\begin{description}
+\item[Derived words] According to the CoNLL guidelines, word derived from name entities must be tagged as \texttt{MISC}. We complied with this rule by tagging each entity whose head is not a noun, as well as when the link's anchor text is not contained in the entity's name, as \texttt{MISC}. The most prominent example for such entities are ethnic groups, which can be linked to their home country, a \texttt{LOC}; e.g. \textit{Turkish} to \textit{Turkey}. Our solution assigns the correct tag to these entities.
+\item[First word in a sentence] As first words are always capitalized, labelling them is difficult if they are unlinked and not contained in the entity alias set. We base the decision on the POS tag of the first word: if it is \texttt{NNP}, we tag it as \texttt{UNK}; otherwise, \texttt{O}.
+\item[Reference cleansing] Page titles and anchor texts may contain more than just the entity name. Personal titles are part of the entity name in Wikipedia, but not in CoNLL, and punctuation marks around the entity may become part of the link by mistake. We tag all punctuation marks after the entity name as \texttt{O}.
 
-The algorithm maintains a list of entities already indentified on the page. The list includes:
-\begin{itemize}
-\item The page title, if we know its category;
-\item Title of redirect pages that target the current page; % TODO
-\item Entities marked with links in the text thus far.
-\end{itemize}
-
-When an unmarked entity is encountered, the list is consulted to find an item that contains it in its entirety; i.e.~all of its words, in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NE tag, the unmarked entity is tagged accordingly. Otherwise the sentence is discarded.
-
-Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. 
-
-\subsubsection{Exceptions}
-
-%Strictly speaking, our original assumption of equating Wikipedia articles with NEs is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of CoNLL tagset or of NER in general. In this section, we describe the measures taken to avoid errors introduced by these false entities. We shall modify the two approaches -- precision and recall-oriented -- accordingly.
-
-Proper names that are not deemed NE under the ConLL scheme
-%ilyeneknek nem szabad lenniük a MISC miatt
- cause XXX little concern: they are either missing from DBpedia altogether, or we can map the classes they belong to to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that we need no adjustment XXX to our original method.
-
-Links to number and common noun pages are handled differently by the two approaches. The precision-oriented method treats them similarly to links to unknown entities and discards the sentences in which they occur. The recall-oriented approach tries to distinguish them from links to entities so that otherwise valid sentences can be retained XXX. The method is as follows XXX.
-
-\begin{itemize}
-\item Common nouns are filtered by POS category: links that contain no proper nouns are ignored.
-\item Numbers behave more like proper nouns in that they can refer to entities, such as 737 to the Boeing 737. Therefore, links to number pages are filtered by the surface form of the page title.
-\end{itemize}
-
-Time expressions require special attention due to two reasons. First, Wikipedia has pages for years, months and concrete dates, therefore our algorithm might mistake them for entities. Second, as dates are made up of numbers and proper nouns, they can be mistaken for unmarked entities. To avoid these errors, we have create a set of regular expressions that recognize dates and time expressions and changed the recall-oriented method to not treat them as entities.
-
-XXX from \cite{Nothman:09}: Exceptions are made for common titlecase words, e.g. I, Mr., June, and sentence-initial words. 
-
-% TODO: monetary, etc. units?
+To tackle personal titles, we extracted a list from the Wikipedia page \textit{List of titles}, which contains titles in many languages. We manually removed all titles that also function as given names, such as \textit{Regina}. If a link to a \texttt{PER} or \texttt{UNK} entity, or an unlinked entity starts with, or consists solely of a title in the list, we tag the words that make up the title as \texttt{O}.
+\item[Incidental capitalization] Various non-\texttt{NNP} words in English are capitalized: names of months, the \textit{I} pronoun and non-entity acronyms, such as \textit{RSVP}. While the latter two group is unlikely to appear in Wikipedia text, we assembled a list of these words and tag them as \texttt{O} unless they are part of the alias set.
+\end{description}
 
 \subsubsection{Filtering}
 
@@ -232,13 +229,13 @@ To annotate our corpus with NE-tags, we chose to follow the annotation guideline
 The Szeged NER guideline relies heavily on the rules of capitalization to decide which words should be marked as NEs. As mentioned earlier, in Hungarian, apart from the first word in the sentence, only proper nouns are capitalized. The following concepts are not proper nouns in Hungarian, and thus are not considered as NEs according to the Szeged NER guideline:
 
 \begin{itemize}
-\item names of languages, nationalities, religions, poltical ideologies;
+\item names of languages, nationalities, religions, political ideologies;
 \item adjectives derived from a NE;
 \item names of months, days, holidays;
 \item names of special events and wars.
 \end{itemize}
 
-There is an other special case in Hungarian: opposite to English, the number of compund words is quite large in Hungarian, and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. 
+There is another special case in Hungarian: opposite to English, the number of compund words is quite large in Hungarian, and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. 
 
 Inflections of acronyms and foreign names ending with non-pronounced vowel have similar surface forms to the aforementioned compounds, e.g.~\textit{MTI-t} ['MTI'+ACC], \textit{Shakespeare-rel} ['with Shakespeare']. It is important to distinguish these types of hyphenated NEs, because inflections do not change NE labeling in contrast to some type of compounds. Due to the surface similarity of these phenomena the solution of this problem is not obvious, and needs more investigation. 
 
@@ -495,29 +492,28 @@ H. Zaragoza and J. Atserias and M. Ciaramita and G. Attardi.
 
 \end{thebibliography}
 
-% HEEEEELP!
-\appendix
-\section{DBpedia to ConLL Mapping}
-\label{sec:appa}
-
-\begin{table*}[ht]
-\begin{center}
-\begin{tabular}{llll}
-\hline DBpedia & \bf CoNLL & \bf DBpedia & \bf CoNLL \\ \hline
-Person & PER & Library & LOC \\
-Place & LOC & MeanOfTransportation & MISC \\
-Organization & ORG & PeriodicalLiterature & ORG \\
-Organisation & ORG & ProgrammingLanguage & MISC \\
-Award & MISC & Project & MISC \\
-EthnicGroup & MISC & SportsLeague & MISC \\
-Event & MISC & SportsTeamSeason & O \\
-Holiday & MISC & Weapon & MISC \\
-Ideology & MISC & Work & MISC \\
-Language & MISC & & \\
-\hline
-\end{tabular}
-\end{center}
-\end{table*}
+%\appendix
+%\section{DBpedia to ConLL Mapping}
+%\label{sec:appa}
+%
+%\begin{table*}[ht]
+%\begin{center}
+%\begin{tabular}{llll}
+%\hline DBpedia & \bf CoNLL & \bf DBpedia & \bf CoNLL \\ \hline
+%Person & PER & Library & LOC \\
+%Place & LOC & MeanOfTransportation & MISC \\
+%Organization & ORG & PeriodicalLiterature & ORG \\
+%Organisation & ORG & ProgrammingLanguage & MISC \\
+%Award & MISC & Project & MISC \\
+%EthnicGroup & MISC & SportsLeague & MISC \\
+%Event & MISC & SportsTeamSeason & O \\
+%Holiday & MISC & Weapon & MISC \\
+%Ideology & MISC & Work & MISC \\
+%Language & MISC & & \\
+%\hline
+%\end{tabular}
+%\end{center}
+%\end{table*}
 
 \end{document}
 
