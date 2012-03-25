@@ -61,13 +61,13 @@ The paper is structured as follows. XXX In section~\ref{sec:hun}, we show how th
 \label{sec:related}
 % Wikify!
 
-Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers\footnote{http://en.wikipedia.org/wiki/Wikipedia}. It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English and 212,120 are Hungarian. XXX %kell ez ide?
+Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers\footnote{http://en.wikipedia.org/wiki/Wikipedia}. It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English and 212,120 are Hungarian.
 
 Wikipedia has been applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, multilingual information retrieval, and question answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
 
 Wikipedia is recognized as one of the largest available collection of entities, and also as an external knowledge to improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations (e.g.~Toral and Mu\~noz \shortcite{Toral:06}). Creating dictionaries of entities is also a common step of named entity disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al.~\shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
 
-Wikipedia's knowledge may be incorporated as features in NER learning, e.g.~Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE-tagger. 
+The knowledge in Wikipedia may be incorporated as features in NER learning, e.g.~Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE-tagger. 
 
 A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE-tags. They used the inherent category structure of Wikipedia to determine the NE-type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE-annotated text in English. They transformed the Wikipedia links into NE-annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
 
@@ -77,12 +77,12 @@ To our knowledge, such type of automatically built corpora are not freely availa
 
 Thanks for the huge amount of Wikipedia articles, the possibility of building large enough 
 %(XXX ez mit jelent?) elég nagy :)
-corpora is given for less resourced languages, as well. Since our method is mainly XXX language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities XXX detailed later in section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but the one presented here is the first automatically NE-annotated corpus for Hungarian. 
+corpora is given for less resourced languages, as well. Since our method is mainly XXX language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities detailed later in section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but the one presented here is the first automatically NE-annotated corpus for Hungarian. 
 
 \section{Creating the English Corpus} 
 \label{sec:create}
 
-Our goal is to create a large NE-annotated corpus, automatically generated from Wikipedia articles. We follow a similar path XXX to \cite{Nothman:08}, who broke up XXX the process into four steps:
+Our goal is to create a large NE-annotated corpus, automatically generated from Wikipedia articles. We follow a similar path to \cite{Nothman:08}, who broke down the process into four steps:
 
 \begin{enumerate}
 \item Classify all articles into entity classes.
@@ -91,7 +91,7 @@ Our goal is to create a large NE-annotated corpus, automatically generated from 
 \item Select sentences for inclusion in the corpus.
 \end{enumerate}
 
-In this section, we describe how these steps were implemented. While the approach in essence is language-independent, the exact details XXX have to be accomodated to the target language. This section explains the general idea and its execution for English; the next section describes how the idea is adapted to Hungarian.
+In this section, we describe how these steps were implemented. While the approach in essence is language-independent, the exact details have to be accomodated to the target language. This section explains the general idea and its execution for English; the next section describes how the idea is adapted to Hungarian.
 
 \subsection{Parsing Wikipedia}
 
@@ -114,7 +114,7 @@ The types in DBpedia are organized into a class hierarchy, available as an OWL\f
 
 The type of entities is extracted automatically from Wikipedia categories. However, the mapping between Wikipedia categories and classes in the DBpedia ontology is manually defined. This, together with the fact that the existence of the reference ontology prevents the proliferation of categories observable in Wikipedia \cite{Bizer:09}, ensures that type information in DBpedia can be considered gold quality.
 
-From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE categories PERSON, ORGANIZATION and LOCATION. The fourth category, MISCELLANEOUS is more elusive; according to the ConLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
+From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE categories PERSON, ORGANIZATION and LOCATION. The fourth category, MISCELLANEOUS is more elusive; according to the ConLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
 
 While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, CoNLL does not recognize such entities.
 
@@ -122,7 +122,7 @@ To account for these misclassification, as well as the miscellaneous classes out
 
 As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph (CITE). This introduces the problem of selecting the right superclass, and hence, CoNLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NE mapping for the ambiguous XXX class and adding it to the mapping file.
 
-The first approach, unfortunately, already fails to assign the correct ConLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation, while ConLL's one refers it as a Location. Therefore, only the second, manual approach ensures correct tagging. XXX
+The first approach, unfortunately, already fails to assign the correct ConLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation, while ConLL's one refers it as a Location. Therefore, only the second, manual approach ensures correct tagging.
 
 % The full mapping can be found in Appendix~\ref{sec:appa}.
 %
