@@ -17,7 +17,7 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \setlength\titlebox{6.5cm}    % Expanding the titlebox
 
-\title{XXX}
+\title{Automatically generated NE tagged corpora for English and Hungarian}
 
 %\author{Dávid Márk Nemeskey \\
 %  Research Institute for Computer Science and Automation \\
@@ -36,52 +36,52 @@
 \maketitle
 \begin{abstract}
 
-Supervised Named Entity Recogizers require large amount of annotated texts. However, manual annotation is a highly costly procedure, thus reducing the annotation cost is essential. We present a fully automatic method to build NE-annotated corpora from Wikipedia. In contrast to recent work, we apply a new method, which maps the DBpedia classes into CoNLL NE types. Since our method is mainly language-independent, we used it for generating corpora for English and Hungarian, as well. The corpora are freely available. 
+Supervised Named Entity Recogizers require large amount of annotated texts. However, manual annotation is a highly costly procedure, thus reducing the annotation cost is essential. We present a fully automatic method to build NE annotated corpora from Wikipedia. In contrast to recent work, we apply a new method, which maps the DBpedia classes into CoNLL NE types. Since our method is mainly language-independent, we used it for generating corpora for English and Hungarian, as well. The corpora are freely available. 
 
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
-Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as Information Retrieval, Information Extraction or Machine Translation. The NER task was introduced with the 6th Message Understanding Conference (MUC) in 1995 \cite{Grishman:96}. In MUC shared tasks the NER consists of three subtasks: entity names, temporal expressions and number expressions. Although there is a general agreement in the NER community about the inclusion of temporal expressions and some numerical expressions such as amounts of money and other types of units, the most studied types are names of persons, locations and organizations. The fourth type, called "miscellaneous'', was introduced in the CoNLL NER tasks in 2002 \cite{Tjong:02} and 2003 \cite{Tjong:03}, and includes proper names falling outside the three classic types. Since then, MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
+Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. The NER task was introduced with the 6th Message Understanding Conference (MUC) in 1995 \cite{Grishman:96}. In MUC shared tasks the NER consists of three subtasks: entity names, temporal and number expressions. Although there is a general agreement in the NER community about the inclusion of temporal expressions and some numerical expressions, the most studied types are names of persons, locations and organizations. The fourth type, called "miscellaneous'', was introduced in the CoNLL NER tasks in 2002 \cite{Tjong:02} and 2003 \cite{Tjong:03}, and includes proper names falling outside the three classic types. Since then, MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
 
-The standard datasets are highly domain-specific (mostly newspaper articles about company activities and defense related activities), and are restricted in size, as well. Thus they are not large enough to train and test robust NE-taggers on them. Moreover, merging these datasets to get a bigger training corpus faces NLP researchers with the problem of combining different tagsets and annotation schemes. However, to build a robust supervised machine learning system for NER, large enough, accurately annotated corpora are essential. Annotating large amount of texts with linguistic information is a time-consuming, highly skilled and delicate work. Mainly due to this fact, one of the main challenges in NLP is reducing the annotation cost. 
+The standard datasets are highly domain-specific (mostly newswire), and are restricted in size, as well. 
+%Thus they are not large enough to train and test robust NE-taggers on them. Moreover, 
+Merging these datasets to get a bigger training corpus faces NLP researchers with the problem of combining different tagsets and annotation schemes. However, to build a robust supervised machine learning system for NER, large enough, accurately annotated corpora are essential. Annotating large amount of texts with linguistic information is a time-consuming, highly skilled and delicate work. Mainly due to this fact, one of the main challenges in NLP is reducing the annotation cost. 
 
 One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. Another approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as Google's Web 1T 5-gram collection or DBpedia.  
 
-%One of the main trends in NLP is the need for reducing the annotation cost. After examining the calls for papers of nowadays conferences and workshops there seems to be three major directions to achieve this aim. 
-
 %The first approach is the application of unsupervised and semi-supervised learning techniques. Researchers following this approach try to not only reduce, but avoid the annotation cost with minimizing the need for annotated data. These methods can be applied to any language or genre for which adequate raw text resources are available. 
 
-In this paper we present a kind of combination of the approaches mentioned above. We built freely available NE-tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. %Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE-taggers. 
+In this paper we present a kind of combination of the approaches mentioned above. We built freely available NE tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. %Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE-taggers. 
 
-The paper is structured as follows. In Section~\ref{sec:related} we give an overview of related works. We introduce our algorithm in Section~\ref{sec:create}, and show how it was adapted to Hungarian in Section~\ref{sec:hun}. The corpus format is described in Section~\ref{sec:data}. Section~\ref{sec:eval} contains evaluations and Section~\ref{sec:conclusion} our conclusions.
+The paper is structured as follows. In section~\ref{sec:related} we give an overview of related work. Our method is introduced in section~\ref{sec:create}, and showed how it is applied to Hungarian in section~\ref{sec:hun}. The corpus format is described in section~\ref{sec:data}. Section~\ref{sec:eval} contains evaluations and section~\ref{sec:conclusion} our conclusion.
 
 \section{Wikipedia and NER}
 \label{sec:related}
 % Wikify!
 
-Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers\footnote{http://en.wikipedia.org/wiki/Wikipedia}. It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English and 212,120 are Hungarian. XXX %kell ez ide?
+Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers\footnote{http://en.wikipedia.org/wiki/Wikipedia}. It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English, and 212,120 are Hungarian. XXX %kell ez ide?
 
-Wikipedia has been applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, multilingual information retrieval, and question answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
+Wikipedia has been applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, and question answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
 
 Wikipedia is recognized as one of the largest available collection of entities, and also as a resource that can improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations (e.g.~Toral and Mu\~noz \shortcite{Toral:06}). Creating dictionaries of entities is also a common step of named entity disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al.~\shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
 
 Wikipedia's knowledge may be incorporated as features in NER learning, e.g.~Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE-tagger. 
 
-A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE-tags. They used the inherent category structure of Wikipedia to determine the NE-type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE-annotated text in English. They transformed the Wikipedia links into NE-annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
+A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE-tags. They used the inherent category structure of Wikipedia to determine the NE-type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE annotated text in English. They transformed the Wikipedia links into NE-annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
 
 In contrast to the aforementioned methods, we applied a new approach to recognize and classify NEs in corpora generated from Wikipedia. We mapped the DBpedia ontology classes to standard NE tags and assigned them to Wikipedia entities (see more details in section \ref{dbpedia}).
 
 To our knowledge, such type of automatically built corpora are not freely available, with the one exception of the Semantically Annotated Snapshot of the English Wikipedia \cite{Zaragoza:07}. It provides a wide range of linguistic information: POS tags, dependency labels, WordNet super senses and NE annotation according to WSJ and CoNLL tagsets. However, they followed a different way: the NEs were tagged by high quality open source softwares. In contrast, our approach relies on the manual judgement of thousands of Wikipedia volunteers.
 
 Thanks for the huge amount of Wikipedia articles, the possibility of building large enough 
-corpora is given for less resourced languages, as well. Since our method is largely language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities detailed later in section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but the one presented here is the first automatically NE-annotated corpus for Hungarian.
+corpora is given for less resourced languages, as well. Since our method is largely language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities detailed later in section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but the one presented here is the first automatically NE annotated corpus for Hungarian.
 
 \section{Creating the English Corpus} 
 \label{sec:create}
 
-Our goal is to create a large NE-annotated corpus, automatically generated from Wikipedia articles. We follow a similar path XXX to \cite{Nothman:08}, who broke up XXX the process into four steps:
+Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. We follow a similar path XXX to \cite{Nothman:08}, who broke up XXX the process into four steps:
 
 \begin{enumerate}
 \item Classify all articles into entity classes.
@@ -315,14 +315,14 @@ Since in the subtask of NE labeling for Hungarian we followed the Szeged NER cor
 
 Due to the quite good F-measure of training on the Hungarian Wikipedia train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE-taggers for domains falling out of newswire. 
 
-\section{Conclusions and Future Work}
+\section{Conclusion}
 \label{sec:conclusion}
 
-We have presented freely available NE-tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08} the process can be divided into four main steps: (1) classifying all articles into entity classes; (2) splitting Wikipedia articles into sentences; (3) labeling NEs according to link targets; and (4) selecting sentences for inclusion in the corpus. 
+We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08} the process can be divided into four main steps: (1) classifying all articles into entity classes; (2) splitting Wikipedia articles into sentences; (3) labeling NEs according to link targets; and (4) selecting sentences for inclusion in the corpus. 
 
 Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of the Hungarian language, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
 
-Automatically generated, so called "silver standard corpora" can be very useful for improving NER in more ways. We showed that huge gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves overall F-measure. Moreover, our Hungarian corpus can serve as a training corpus to build NE-taggers for more general domains, than the standard newswire.  
+Automatically generated, so called "silver standard corpora" can be very useful for improving NER in more ways. We showed that huge gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves overall F-measure. Moreover, our Hungarian corpus can serve as a training corpus to build NE-taggers for more general domains, than the classic newswire.  
 
 %az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
 
