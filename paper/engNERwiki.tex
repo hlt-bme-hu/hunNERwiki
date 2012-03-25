@@ -6,7 +6,6 @@
 %% Based on the style files for ACL2008 by Joakim Nivre and Noah Smith
 %% and that of ACL2010 by Jing-Shin Chang and Philipp Koehn
 
-
 \documentclass[11pt]{article}
 \usepackage{acl2012}
 \usepackage{times}
@@ -56,8 +55,7 @@ One approach to reduce the manual intervention required in language resource pro
 
 In this paper we present a kind of combination of the approaches mentioned above. We built freely available NE-tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. %Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE-taggers. 
 
-The paper is structured as follows. XXX In section~\ref{sec:hun}, we show how the algorithm was adapted to Hungarian.
-
+The paper is structured as follows. In Section~\ref{sec:related} we give an overview of related works. We introduce our algorithm in Section~\ref{sec:create}, and show how it was adapted to Hungarian in Section~\ref{sec:hun}. The corpus format is described in Section~\ref{sec:data}. Section~\ref{sec:eval} contains evaluations and Section~\ref{sec:conclusion} our conclusions.
 
 \section{Wikipedia and NER}
 \label{sec:related}
@@ -246,12 +244,14 @@ Inflections of acronyms and foreign names ending with non-pronounced vowel have 
 %az angol: 1,7 milliárd
 
 \section{Data Description}
+\label{sec:data}
 
 The corpora are available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from ...\footnote{To be filled in in the camera-ready version.}.
 
 The corpora are available in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its part-of-speech tag. Two NE tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
 
 \section{Evaluation}
+\label{sec:eval}
 
 % Corpus sizes, performance, tagging conventions
 % Hun -> not utf-8, loss of precision?
@@ -333,6 +333,7 @@ Since in the subtask of NE labeling for Hungarian we followed the Szeged NER cor
 Due to the quite good F-measure of training on the Hungarian Wikipedia train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE-taggers for domains falling out of newswire. 
 
 \section{Conclusions and Future Work}
+\label{sec:conclusion}
 
 We have presented freely available NE-tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08} the process can be divided into four main steps: (1) classifying all articles into entity classes; (2) splitting Wikipedia articles into sentences; (3) labeling NEs according to link targets; and (4) selecting sentences for inclusion in the corpus. 
 
