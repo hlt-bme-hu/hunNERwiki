@@ -105,7 +105,7 @@ The English corpus is based on the Wikipedia snapshot as of January 15, 2011. Th
 \subsection{Articles as Entities}
 \label{dbpedia}
 
-Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et al \shortcite{Nothman:09} used unsupervised methods based on Wikipedia categories and text to classify articles into entity categories. To avoid the inevitable classification errors, we obtain entity type information from the DBpedia knowledge base \cite{Bizer:09}. This enables us to have high precision information about entity types at the expense of recall: out of the 3,903,467 English Wikipedia pages, 1,470,293 are covered by DBpedia.
+Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et al \shortcite{Nothman:08} used unsupervised methods based on Wikipedia categories and text to classify articles into entity categories. To avoid the inevitable classification errors, we obtain entity type information from the DBpedia knowledge base \cite{Bizer:09}. This enables us to have high precision information about entity types at the expense of recall: out of the 3,903,467 English Wikipedia pages, 1,470,293 are covered by DBpedia.
 
 DBpedia is an open database that presents information about entities in Wikipedia in structured form. Each entity corresponds to a Wikipedia article. DBpedia provides various information about entities including type, properties, home pages, etc. Here we limit our interest to the type system.
 
@@ -125,7 +125,9 @@ The first approach, unfortunately, already fails to assign the correct ConLL NER
 
 The full mapping can be found in Appendix~\ref{sec:appa}.
 
-Using the mapping described above, we compile an entity list that contains all entities in DBpedia tagged with the appropriate XXX CoNLL named entity category.
+Using the mapping described above, we compile an entity list that contains all entities in DBpedia tagged with the appropriate CoNLL named entity category.
+
+We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a named entity tagset themselves. We leave the exploration of these possibilities for future work.
 
 \subsection{Named Entity Labeling}
 
@@ -133,66 +135,57 @@ A NER corpus consists of sentences where NEs are accurately tagged. In order to 
 
 Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity.
 
-Discovered entities are tagged with the CoNLL category assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity and tag it as \texttt{UNK}. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
+Discovered entities are tagged with the CoNLL category assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity and tag it as \texttt{UNK}. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
 
-There are several 
+There are several ways to improve the method described above to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines. These are detailed in the next sub-sections.
 
 \subsubsection{Non-entity Links}
 
-Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of NER.
+Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), calendar-related concepts (March 15, 2007), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
 
 \begin{description}
 \item[Common nouns] Links to common nouns are filtered by POS tags; if a link contains no \texttt{NNP}s, it is ignored.
-\item[Dates] Wikipedia has pages for years, months and concrete dates, therefore our algorithm might mistake them for entities. To prevent this problem, we compiled a list of calendar-related entities and added them to the main entity list tagged with the CoNLL category \texttt{O}.
-\item[Lowercase links] 
+\item[Dates] Time expressions require special attention, because dates and months are often linked to the respective Wikipedia pages. We circumvented this problem by compiling a list of calendar-related pages and adding them to the main entity list tagged with the CoNLL category \texttt{O}. 
+\item[Lowercase links] Entities are sometimes referred to by common nouns, such as \textit{republic} to \textit{Roman Republic}, \texttt{LOC}, which results in a lowercase link. These references are not considered named entities and are ignored.
 \end{description}
 
 \subsubsection{Unmarked Entities}
 
+Not all entities are marked with links. Authors may neglect to add references to their text. Furthermore, in a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. To account for such mentions, we try to associate capitalized words in the article text with entities we have tagged thus far.
+
+For each article, we build a set that contains all entities discovered so far, as well as their aliases:
+\begin{itemize}
+\item If the current page is a NE:
+  \begin{itemize}
+  \item The page title, with Wikipedia antics, such as a category name in parentheses removed
+  \item Title of redirect pages that target the current page
+  \item Title of the current page in other languages, extracted from the interlanguage link file, as Wikipedia usually mentions the original name of foreign entities
+  \end{itemize}
+\item Entities marked with links in the text thus far
+\item Certain subsets of the above:
+  \begin{itemize}
+  \item First and last names of \texttt{PER} entities
+  \item Numbers, such as \textit{737} in \textit{Boeing 737}
+  \end{itemize}
+\end{itemize}
+
+When an unmarked entity is encountered, the set is consulted to find an item that contains it in its entirety; i.e.~all of its words, in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NE tag, the unmarked entity is tagged accordingly; otherwise it is tagged as \texttt{UNK}.
+
+% Eszter: ehhez a felső listához hivatkozzam Nothmant? A fele tőle jön, viszont mi máshogy csináltuk kicsit.
+Our solution is similar to Nothman's \shortcite{Nothman:09}. Instead of a trie, however, we use a set, albeit with more alias types. We expect more precise tagging from our slightly more rigorous solution.
+
 \subsubsection{Special Cases}
 
+There are some special cases to the algorithm described thus far. These are detailed below.
 
-Not all entities are marked with links. Authors may neglect to add references to their text. Furthermore, in a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. To account for such entities, 
+\begin{description}
+\item[Derived words] According to the CoNLL guidelines, word derived from name entities must be tagged as \texttt{MISC}. We complied with this rule by tagging each entity whose head is not a noun, as well as when the link's anchor text is not contained in the entity's name, as \texttt{MISC}. The most prominent example for such entities are ethnic groups, which can be linked to their home country, a \texttt{LOC}; e.g. \textit{Turkish} to \textit{Turkey}. Our solution assigns the correct tag to these entities.
+\item[First word in a sentence] As first words are always capitalized, labelling them is difficult if they are unlinked and not contained in the entity alias set. We base the decision on the POS tag of the first word: if it is \texttt{NNP}, we tag it as \texttt{UNK}; otherwise, \texttt{O}.
+\item[Reference cleansing] Page titles and anchor texts may contain more than just the entity name. Personal titles are part of the entity name in Wikipedia, but not in CoNLL, and punctuation marks around the entity may become part of the link by mistake. We tag all punctuation marks after the entity name as \texttt{O}.
 
-The recall-oriented method tries to associate unmarked entities with entities already identified on the same page. Only if the attempt fails is the sentence that contains the words discarded. 
-This approach aims to generate more sentences with as little loss of precision as possible. 
-
-The algorithm maintains a list of entities already indentified on the page. The list includes:
-\begin{itemize}
-\item The page title, if we know its category;
-\item Title of redirect pages that target the current page; % TODO
-\item Entities marked with links in the text thus far.
-\end{itemize}
-
-When an unmarked entity is encountered, the list is consulted to find an item that contains it in its entirety; i.e.~all of its words, in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NE tag, the unmarked entity is tagged accordingly. Otherwise the sentence is discarded.
-
-%Both approaches are evaluated in the next chapter.
-
-%Szerintem ide kéne a DBpedia--CoNLL mapping
-We use DBpedia as 
-
-Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. 
-
-%\subsubsection{Tagging}
-
-%TODO: merge with Entity Identification
-%megtörtént
-
-\subsubsection{Exceptions}
-
-Proper entities that are not deemed NE under the ConLL scheme cause XXX little concern: they are either missing from DBpedia altogether, or we can map the classes they belong to to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that we need no adjustment XXX to our original method.
-
-Links to number and common noun pages are handled differently by the two approaches. The precision-oriented method treats them similarly to links to unknown entities and discards the sentences in which they occur. The recall-oriented approach tries to distinguish them from links to entities so that otherwise valid training sentences can be retained XXX. The method is as follows XXX.
-\begin{itemize}
-\item Common nouns are filtered by POS category: links that contain no proper nouns are ignored.
-\item Numbers behave more like proper nouns in that they can refer to entities, such as 737 to the Boeing 737. Therefore, links to number pages are filtered by the surface form of the page title.
-\end{itemize}
-
-Time expressions require special attention due to two reasons. First, Wikipedia has pages for years, months and concrete dates, therefore our algorithm might mistake them for entities. Second, as dates are made up of numbers and proper nouns, they can be mistaken for unmarked entities. To avoid these errors, we have create a set of regular expressions that recognize dates and time expressions and changed the recall-oriented method to not treat them as entities.
-
-from \cite{Nothman:09}: Exceptions are made for common titlecase words, e.g. I, Mr., June, and sentence-initial words. 
-
-% TODO: monetary, etc. units?
+To tackle personal titles, we extracted a list from the Wikipedia page \textit{List of titles}, which contains titles in many languages. We manually removed all titles that also function as given names, such as \textit{Regina}. If a link to a \texttt{PER} or \texttt{UNK} entity, or an unlinked entity starts with, or consists solely of a title in the list, we tag the words that make up the title as \texttt{O}.
+\item[Incidental capitalization] Various non-\texttt{NNP} words in English are capitalized: names of months, the \textit{I} pronoun and non-entity acronyms, such as \textit{RSVP}. While the latter two group is unlikely to appear in Wikipedia text, we assembled a list of these words and tag them as \texttt{O} unless they are part of the alias set.
+\end{description}
 
 \subsubsection{Filtering}
 
