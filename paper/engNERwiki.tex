@@ -332,11 +332,15 @@ Due to the quite good F-measure of training on the Hungarian Wikipedia train cor
 
 \section{Conclusions and Future Work}
 
+We have presented freely available NE-tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08} the process can be divided into four main steps: (1) classifying all articles into entity classes; (2) splitting Wikipedia articles into sentences; (3) labeling NEs according to link targets; and (4) selecting sentences for inclusion in the corpus. 
 
+Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of the Hungarian language, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
 
-az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
+Automatically generated, so called "silver standard corpora" can be very useful for improving NER in more ways. We showed that huge gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves overall F-measure. Moreover, our Hungarian corpus can serve as a training corpus to build NE-taggers for more general domains, than the standard newswire.  
 
-később majd kirakjuk a scripteket is, és akár újra és újra frissíthető lesz
+%az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
+
+%később majd kirakjuk a scripteket is, és akár újra és újra frissíthető lesz
 
 %\section*{Acknowledgments}
 
