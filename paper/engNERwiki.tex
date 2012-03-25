@@ -135,7 +135,7 @@ Our approach to entity identification relies on Wikipedia cross-references found
 
 Discovered entities are tagged with the CoNLL label assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we can not determine the type of the entity, and tag it as UNK. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
 
-There are several ways to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines. These are detailed in the next subsections.
+The following sub-sections describe how the method explained above can be improved to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines.
 
 \subsubsection{Non-entity Links}
 
