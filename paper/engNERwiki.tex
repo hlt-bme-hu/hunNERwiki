@@ -107,11 +107,11 @@ Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et a
 
 DBpedia is an open database that presents information about entities in Wikipedia in structured form. Each entity corresponds to a Wikipedia article. DBpedia provides various information about entities including type, properties, home pages, etc. Here we limit our interest to the type system.
 
-The types in DBpedia are organized into a class hierarchy, available as an OWL\footnote{http://www.w3.org/TR/owl-ref/} ontology. The ontology contains the 320 most frequent entity categories, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 6 largest sub-hierarchies (here named after their topmost classes): \texttt{Person}, \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
+The types in DBpedia are organized into a class hierarchy, available as an OWL\footnote{http://www.w3.org/TR/owl-ref/} ontology. The ontology contains the 320 most frequent entity categories, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 6 largest sub-hierarchies (here named after their topmost classes): \texttt{Person}, \texttt{Organisation}, \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
 
 The type of entities is extracted automatically from Wikipedia categories. However, the mapping between Wikipedia categories and classes in the DBpedia ontology is manually defined. This, together with the fact that the existence of the reference ontology prevents the proliferation of categories observable in Wikipedia \cite{Bizer:09}, ensures that type information in DBpedia can be considered gold quality.
 
-From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE categories PERSON, ORGANIZATION and LOCATION. The fourth category, MISCELLANEOUS is more elusive; according to the CoNLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
+From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE categories PER, ORG and LOC. The fourth category, MISC is more elusive; according to the CoNLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
 
 While the correspondence described above holds for most classes in the sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they are tagged as MISC. 
 
@@ -123,19 +123,19 @@ As of version 3.7, the DBpedia ontology allows multiple superclasses, making the
 
 %The full mapping can be found in Appendix~\ref{sec:appa}.
 
-Using the mapping described above, we compile a NE list that contains all entities in DBpedia tagged with the appropriate CoNLL category.
+Using the mapping described above, we compile a list that contains all entities in DBpedia tagged with the appropriate CoNLL category.
 
 We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a named entity tagset themselves. We leave the exploration of these possibilities for future work.
 
 \subsection{Named Entity Labeling}
 
-A NER corpus consists of sentences where NEs are accurately tagged. In order to automatically prepare such sentences, two tasks need to be performed: identifying the entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus.
+A NER corpus consists of sentences where NEs are accurately tagged. In order to automatically prepare such sentences, two tasks need to be performed: identifying entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus.
 
-Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity.
+Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular NE.
 
-Discovered entities are tagged with the CoNLL category assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity and tag it as \texttt{UNK}. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
+Discovered entities are tagged with the CoNLL label assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we can not determine the type of the entity, and tag it as UNK. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
 
-There are several ways to improve the method described above to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines. These are detailed in the next sub-sections.
+There are several ways to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines. These are detailed in the next subsections.
 
 \subsubsection{Non-entity Links}
 
@@ -300,9 +300,9 @@ Szeged NER with wikitags & Szeged NER & 95.38 & 94.92 & 95.15 \\
 \caption{\label{huresults} Hungarian results.}
 \end{table*}
 
-We evaluated our English corpus against (a) itself (divided into train and test sets); and (b) a manually annotated English corpus. Since the filtered English Wikipedia corpus -- containing only the sentences with NEs -- is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
+We evaluated our English corpus against (a) itself (divided into train and test sets); and (b) a manually annotated English corpus. Since the filtered English Wikipedia corpus, containing only the sentences with NEs, is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
 
-For the English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied that cross-checking between different corpora leads to F-measure decrease. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see Table \ref{enresults} for results). 
+For the English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied that cross-checking between different corpora decrease F-measure. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see Table \ref{enresults} for results). 
 
 However, Wikipedia-derived corpora can also be used for improving NER performance in other ways. First, like e.g.~\cite{Toral:06} we collected huge gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE-tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved overall F-measure on CoNLL test set.  
 
