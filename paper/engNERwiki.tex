@@ -116,37 +116,52 @@ The type of entities is extracted automatically from Wikipedia categories. Howev
 
 From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels XXX between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE categories PERSON, ORGANIZATION and LOCATION. The fourth category, MISCELLANEOUS is more elusive; according to the ConLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
 
-While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, ConLL does not recognize such entities. To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class--NE category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to the entity the category of the class that matches it most closely -- i.e.~the category of the entity's class, if it is in the list, or that of its closest ancestor. XXX!!! If no match is found, the entity is tagged with \texttt{O}. Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main sub-hierarchies, exceptions of the like XXX mentioned above and the various classes that belong to the MISC category according to the CoNLL annotation guideline.
+While the correspondence described above holds for most classes in the XXX sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, CoNLL does not recognize such entities.
 
-As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph (CITE). This introduces the problem of selecting the right superclass, and hence, CoNLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NE mapping for the ambiguous XXX class and adding it to the mapping file. The first approach, unfortunately, already fails to assign the correct CoNLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation; while ConLL's one refers it as a Location. Therefore, only the second, manual approach ensures correct tagging. XXX
+To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class--NE category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign the category of the class that matches it most closely to the entity. If no match is found, the entity is tagged with \texttt{O}. Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main hierarchies, exceptions like those mentioned above, and the various classes that belong to the MISC category according to the CoNLL annotation guideline.
+
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph (CITE). This introduces the problem of selecting the right superclass, and hence, CoNLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. There are two ways to tackle this problem. The first is to follow the DBpedia guidelines and only retain the first parent. The second method is manually deciding the right NE mapping for the ambiguous XXX class and adding it to the mapping file.
+
+The first approach, unfortunately, already fails to assign the correct ConLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefers Organisation, while ConLL's one refers it as a Location. Therefore, only the second, manual approach ensures correct tagging. XXX
 
 The full mapping can be found in Appendix~\ref{sec:appa}.
 
-\subsection{Extracting and Filtering Sentences}
+Using the mapping described above, we compile an entity list that contains all entities in DBpedia tagged with the appropriate XXX CoNLL NE category.
 
-A NER corpus consists of sentences that accurately tag NEs occurring in them. In order to automatically prepare such sentences, two tasks need to be performed: identifying the entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus. In this section, we describe how these steps were implemented, as well as the post-filtering we employed to dispose of correctly tagged, but unusable training sentences.
+\subsection{Named Entity Labeling}
 
+A NER corpus consists of sentences where NEs are accurately tagged. In order to automatically prepare such sentences, two tasks need to be performed: identifying the entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus.
 
-\subsubsection{Identifying the entities}
-% TODO: identification and tagging happens in parallel, else the recall oriented approach cannot be explained.
+Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe named entities. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity.
+
+Discovered entities are tagged with the CoNLL category assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity and tag it as \texttt{UNK}. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
+
+There are several 
+
+\subsubsection{Non-entity Links}
 
 Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular entity. However, there are exceptions to this rule. Disambiguation pages are used when the page title is ambiguous, and can refer to several entities. If a link points to a disambiguation page, we acknowledge the anchor text as an entity, but mark it unknown. A similar measure is taken if the link target XXX does not exist. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references.
 
-However, not all entities are marked with links. Authors may neglect to add XXX references to their text. Furthermore, in a Wikipedia article XXX, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. We devised XXX two methods to account for unmarked entities: one that emphasizes XXX precision, and the other, recall. XXX
+%Strictly speaking, our original assumption of equating Wikipedia articles with named entities is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of NER.
 
-% Or NPP
+\begin{description}
+\item[Common nouns] Links to common nouns are filtered by POS tags; if a link contains no \texttt{NNP}s, it is ignored.
+\item[Dates] Wikipedia has pages for years, months and concrete dates, therefore our algorithm might mistake them for entities. To prevent this problem, we compiled a list of calendar-related entities and added them to the main entity list tagged with the CoNLL category \texttt{O}.
+\item[Lowercase links] 
+\end{description}
 
-The precision-oriented approach seeks to minimize the risk of words getting incorrectly tagged XXX in the corpus. Names and their parts mostly start with capital letter, thus 
-%A short study of the CoNLL annotation guidelines reveals that the words in the entities of interest to us all start with capital letter. According to this method XXX, 
-all sentences that contain capitalized words, but are not part of the anchor text of a link, XXX were discarded. The rationale behind this approach is that the sheer size of Wikipedia guarantees that we end up with a sizeable corpus even with such a strict policy. XXX
+\subsubsection{Unmarked Entities}
+
+\subsubsection{Special Cases}
+
+Not all entities are marked with links. Authors may neglect to add references to their text. Furthermore, in a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. To account for such entities, 
 
 The recall-oriented method tries to associate unmarked entities with entities already identified on the same page. Only if the attempt fails is the sentence that contains the words discarded. 
-%Ez utóbbi biztosan jó mondat?
 This approach aims to generate more sentences with as little loss of precision as possible. 
 
 The algorithm maintains a list of entities already indentified on the page. The list includes:
 \begin{itemize}
-\item The page title; % if it is in DBpedia
+\item The page title, if we know its category;
 \item Title of redirect pages that target the current page; % TODO
 \item Entities marked with links in the text thus far.
 \end{itemize}
@@ -155,20 +170,16 @@ When an unmarked entity is encountered, the list is consulted to find an item th
 
 Only sentences for whose entities the correct category could be obtained from DBpedia are added to the corpus; those that contain unknown entities are discarded. 
 
-%\subsubsection{Tagging}
-
-%TODO: merge with Entity Identification
-%megtörtént
-
 \subsubsection{Exceptions}
 
-Strictly speaking, our original assumption of equating Wikipedia articles with NEs is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of CoNLL tagset or of NER in general. In this section, we describe the measures taken to avoid errors introduced by these false entities. We shall modify the two approaches -- precision and recall-oriented -- accordingly.
+%Strictly speaking, our original assumption of equating Wikipedia articles with NEs is not valid: many pages describe common nouns (Book, Aircraft), numbers (1, 42), currencies (Euro, Dollar) or other concepts that fall outside the scope of CoNLL tagset or of NER in general. In this section, we describe the measures taken to avoid errors introduced by these false entities. We shall modify the two approaches -- precision and recall-oriented -- accordingly.
 
 Proper names that are not deemed NE under the ConLL scheme
 %ilyeneknek nem szabad lenniük a MISC miatt
  cause XXX little concern: they are either missing from DBpedia altogether, or we can map the classes they belong to to the NER category \texttt{0} (not an entity). This "ontological filtering" ensures that we need no adjustment XXX to our original method.
 
 Links to number and common noun pages are handled differently by the two approaches. The precision-oriented method treats them similarly to links to unknown entities and discards the sentences in which they occur. The recall-oriented approach tries to distinguish them from links to entities so that otherwise valid sentences can be retained XXX. The method is as follows XXX.
+
 \begin{itemize}
 \item Common nouns are filtered by POS category: links that contain no proper nouns are ignored.
 \item Numbers behave more like proper nouns in that they can refer to entities, such as 737 to the Boeing 737. Therefore, links to number pages are filtered by the surface form of the page title.
@@ -188,12 +199,7 @@ Manual inspection has found two conditions that can be used to detect fragments.
 %Ezeket leméred, vagy mérjem én? Ha utóbbi, akkor melyikben kell mérni?
 % TODO: Last sentence to evaluation? But then this whole subsection is too short.
 
-% 4. Test sentence extraction?
-%   a. unknown links, no unlinked names
-%   b. might be good for quality evaluation / recursive tagging (next paper?)
-% 5. teaching the original DBpedia categories?
-
-In Wikipedia the nationalities (e.g.~American and Australian) links to the corresponding places (America and Australia, respectively). However, in CoNLL scheme these types of entities take parts of MISC category. XXX Postprocessing: list look-up (nationalities, adjective forms of person who live in the corresponding country); if the name is POS-tagged as adjective, then it is not a NE
+In Wikipedia the nationalities (e.g. American and Australian) links to the corresponding places (America and Australia, respectively). However, in CoNLL scheme these types of entities take parts of MISC category. XXX Postprocessing: list look-up (nationalities, adjective forms of person who live in the corresponding country); if the name is POS-tagged as adjective, then it is not a NE
 
 %nem biztos, hogy ide kell
 Link boundaries need to be adjusted, e.g.~to remove excess punctuation.
@@ -276,7 +282,7 @@ We used the CoNLL standard method for evaluation. According to this, an automati
 
 \subsection{Wikipedia data}
 
-Our automatic annotation process retain all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs take also part of the whole corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of NE density in our Wikipedia corpora and gold standard corpora (see table \ref{size}), we decided the sentences without NEs not to include in evaluation datasets. 
+Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our Wikipedia corpora and gold standard corpora (see table \ref{size}), we decided not to include the sentences without NEs in evaluation datasets. 
 
 \begin{table*}[ht]
 \begin{center}
@@ -323,7 +329,7 @@ Szeged NER with wikitags & Szeged NER & 95.38 & 94.92 & 95.15 \\
 \caption{\label{huresults} Hungarian results.}
 \end{table*}
 
-We evaluated our English corpus against (a) itself (divided into train and test sets); and (b) a manually annotated English corpus. Since the filtered English Wikipedia corpus -- containing only the sentences with NEs -- is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus is similar). It was divided into train and test sets (90\%-10\%). 
+We evaluated our English corpus against (a) itself (divided into train and test sets); and (b) a manually annotated English corpus. Since the filtered English Wikipedia corpus -- containing only the sentences with NEs -- is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
 
 For the English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied (e.g. XXX) that cross-checking between different corpora does not lead to F-measure improvement. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see table \ref{enresults} and \ref{huresults} for results). 
 
@@ -447,6 +453,7 @@ Erik F. Tjong Kim Sang.
 \newblock Introduction to the CoNLL-2002 shared task: Language-independent named entity recognition.
 \newblock In: {\em Proceedings of the 6th Conference on Natural Language Learning}, pages 1--4, Taipei, Taiwan.
 
+<<<<<<< HEAD
 \bibitem[\protect\citename{Tjong Kim Sang and De Meulder}2003]{Tjong:03}
 Erik F. Tjong Kim Sang and Fien De Meulder.
 \newblock 2003.
@@ -455,6 +462,10 @@ Erik F. Tjong Kim Sang and Fien De Meulder.
 
 \bibitem[\protect\citename{Toral and Mu\~noz}2006]{Toral:06}
 A. Toral and R. Mu\~noz.
+=======
+\bibitem[\protect\citename{Kiss and Strunk}2006]{Kiss:06}
+Tibor Kiss, Jan Strunk.
+>>>>>>> de68a5da80dd1ccc213b9ac012d988cb56fee19a
 \newblock 2006.
 \newblock A proposal to automatically build and maintain gazetteers for Named Entity Recognition by using Wikipedia.
 \newblock In: {\em EACL 2006}.
@@ -480,7 +491,6 @@ H. Zaragoza and J. Atserias and M. Ciaramita and G. Attardi.
 
 \end{thebibliography}
 
-\pagebreak
 % HEEEEELP!
 \appendix
 \section{DBpedia to ConLL Mapping}
