@@ -246,14 +246,11 @@ Inflections of acronyms and foreign names ending with non-pronounced vowel have 
 %most van: 102 millió szó a disambiguation pages-zel együtt
 %az angol: 1,7 milliárd
 
-\section{Corpus Description}
+\section{Data Description}
 
-% TODO: pls írd meg az első pár mondatot és nevezd át a sectiont! 
+The corpora are available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from ...\footnote{To be filled in in the camera-ready version.}.
 
-The corpora are available in the tab separated format used by ConLL (XXX, CITE). In this format, one line contains one word, its linguistic features and the named entity tags. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word, its part-of-speech and chunk tags. Two named entity tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the ConLL named entity tag. While the named entity tags can be considered "silver", the linguistic features are provided on a "best-effort" basis.
-
-The corpus is available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from ...\footnote{To be filled in in the camera-ready version.}.
-
+The corpora are available in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its part-of-speech tag. Two NE tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
 
 \section{Evaluation}
 
@@ -275,9 +272,7 @@ To evaluate our corpora we used a maximum entropy NE-tagger \cite{Varga:07}, whi
 \item morphological information.
 \end{itemize}
 
-
-
-We used the CoNLL standard method for evaluation. According to this, an automatic labeling is correct if it gives the same start and end position, and the same NE class, as the gold standard. Based on this, precision and recall can be calculated, and the F-measure, as usual, the harmonic mean of these two values.  
+We used the CoNLL standard method for evaluation. According to this, an automatic labeling is correct if it gives the same start and end position, and the same NE class as the gold standard. Based on this, precision and recall can be calculated, and the F-measure, as usual, the harmonic mean of these two values.  
 
 \subsection{Wikipedia data}
 
@@ -340,6 +335,10 @@ Although two human-annotated NER corpora exist for Hungarian, we chose the Szege
 
 The strong correlation between capitalization and named entities makes recognition of entities in text relatively simple: a word is part of an entity if it is capitalized.
 
+training corpora in absence of gold standard datasets
+
+training sets for domains differing from newswire
+
 \section{Conclusions and Future Work}
 
 az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
@@ -350,6 +349,7 @@ később majd kirakjuk a scripteket is, és akár újra és újra frissíthető 
 
 %The authors are grateful to Attila Zséder and Gábor Recski for their respective work on Wikipedia parsing and {\tt hunner}.
 % + CE(A?)SAR
+
 
 \begin{thebibliography}{}
 
