@@ -55,13 +55,13 @@ One approach to reduce the manual intervention required in language resource pro
 
 In this paper we present a kind of combination of the approaches mentioned above. We built freely available NE tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. %Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE-taggers. 
 
-The paper is structured as follows. In section~\ref{sec:related} we give an overview of related work. Our method is introduced in section~\ref{sec:create}, and showed how it is applied to Hungarian in section~\ref{sec:hun}. The corpus format is described in section~\ref{sec:data}. Section~\ref{sec:eval} contains evaluations and section~\ref{sec:conclusion} our conclusion.
+The paper is structured as follows. In Section~\ref{sec:related} we give an overview of related work. Our method is introduced in Section~\ref{sec:create}, and showed how it is applied to Hungarian in Section~\ref{sec:hun}. The corpus format is described in Section~\ref{sec:data}. Section~\ref{sec:eval} contains evaluations and Section~\ref{sec:conclusion} our conclusion.
 
 \section{Wikipedia and NER}
 \label{sec:related}
 % Wikify!
 
-Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers\footnote{http://en.wikipedia.org/wiki/Wikipedia}. It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English, and 212,120 are Hungarian. XXX %kell ez ide?
+Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers\footnote{http://en.wikipedia.org/wiki/Wikipedia}. It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English, and 212,120 are Hungarian. 
 
 Wikipedia has been applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, and question answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
 
@@ -107,19 +107,21 @@ Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et a
 
 DBpedia is an open database that presents information about entities in Wikipedia in structured form. Each entity corresponds to a Wikipedia article. DBpedia provides various information about entities including type, properties, home pages, etc. Here we limit our interest to the type system.
 
-The types in DBpedia are organized into a class hierarchy, available as an OWL\footnote{http://www.w3.org/TR/owl-ref/} ontology. The ontology contains the 320 most frequent entity categories, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 5 largest sub-hierarchies (here named after their topmost classes): \texttt{Agent} (which is further divided into \texttt{Person} and \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
+The types in DBpedia are organized into a class hierarchy, available as an OWL\footnote{http://www.w3.org/TR/owl-ref/} ontology. The ontology contains the 320 most frequent entity categories, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 6 largest sub-hierarchies (here named after their topmost classes): \texttt{Person}, \texttt{Organisation}), \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
 
 The type of entities is extracted automatically from Wikipedia categories. However, the mapping between Wikipedia categories and classes in the DBpedia ontology is manually defined. This, together with the fact that the existence of the reference ontology prevents the proliferation of categories observable in Wikipedia \cite{Bizer:09}, ensures that type information in DBpedia can be considered gold quality.
 
-From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE categories PERSON, ORGANIZATION and LOCATION. The fourth category, MISCELLANEOUS is more elusive; according to the ConLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
+From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE categories PERSON, ORGANIZATION and LOCATION. The fourth category, MISCELLANEOUS is more elusive; according to the CoNLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
 
-While the correspondence described above holds for most classes in the sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they are tagged as MISC. Similarly, the class \texttt{SportsTeamSeason} is under \texttt{Event}, by which account it would be classified as MISC; however, CoNLL does not recognize such entities.
+While the correspondence described above holds for most classes in the sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they are tagged as MISC. 
 
 To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class--NE category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to it the category of the class that matches it most closely. If no match is found, the entity is tagged with \texttt{O}. Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main hierarchies, exceptions like those mentioned above, and the various classes that belong to the MISC category according to the CoNLL annotation guideline.
 
-As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. This introduces the problem of selecting the right superclass, and hence, CoNLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}.
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. This introduces the problem of selecting the right superclass, and hence, CoNLL mapping for classes with more than one parent. In version 3.7, the only such class is \textit{Library}, which can be traced back to both \textit{Place} and \textit{Organisation}. Hence, we picked the right NE mapping manually, and added it to the mapping file.
 
-DBpedia guidelines suggest that only the first parent is retained. Unfortunately, this approach already fails to assign the correct ConLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefer \texttt{Organisation}; ConLL's prefer LOCATION. Hence, we picked the right NE mapping manually and added it to the mapping file.
+
+
+%DBpedia guidelines suggest that only the first parent is retained. Unfortunately, this approach already fails to assign the correct CoNLL NE tag to our only example. The reason behind this failure is that multiple parents in an ontology show an inherent ambiguity in the class in question: it is entirely natural to think of a library as a location as well as a public organization. DBpedia's guidelines prefer \texttt{Organisation}; CoNLL's prefer LOCATION. Hence, we picked the right NE mapping manually and added it to the mapping file.
 
 %The full mapping can be found in Appendix~\ref{sec:appa}.
 
@@ -192,7 +194,7 @@ Certain types of sentences were filtered from the corpus. As mentioned above, se
 \section{Creating the Hungarian Corpus}
 \label{sec:hun}
 
-The procedure described in the previous section was used to generate the Hungarian corpus, as well. However, linguistic diversity pose several problems even in the NER task. In this section we describe the differences between the two languages related to labeling NEs, and the changes they prompted in the algorithm.
+The procedure described in the previous section was used to generate the Hungarian corpus, as well. However, linguistic diversity pose several problems. In this section we describe the differences between the two languages related to labeling NEs, and the changes they prompted in the method.
 
 \subsection{Parsing the Hungarian Wikipedia}
 
@@ -223,13 +225,9 @@ The Szeged NER guideline relies heavily on the rules of capitalization to decide
 \item names of special events and wars.
 \end{itemize}
 
-There is another special case in Hungarian: opposite to English, the number of compund words is quite large and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. 
+There is another special case in Hungarian: opposite to English, the number of compund words is quite large and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. The solution of this problem is not obvious, and needs more investigation.
 
-Inflections of acronyms and foreign names ending with non-pronounced vowel have similar surface forms to the aforementioned compounds, e.g.~\textit{MTI-t} ['MTI'+ACC], \textit{Shakespeare-rel} ['with Shakespeare']. It is important to distinguish these types of hyphenated NEs, because inflections do not change NE labeling in contrast to some type of compounds. Due to the surface similarity of these phenomena the solution of this problem is not obvious, and needs more investigation. 
-
-% Ezt hová?
-%most van: 102 millió szó a disambiguation pages-zel együtt
-%az angol: 1,7 milliárd
+%Inflections of acronyms and foreign names ending with non-pronounced vowel have similar surface forms to the aforementioned compounds, e.g.~\textit{MTI-t} ['MTI'+ACC], \textit{Shakespeare-rel} ['with Shakespeare']. It is important to distinguish these types of hyphenated NEs, because inflections do not change NE labeling in contrast to some type of compounds. Due to the surface similarity of these phenomena the solution of this problem is not obvious, and needs more investigation. 
 
 \section{Data Description}
 \label{sec:data}
@@ -251,27 +249,26 @@ NE density & 5.23\% & 14.59\% & 16.76\% & 2.38\% & 12.99\%  & 11.46\%\\
 \caption{\label{size} Corpus size and NE-density.}
 \end{table*}
 
-
 \section{Evaluation}
 \label{sec:eval}
 
 Having the obvious advantages, an automatically generated corpus can not serve as a gold standard dataset. Then what can we do with these so called "silver standard corpora" (SSC)? They can be very useful for improving NER in more ways: (a) for less resourced languages, they can serve as training corpora in absence of gold standard datasets; (b) they can serve as (supplementary or independent) training sets for domains differing from newswire; (c) they can be sources of huge entity lists, and (d) feature extraction. 
 
-To evaluate our corpora we used a maximum entropy NE-tagger \cite{Varga:07}, which was originally developed for labeling NEs in Hungarian texts, but it can be tuned for different languages, as well. Corpus-specific features (e.g.~NP chunks, Wikipedia links) were removed to get better comparability, so the feature set was as follows:
+To evaluate our corpora we used a maximum entropy NE-tagger \cite{Varga:07}, which was originally developed for labeling NEs in Hungarian texts, but it can be tuned for different languages, as well. Corpus-specific features (e.g.~NP chunks, Wikipedia links) were removed to get better comparability, so the feature set consists of gazetteer features; sentence start and end position; Boolean-valued orthographic properties of the word form; string-valued surface properties of the word form; and morphological information.
 
-\begin{itemize}
-\item gazetteer features;
-\item sentence start and end position;
-\item Boolean-valued orthographic properties of the word form;
-\item string-valued surface properties of the word form;
-\item morphological information.
-\end{itemize}
+%\begin{itemize}
+%\item gazetteer features;
+%\item sentence start and end position;
+%\item Boolean-valued orthographic properties of the word form;
+%\item string-valued surface properties of the word form;
+%\item morphological information.
+%\end{itemize}
 
 We used the CoNLL standard method for evaluation. According to this, an automatic labeling is correct if it gives the same start and end position, and the same NE class as the gold standard. Based on this, precision and recall can be calculated, and the F-measure, as usual, the harmonic mean of these two values.  
 
 \subsection{Wikipedia data}
 
-Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our Wikipedia corpora and gold standard corpora (see table \ref{size}), we decided not to include the sentences without NEs in evaluation datasets. 
+Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our Wikipedia corpora and gold standard corpora (see Table \ref{size}), we decided not to include the sentences without NEs in evaluation datasets. 
 
 \subsection{Experiments and results}
 
@@ -307,11 +304,11 @@ Szeged NER with wikitags & Szeged NER & 95.38 & 94.92 & 95.15 \\
 
 We evaluated our English corpus against (a) itself (divided into train and test sets); and (b) a manually annotated English corpus. Since the filtered English Wikipedia corpus -- containing only the sentences with NEs -- is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
 
-For the English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied that cross-checking between different corpora leads to F-measure decrease. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see table \ref{enresults} for results). 
+For the English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied that cross-checking between different corpora leads to F-measure decrease. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see Table \ref{enresults} for results). 
 
 However, Wikipedia-derived corpora can also be used for improving NER performance in other ways. First, like e.g.~\cite{Toral:06} we collected huge gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE-tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved overall F-measure on CoNLL test set.  
 
-Since in the subtask of NE labeling for Hungarian we followed the Szeged NER corpus annotation guidelines, it is obvious to perform the experiments on this dataset, as well. Hungarian results are quite similar to the English ones (see table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher, than ones for English. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency and diversity of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was highly accurately annotated with an inter-annotator agreement over 99\%.  
+Since in the subtask of NE labeling for Hungarian we followed the Szeged NER corpus annotation guidelines, it is obvious to perform the experiments on this dataset, as well. Hungarian results are quite similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher, than ones for English. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency and diversity of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was highly accurately annotated with an inter-annotator agreement over 99\%.  
 
 Due to the quite good F-measure of training on the Hungarian Wikipedia train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE-taggers for domains falling out of newswire. 
 
@@ -479,7 +476,7 @@ H. Zaragoza and J. Atserias and M. Ciaramita and G. Attardi.
 \end{thebibliography}
 
 %\appendix
-%\section{DBpedia to ConLL Mapping}
+%\section{DBpedia to CoNLL Mapping}
 %\label{sec:appa}
 %
 %\begin{table*}[ht]
