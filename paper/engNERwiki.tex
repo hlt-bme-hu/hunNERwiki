@@ -250,14 +250,22 @@ The corpora are available under the Creative Commons Attribution-Sharealike 3.0 
 
 The corpora are available in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its part-of-speech tag. Two NE tags are included with each word: one is the most specific DBpedia category it belongs to, if any; the other is the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
 
+\begin{table*}[ht]
+\begin{center}
+\begin{tabular}{lllllll}
+\hline  & \bf enwiki & \bf enwiki filtered & \bf CoNLL & \bf huwiki & \bf huwiki filtered  & \bf Szeged NER \\ \hline
+token & 60,520,819 & 21,718,854 & 302,811 &  19,108,027 & 3,512,249  & 225,963\\
+NE & 3,169,863 & 3,169,863 & 50,758 & 456,281 & 456,281  & 25,896\\
+NE density & 5.23\% & 14.59\% & 16.76\% & 2.38\% & 12.99\%  & 11.46\%\\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{size} Corpus size and NE-density.}
+\end{table*}
+
+
 \section{Evaluation}
 \label{sec:eval}
-
-% Corpus sizes, performance, tagging conventions
-% Hun -> not utf-8, loss of precision?
-%measuring Wikipedia's inconsistency using n-gram tag variation (\cite{Nothman:09})
-%ez jó mérőszám lehet a gold standard korpuszok összehasonlítására
-%használhatjuk fordítva is: ha egy adott nucleus ugyanolyan n-gram környezetben nagyon sokszor van X-ként taggelve, és kevésszer Y-ként, akkor az Y-okat is átcsinálhatnánk X-szé
 
 Having the obvious advantages, an automatically generated corpus can not serve as a gold standard dataset. Then what can we do with these so called "silver standard corpora" (SSC)? They can be very useful for improving NER in more ways: (a) for less resourced languages, they can serve as training corpora in absence of gold standard datasets; (b) they can serve as (supplementary or independent) training sets for domains differing from newswire; (c) they can be sources of huge entity lists, and (d) feature extraction. 
 
@@ -276,19 +284,6 @@ We used the CoNLL standard method for evaluation. According to this, an automati
 \subsection{Wikipedia data}
 
 Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our Wikipedia corpora and gold standard corpora (see table \ref{size}), we decided not to include the sentences without NEs in evaluation datasets. 
-
-\begin{table*}[ht]
-\begin{center}
-\begin{tabular}{lllllll}
-\hline  & \bf enwiki & \bf enwiki filtered & \bf CoNLL & \bf huwiki & \bf huwiki filtered  & \bf Szeged NER \\ \hline
-token & 60,520,819 & 21,718,854 & 302,811 &  19,108,027 & 3,512,249  & 225,963\\
-NE & 3,169,863 & 3,169,863 & 50,758 & 456,281 & 456,281  & 25,896\\
-NE density & 5.23\% & 14.59\% & 16.76\% & 2.38\% & 12.99\%  & 11.46\%\\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{size} Corpus size and NE-density.}
-\end{table*}
 
 \subsection{Experiments and results}
 
