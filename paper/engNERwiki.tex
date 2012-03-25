@@ -177,8 +177,8 @@ Our solution is similar to Nothman's \shortcite{Nothman:08}. Instead of a trie, 
 There are some special cases to the algorithm described thus far. These are detailed below.
 
 \begin{description}
-\item[Derived words] According to the CoNLL guidelines, word derived from name entities must be tagged as \texttt{MISC}. We complied with this rule by tagging each entity whose head is not a noun, as well as when the link's anchor text is not contained in the entity's name, as \texttt{MISC}. The most prominent example for such entities are ethnic groups, which can be linked to their home country, a \texttt{LOC}; e.g. \textit{Turkish} to \textit{Turkey}. Our solution assigns the correct tag to these entities.
-\item[First word in a sentence] As first words are always capitalized, labelling them is difficult if they are unlinked and not contained in the entity alias set. We base the decision on the POS tag of the first word: if it is \texttt{NNP}, we tag it as \texttt{UNK}; otherwise, \texttt{O}.
+\item[Derived words] According to the CoNLL guidelines, word derived from NEs are tagged as \texttt{MISC}. We complied with this rule by tagging each entity whose head is not a noun, as well as when the link's anchor text is not contained in the entity's name, as \texttt{MISC}. The most prominent example for such entities are nationalities, which can be linked to their home country, a \texttt{LOC}; e.g.~\textit{Turkish} to \textit{Turkey}. Our solution assigns the correct tag to these entities.
+\item[First word in a sentence] As first words are always capitalized, labeling them is difficult if they are unlinked and not contained in the entity alias set. We base the decision on the POS tag of the first word: if it is NNP, we tag it as UNK; otherwise, O.
 \item[Reference cleansing] Page titles and anchor texts may contain more than just the entity name. Personal titles are part of the entity name in Wikipedia, but not in CoNLL, and punctuation marks around the entity may become part of the link by mistake. We tag all punctuation marks after the entity name as \texttt{O}.
 
 To tackle personal titles, we extracted a list from the Wikipedia page \textit{List of titles}, which contains titles in many languages. We manually removed all titles that also function as given names, such as \textit{Regina}. If a link to a \texttt{PER} or \texttt{UNK} entity, or an unlinked entity starts with, or consists solely of a title in the list, we tag the words that make up the title as \texttt{O}.
@@ -187,12 +187,27 @@ To tackle personal titles, we extracted a list from the Wikipedia page \textit{L
 
 \subsubsection{Sentence Filtering}
 
-Certain types of sentences were filtered from the corpus. As mentioned above, sentences with words tagged as \texttt{UNK} are discarded. Furthermore, there are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is known to be noisy and fragmented. As a compromise solution, we included these fragments in the corpus, but labelled them as "low quality", so that users of the corpus can decide whether they want to use them or not. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs.
+As mentioned above, sentences with words tagged as \texttt{UNK} are discarded. Furthermore, there are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is known to be noisy and fragmented. As a compromise solution, we included these fragments in the corpus, but labelled them as "low quality", so that users of the corpus can decide whether they want to use them or not. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs.
 
 \section{Creating the Hungarian Corpus}
 \label{sec:hun}
 
 The procedure described in the previous section was used to generate the Hungarian corpus, as well. However, linguistic diversity pose several problems. In this section we describe the differences between the two languages related to labeling NEs, and the changes they prompted in the method.
+
+\begin{table*}[ht]
+\begin{center}
+\begin{tabular}{lllll}
+\hline \bf train & \bf test & \bf precision & \bf recall & \bf F-measure \\ \hline
+Szeged NER & Szeged NER & 94.50 & 94.35 & 94.43 \\
+huwiki & huwiki & 90.64 & 88.91 &  89.76 \\
+huwiki & Szeged NER & 63.08 & 70.46 & 66.57 \\
+Szeged NER with wikilists & Szeged NER & 95.48 & 95.48 & 95.48 \\
+Szeged NER with wikitags & Szeged NER & 95.38 & 94.92 & 95.15 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{huresults} Hungarian results.}
+\end{table*}
 
 \subsection{Parsing the Hungarian Wikipedia}
 
@@ -210,7 +225,7 @@ First, in order to identify which pages denote entities in the Hungarian Wikiped
 
 Second, entities without a page in the English Wikipedia are absent from the entity list. This gives rise to two potential problems. One is that compared to English, the list is relatively shorter: the entity/page ratio is 12.12\%, as opposed to the 37.66\% of the English Wikipedia. The other, since mostly Hungarian people, places and organizations are missing, a NER tagger that takes the surface forms of words into account might be mislead as to the language model of entity names. To overcome these problems, the list has to be extended with Hungarian entity pages that do not have a corresponding English page. We leave this for future work.
 
-To annotate our corpus with NE-tags, we chose to follow the annotation guidelines of the largest human-annotated NER corpus for Hungarian, Szeged NER corpus \cite{Szarvas:06}. It is quite similar to the CoNLL standards: it contains business newswire texts, it comprises ca.~200,000 tokens, and the text has been annotated with NE class labels in line with the CoNLL annotation scheme. However, the convention of what constitutes a NE is slightly different for Hungarian. 
+To annotate our corpus with NE tags, we chose to follow the annotation guidelines of the largest human-annotated NER corpus for Hungarian, Szeged NER corpus \cite{Szarvas:06}. It is similar to CoNLL standards: contains newswire texts, comprises ca.~200,000 tokens, and is annotated with NE class labels in line with the CoNLL annotation scheme. However, the convention of what constitutes a NE is slightly different for Hungarian. 
 
 \subsubsection{Special cases}
 
@@ -247,10 +262,25 @@ NE density & 5.23\% & 14.59\% & 16.76\% & 2.38\% & 12.99\%  & 11.46\%\\
 \caption{\label{size} Corpus size and NE-density.}
 \end{table*}
 
+\begin{table*}[ht]
+\begin{center}
+\begin{tabular}{lllll}
+\hline \bf train & \bf test & \bf precision & \bf recall & \bf F-measure \\ \hline
+CoNLL & CoNLL & 85.13 & 85.13 & 85.13 \\
+enwiki & enwiki & 72.46 & 73.33 &  72.89 \\
+enwiki & CoNLL & 56.55 & 49.77 & 52.94 \\
+CoNLL with wikilists & CoNLL & 86.33 & 86.35 & 86.34 \\
+CoNLL with wikitags & CoNLL & 85.88 & 85.94 & 85.91 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{enresults} English results.}
+\end{table*}
+
 \section{Evaluation}
 \label{sec:eval}
 
-Having the obvious advantages, an automatically generated corpus can not serve as a gold standard dataset. Then what can we do with these so called "silver standard corpora" (SSC)? They can be very useful for improving NER in more ways: (a) for less resourced languages, they can serve as training corpora in absence of gold standard datasets; (b) they can serve as (supplementary or independent) training sets for domains differing from newswire; (c) they can be sources of huge entity lists, and (d) feature extraction. 
+Having the obvious advantages, an automatically generated corpus can not serve as a gold standard dataset. Then what can we do with silver standard corpora? They can be very useful for improving NER in more ways: (a) for less resourced languages, they can serve as training corpora in absence of gold standard datasets; (b) they can serve as (supplementary or independent) training sets for domains differing from newswire; (c) they can be sources of huge entity lists, and (d) feature extraction. 
 
 To evaluate our corpora we used a maximum entropy NE-tagger \cite{Varga:07}, which was originally developed for labeling NEs in Hungarian texts, but it can be tuned for different languages, as well. Corpus-specific features (e.g.~NP chunks, Wikipedia links) were removed to get better comparability, so the feature set consists of gazetteer features; sentence start and end position; Boolean-valued orthographic properties of the word form; string-valued surface properties of the word form; and morphological information.
 
@@ -270,54 +300,24 @@ Our automatic annotation process retains all of the Wikipedia sentences, which r
 
 \subsection{Experiments and results}
 
-\begin{table*}[ht]
-\begin{center}
-\begin{tabular}{lllll}
-\hline \bf train & \bf test & \bf precision & \bf recall & \bf F-measure \\ \hline
-CoNLL & CoNLL & 85.13 & 85.13 & 85.13 \\
-enwiki & enwiki & 72.46 & 73.33 &  72.89 \\
-enwiki & CoNLL & 56.55 & 49.77 & 52.94 \\
-CoNLL with wikilists & CoNLL & 86.33 & 86.35 & 86.34 \\
-CoNLL with wikitags & CoNLL & 85.88 & 85.94 & 85.91 \\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{enresults} English results.}
-\end{table*}
+The English train corpus was evaluated against itself and a manually annotated English corpus. Since the filtered English Wikipedia corpus, containing only the sentences with NEs, is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
 
-\begin{table*}[ht]
-\begin{center}
-\begin{tabular}{lllll}
-\hline \bf train & \bf test & \bf precision & \bf recall & \bf F-measure \\ \hline
-Szeged NER & Szeged NER & 94.50 & 94.35 & 94.43 \\
-huwiki & huwiki & 90.64 & 88.91 &  89.76 \\
-huwiki & Szeged NER & 63.08 & 70.46 & 66.57 \\
-Szeged NER with wikilists & Szeged NER & 95.48 & 95.48 & 95.48 \\
-Szeged NER with wikitags & Szeged NER & 95.38 & 94.92 & 95.15 \\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{huresults} Hungarian results.}
-\end{table*}
-
-We evaluated our English corpus against (a) itself (divided into train and test sets); and (b) a manually annotated English corpus. Since the filtered English Wikipedia corpus, containing only the sentences with NEs, is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
-
-For the English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied that cross-checking between different corpora decrease F-measure. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see Table \ref{enresults} for results). 
+For English cross-corpus evaluation the CoNLL-2003 dataset was chosen, mostly because of the similarity in tagset and format. It is well-studied that cross-checking between different corpora decrease F-measure. Stylistic and domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs much better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own training set (see Table \ref{enresults} for results). 
 
 However, Wikipedia-derived corpora can also be used for improving NER performance in other ways. First, like e.g.~\cite{Toral:06} we collected huge gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE-tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved overall F-measure on CoNLL test set.  
 
-Since in the subtask of NE labeling for Hungarian we followed the Szeged NER corpus annotation guidelines, it is obvious to perform the experiments on this dataset, as well. Hungarian results are quite similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher, than ones for English. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency and diversity of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was highly accurately annotated with an inter-annotator agreement over 99\%.  
+Since in NE labeling for Hungarian we followed the Szeged NER corpus annotation guidelines, it is obvious to perform the experiments on this dataset, as well. Hungarian results are quite similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher, than ones for English. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency and diversity of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was highly accurately annotated with an inter-annotator agreement over 99\%.  
 
 Due to the quite good F-measure of training on the Hungarian Wikipedia train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE-taggers for domains falling out of newswire. 
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08}, the process can be divided into four main steps: (1) classifying all articles into entity classes; (2) splitting Wikipedia articles into sentences; (3) labeling NEs according to link targets; and (4) selecting sentences for inclusion in the corpus. 
+We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08}, the process can be divided into four main steps:  classifying all articles into entity classes; splitting Wikipedia articles into sentences; labeling NEs according to link targets; and selecting sentences for inclusion in the corpus. 
 
 Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of the Hungarian language, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
 
-Automatically generated, so called "silver standard corpora" can be very useful for improving NER in more ways. We showed that huge gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves overall F-measure. Moreover, our Hungarian corpus can serve as a training corpus to build NE taggers for more general domains, than the classic newswire.  
+Automatically generated, silver standard corpora can be very useful for improving NER in more ways. We showed that huge gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves overall F-measure. Moreover, our Hungarian corpus can serve as a training corpus to build NE taggers for more general domains, than the classic newswire.  
 
 %az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
 
