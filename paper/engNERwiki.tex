@@ -19,16 +19,16 @@
 
 \title{Automatically generated NE tagged corpora for English and Hungarian}
 
-%\author{Dávid Márk Nemeskey \\
-%  Research Institute for Computer Science and Automation \\
-%  Hungarian Academy of Sciences \\
-%  H-1111 Lágymányosi út 11, Budapest \\
-%  {\tt nemeskey.david@sztaki.hu} \\\And
-%  Eszter Simon \\
-%  Research Institute for Linguistics \\
-%  Hungarian Academy of Sciences \\
-%  H-1068 Benczúr utca 33, Budapest \\
-%  {\tt eszter@nytud.hu} \\}
+\author{Dávid Márk Nemeskey \\
+  Research Institute for \\ Computer Science and Automation \\
+  Hungarian Academy of Sciences \\
+  H-1111 Lágymányosi út 11, Budapest \\
+  {\tt nemeskey.david@sztaki.hu} \\\And
+  Eszter Simon \\
+  Research Institute for Linguistics \\
+  Hungarian Academy of Sciences \\
+  H-1068 Benczúr utca 33, Budapest \\
+  {\tt simon.eszter@nytud.mta.hu} \\}
 
 \date{}
 
@@ -36,7 +36,7 @@
 \maketitle
 \begin{abstract}
 
-Supervised Named Entity Recogizers require large amount of annotated texts. However, manual annotation is a highly costly procedure, thus reducing the annotation cost is essential. We present a fully automatic method to build NE annotated corpora from Wikipedia. In contrast to recent work, we apply a new method, which maps the DBpedia classes into CoNLL NE types. Since our method is mainly language-independent, we used it for generating corpora for English and Hungarian, as well. The corpora are freely available. 
+Supervised Named Entity Recognizers require large amount of annotated texts. However, manual annotation is a highly costly procedure, thus reducing the annotation cost is essential. We present a fully automatic method to build NE annotated corpora from Wikipedia. In contrast to recent work, we apply a new method, which maps the DBpedia classes into CoNLL NE types. Since our method is mainly language-independent, we used it for generating corpora for English and Hungarian, as well. The corpora are freely available. 
 
 \end{abstract}
 
@@ -46,16 +46,18 @@ Supervised Named Entity Recogizers require large amount of annotated texts. Howe
 Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. The NER task was introduced with the 6th Message Understanding Conference (MUC) in 1995 \cite{Grishman:96}. In MUC shared tasks the NER consists of three subtasks: entity names, temporal and number expressions. Although there is a general agreement in the NER community about the inclusion of temporal expressions and some numerical expressions, the most studied types are names of persons, locations and organizations. The fourth type, called "miscellaneous'', was introduced in the CoNLL NER tasks in 2002 \cite{Tjong:02} and 2003 \cite{Tjong:03}, and includes proper names falling outside the three classic types. Since then, MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
 
 The standard datasets are highly domain-specific (mostly newswire), and are restricted in size, as well. 
-%Thus they are not large enough to train and test robust NE-taggers on them. Moreover, 
+%Thus they are not large enough to train and test robust NE taggers on them. Moreover, 
 Merging these datasets to get a bigger training corpus faces NLP researchers with the problem of combining different tagsets and annotation schemes. However, to build a robust supervised machine learning system for NER, large enough, accurately annotated corpora are essential. Annotating large amount of texts with linguistic information is a time-consuming, highly skilled and delicate work. Mainly due to this fact, one of the main challenges in NLP is reducing the annotation cost. 
 
-One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. Another approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as Google's Web 1T 5-gram collection or DBpedia.  
+One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. Another approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as Google Web 1T 5-gram collection or DBpedia.  
 
 %The first approach is the application of unsupervised and semi-supervised learning techniques. Researchers following this approach try to not only reduce, but avoid the annotation cost with minimizing the need for annotated data. These methods can be applied to any language or genre for which adequate raw text resources are available. 
 
-In this paper we present a kind of combination of the approaches mentioned above. We built freely available NE tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. %Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE-taggers. 
+In this paper we present a kind of combination of these approaches, namely automatically generating resources and using collaboratively constructed resources. We built freely available NE tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. %Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE taggers. 
 
-The paper is structured as follows. In Section~\ref{sec:related} we give an overview of related work. Our method is introduced in Section~\ref{sec:create}, and showed how it is applied to Hungarian in Section~\ref{sec:hun}. The corpus format is described in Section~\ref{sec:data}. Section~\ref{sec:eval} contains evaluations and Section~\ref{sec:conclusion} our conclusion.
+The paper is structured as follows. In Section~\ref{sec:related} we give an overview of related work. Section \ref{sec:create} contains a description of our method, while Section \ref{sec:hun} shows how it is applied to Hungarian. The corpus format is described in Section~\ref{sec:data}. In Section \ref{sec:eval} we present experiments and results on the newly generated datasets. Section \ref{sec:conclusion} concludes the paper with a summary. 
+
+%Our method is introduced in Section~\ref{sec:create}, and showed how it is applied to Hungarian in Section~\ref{sec:hun}. The corpus format is described in Section~\ref{sec:data}. Section~\ref{sec:eval} contains evaluations and Section~\ref{sec:conclusion} our conclusion.
 
 \section{Wikipedia and NER}
 \label{sec:related}
@@ -67,21 +69,21 @@ Wikipedia has been applied for several NLP tasks, e.g.~word sense disambiguation
 
 Wikipedia is recognized as one of the largest available collection of entities, and also as a resource that can improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations (e.g.~Toral and Mu\~noz \shortcite{Toral:06}). Creating dictionaries of entities is also a common step of NE disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al.~\shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
 
-The knowledge in Wikipedia may be incorporated as features in NER learning, e.g.~Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE-tagger. 
+The knowledge in Wikipedia may be incorporated as features in NER learning, e.g.~Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE tagger. 
 
-A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE-tags. They used the inherent category structure of Wikipedia to determine the NE-type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE annotated text in English. They transformed the Wikipedia links into NE-annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
+A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE tags. They used the inherent category structure of Wikipedia to determine the NE type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE annotated text in English. They transformed the Wikipedia links into NE annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
 
-In contrast to the aforementioned methods, we applied a new approach to recognize and classify NEs in corpora generated from Wikipedia. We mapped the DBpedia ontology classes to standard NE tags and assigned them to Wikipedia entities (see more details in section \ref{dbpedia}).
+In contrast to the aforementioned methods, we applied a new approach to recognize and classify NEs in corpora generated from Wikipedia. We mapped the DBpedia ontology classes to standard NE tags and assigned them to Wikipedia entities (see more details in Section \ref{dbpedia}).
 
 To our knowledge, such type of automatically built corpora are not freely available, with the one exception of the Semantically Annotated Snapshot of the English Wikipedia \cite{Zaragoza:07}. It provides a wide range of linguistic information: POS tags, dependency labels, WordNet super senses and NE annotation according to WSJ and CoNLL tagsets. However, they followed a different way: the NEs were tagged by high quality open source softwares. In contrast, our approach relies on the manual judgement of thousands of Wikipedia volunteers.
 
-Thanks for the huge amount of Wikipedia articles, the possibility of building large enough 
-corpora is given for less resourced languages, as well. Since our method is largely language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities detailed later in section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but the one presented here is the first automatically NE annotated corpus for Hungarian.
+Thanks to the huge amount of Wikipedia articles, the possibility of building large enough 
+corpora is given for less resourced languages, as well. Since our method is largely language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities detailed later in Section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but the one presented here is the first automatically NE annotated corpus for Hungarian.
 
 \section{Creating the English Corpus} 
 \label{sec:create}
 
-Our goal is to create a large NE-annotated corpus, automatically generated from Wikipedia articles. We follow a similar path to \cite{Nothman:08}, who broke down the process into four steps:
+Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. We follow a similar path to Nothman et al.~\shortcite{Nothman:08}, who broke down the process into four steps:
 
 \begin{enumerate}
 \item Classify all articles into entity classes.
@@ -90,40 +92,51 @@ Our goal is to create a large NE-annotated corpus, automatically generated from 
 \item Select sentences for inclusion in the corpus.
 \end{enumerate}
 
-In this section, we describe how these steps were implemented. While the approach in essence is language-independent, the exact details XXX have to be accomodated to the target language. This section explains the general idea and its execution for English; the next section describes how the idea is adapted to Hungarian.
+%Subsectionöket valahogy ez alapján kéne.
+
+In this section, we describe how these steps were implemented. While the approach in essence is language-independent, the exact details XXX have to be accomodated to the target language. 
+%Ez utóbbi mondat mit jelent?
+
+%This section explains the general idea and its execution for English; the next section describes how the idea is adapted to Hungarian.
 
 \subsection{Parsing Wikipedia}
 
 Wikipedia is a very rich source of information; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Our task requires the use of only the links between the articles and the article text. In addition to in-article links, our method takes advantage of the redirect and interlanguage links, available as SQL dumps.
 
-The English corpus is based on the Wikipedia snapshot as of January 15, 2011. The XML files were parsed with the \texttt{mwlib} parser\footnote{http://code.pediapress.com}. The raw text was tokenized with a modified version of the Punkt sentence and word tokenizers \cite{Kiss:06} in NLTK \cite{Loper:02}. The words were lemmatized with the Wordnet Lemmatizer, also in NLTK, and POS tagged with HunPos \cite{Halacsy:07}.
+The English corpus is based on the Wikipedia snapshot as of January 15, 2011. The XML files were parsed by the mwlib parser\footnote{http://code.pediapress.com}. The raw text was tokenized by a modified version of the Punkt sentence and word tokenizers \cite{Kiss:06} in NLTK. 
+%\cite{Loper:02}. 
+Lemmatization was performed using the Wordnet Lemmatizer, also in NLTK. Part-of-speech tagging was performed by HunPos \cite{Halacsy:07}.
+%The words were lemmatized with the Wordnet Lemmatizer, also in NLTK, and POS tagged with \texttt{HunPos} \cite{Halacsy:07}.
 
 %Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
 
 \subsection{Articles as Entities}
 \label{dbpedia}
 
-Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et al.~\shortcite{Nothman:08} used semi-supervised methods based on Wikipedia categories and text to classify articles into entity categories. To avoid the inevitable classification errors, we obtain entity type information from the DBpedia knowledge base \cite{Bizer:09}. This enables us to have high precision information about entity types at the expense of recall: out of the 3,903,467 English Wikipedia pages, 1,470,293 are covered by DBpedia.
+Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et al.~\shortcite{Nothman:08} used semi-supervised methods based on Wikipedia categories and text to classify articles into NE types. To avoid the inevitable classification errors, we obtain entity type information from the DBpedia knowledge base \cite{Bizer:09}. This enables us to have high precision information about entity types at the expense of recall: of the 3,903,467 English Wikipedia pages, 1,470,293 are covered by DBpedia.
 
 DBpedia is an open database that presents information about entities in Wikipedia in structured form. Each entity corresponds to a Wikipedia article. DBpedia provides various information about entities including type, properties, home pages, etc. Here we limit our interest to the type system.
 
-The types in DBpedia are organized into a class hierarchy, available as an OWL\footnote{http://www.w3.org/TR/owl-ref/} ontology. The ontology contains the 320 most frequent entity categories, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong into the 6 largest sub-hierarchies (here named after their topmost classes): \texttt{Person}, \texttt{Organisation}, \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
+The types in DBpedia are organized into a class hierarchy, available as an OWL\footnote{http://www.w3.org/TR/owl-ref/} ontology. The ontology contains the 320 most frequent entity categories, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong to the 6 largest sub-hierarchies (here named after their topmost classes): \texttt{Person}, \texttt{Organisation}, \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
 
 The type of entities is extracted automatically from Wikipedia categories. However, the mapping between Wikipedia categories and classes in the DBpedia ontology is manually defined. This, together with the fact that the existence of the reference ontology prevents the proliferation of categories observable in Wikipedia \cite{Bizer:09}, ensures that type information in DBpedia can be considered gold quality.
 
-From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE categories PER, ORG and LOC. The fourth category, MISC is more elusive; according to the CoNLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
+From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE types \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, \texttt{MISC} is more elusive; according to the CoNLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
 
-While the correspondence described above holds for most classes in the sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they are tagged as MISC. 
+While the correspondence described above holds for most classes in the sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they should be tagged as \texttt{MISC}. 
 
-To account for these misclassification, as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. We created a file of DBpedia class--NE category mappings. Whenever an entity is evaluated, we look up its class, as well as the ancestors of its class, in the mapping, and assign to it the category of the class that matches it most closely. If no match is found, the entity is tagged with \texttt{O}. Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main hierarchies, exceptions like those mentioned above, and the various classes that belong to the MISC category according to the CoNLL annotation guideline.
+To avoid such kind of misclassification, 
+%as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. 
+we created a file of DBpedia class--NE category mappings. Whenever an entity is evaluated, we look up its class and the ancestors of its class, and assign to it the category of the class that matches it most closely. If no match is found, the entity is tagged with \texttt{O}. 
+%Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main hierarchies, exceptions like those mentioned above, and the various classes that belong to the MISC category according to the CoNLL annotation guideline.
 
-As of version 3.7, the DBpedia ontology allows multiple superclasses, making the hierarchy a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since selecting the right superclass, and hence, CoNLL tag for classes with more than one parent cannot be reliably done automatically, the class-to-category mapping has to be determined manually. The only such class in version 3.7, \texttt{Library}, can be traced back to both \texttt{Place} and \texttt{Organisation}; its CoNLL tag is \texttt{LOC}.
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since selecting the right superclass, and hence, CoNLL tag for classes with more than one parent cannot be reliably done automatically, the class-to-category mapping has to be determined manually. The only such class in version 3.7 (\texttt{Library}) can be traced back to both \texttt{Place} and \texttt{Organisation}; its CoNLL tag is \texttt{LOC}.
 
 %The full mapping can be found in Appendix~\ref{sec:appa}.
 
 Using the mapping described above, we compile a list that contains all entities in DBpedia tagged with the appropriate CoNLL category.
 
-We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a named entity tagset themselves. We leave the exploration of these possibilities for future work.
+We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a NE tagset themselves. We leave the exploration of these possibilities for future work.
 
 \subsection{Named Entity Labeling}
 
@@ -256,7 +269,7 @@ NE density & 5.23\% & 14.59\% & 16.76\% & 2.38\% & 12.99\%  & 11.46\%\\
 \hline
 \end{tabular}
 \end{center}
-\caption{\label{size} Corpus size and NE-density.}
+\caption{\label{size} Corpus size and NE density.}
 \end{table*}
 
 \begin{table*}[ht]
@@ -279,7 +292,7 @@ CoNLL with wikitags & CoNLL & 85.88 & 85.94 & 85.91 \\
 
 Having the obvious advantages, an automatically generated corpus can not serve as a gold standard dataset. Then what can we do with silver standard corpora? They can be very useful for improving NER in more ways: (a) for less resourced languages, they can serve as training corpora in absence of gold standard datasets; (b) they can serve as (supplementary or independent) training sets for domains differing from newswire; (c) they can be sources of huge entity lists, and (d) feature extraction. 
 
-To evaluate our corpora we used a maximum entropy NE-tagger \cite{Varga:07}, which was originally developed for labeling NEs in Hungarian texts, but it can be tuned for different languages, as well. Corpus-specific features (e.g.~NP chunks, Wikipedia links) were removed to get better comparability, so the feature set consists of gazetteer features; sentence start and end position; Boolean-valued orthographic properties of the word form; string-valued surface properties of the word form; and morphological information.
+To evaluate our corpora we used a maximum entropy NE tagger \cite{Varga:07}, which was originally developed for labeling NEs in Hungarian texts, but it can be tuned for different languages, as well. Corpus-specific features (e.g.~NP chunks, Wikipedia links) were removed to get better comparability, so the feature set consists of gazetteer features; sentence start and end position; Boolean-valued orthographic properties of the word form; string-valued surface properties of the word form; and morphological information.
 
 %\begin{itemize}
 %\item gazetteer features;
@@ -299,13 +312,13 @@ Our automatic annotation process retains all of the Wikipedia sentences, which r
 
 The English train corpus was evaluated against itself and a manually annotated English corpus. Since the filtered English Wikipedia corpus, containing only the sentences with NEs, is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
 
-For English cross-corpus evaluation the CoNLL-2003 corpus was chosen. It is well-studied that cross-checking between different corpora decrease F-measure. Domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE-tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own train set (see Table \ref{enresults}). 
+For English cross-corpus evaluation the CoNLL-2003 corpus was chosen. It is well-studied that cross-checking between different corpora decrease F-measure. Domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own train set (see Table \ref{enresults}). 
 
-However, Wikipedia-derived corpora can also be used for improving NER accuracy in other ways. First, we collected gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE-tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved F-measure on CoNLL test set.  
+However, Wikipedia-derived corpora can also be used for improving NER accuracy in other ways. First, we collected gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved F-measure on CoNLL test set.  
 
 Since in Hungarian NE tagging we followed the Szeged NER corpus annotation guidelines, we performed the experiments on this dataset. Hungarian results are similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was accurately annotated with an inter-annotator agreement over 99\%.  
 
-Due to the quite good F-measure of training on our Hungarian train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE-taggers for domains falling out of newswire. 
+Due to the quite good F-measure of training on our Hungarian train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE taggers for domains falling out of newswire. 
 
 \section{Conclusion}
 \label{sec:conclusion}
