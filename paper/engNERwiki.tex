@@ -23,7 +23,7 @@
   Research Institute for \\ Computer Science and Automation \\
   Hungarian Academy of Sciences \\
   H-1111 Lágymányosi út 11, Budapest \\
-  {\tt nemeskey.david@sztaki.hu} \\\And
+  {\tt nemeskey.david@sztaki.mta.hu} \\\And
   Eszter Simon \\
   Research Institute for Linguistics \\
   Hungarian Academy of Sciences \\
@@ -65,7 +65,7 @@ The paper is structured as follows. In Section~\ref{sec:related} we give an over
 
 Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers\footnote{http://en.wikipedia.org/wiki/Wikipedia}. It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English, and 212,120 are Hungarian. 
 
-Wikipedia has been applied for several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, and question answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
+Wikipedia has been applied to several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, and question answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
 
 Wikipedia is recognized as one of the largest available collection of entities, and also as a resource that can improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations (e.g.~Toral and Mu\~noz \shortcite{Toral:06}). Creating dictionaries of entities is also a common step of NE disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al.~\shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
 
@@ -83,18 +83,18 @@ corpora is given for less resourced languages, as well. Since our method is larg
 \section{Creating the English Corpus} 
 \label{sec:create}
 
-Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. We follow a similar path to Nothman et al.~\shortcite{Nothman:08}, and we broke down the process into four steps:
+Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. We follow a similar path to Nothman et al.~\shortcite{Nothman:08} and we broke down the process into four steps:
 
 \begin{enumerate}
 \item Classify Wikipedia articles into entity classes.
 \item Parse Wikipedia and split articles into sentences.
-\item Label NEs according to link targets.
-\item Select sentences for inclusion in the corpus.
+\item Label named entities in the text.
+\item Select which sentences are included in the corpus.
 \end{enumerate}
 
 In this section, we describe how these steps were implemented. This section explains the general approach and its execution for English; the next section describes how the idea is adapted to Hungarian.
 
-%While the approach in essence is language-independent, the exact details have to be accomodated to the target language. 
+%While the approach in essence is language-independent, the exact details have to be accomodated to the target language.
 
 \subsection{Articles as Entities}
 \label{dbpedia}
