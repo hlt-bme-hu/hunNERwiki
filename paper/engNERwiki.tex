@@ -250,6 +250,8 @@ The Szeged NER guideline relies heavily on the rules of capitalization to decide
 
 There is another special case in Hungarian: opposite to English, the number of compund words is quite large and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. The solution of this problem is not obvious, and needs more investigation.
 
+% TODO: <NE>-<random kisbetűs szó> => nem NE (magyar). Lásd: "a tű nélküli mezoterápia alapja a <Nobel, PER>-díjas"
+
 %Inflections of acronyms and foreign names ending with non-pronounced vowel have similar surface forms to the aforementioned compounds, e.g.~\textit{MTI-t} ['MTI'+ACC], \textit{Shakespeare-rel} ['with Shakespeare']. It is important to distinguish these types of hyphenated NEs, because inflections do not change NE labeling in contrast to some type of compounds. Due to the surface similarity of these phenomena the solution of this problem is not obvious, and needs more investigation. 
 
 \section{Data Description}
@@ -334,11 +336,10 @@ Automatically generated corpora can be useful for improving NER in more ways. We
 
 %később majd kirakjuk a scripteket is, és akár újra és újra frissíthető lesz
 
-%\section*{Acknowledgments}
+\section*{Acknowledgments}
 
-%The authors are grateful to Attila Zséder and Gábor Recski for their respective work on Wikipedia parsing and {\tt hunner}.
-% + CE(A?)SAR
-
+% TODO: the corpora will be published in the META-SHARE repository.
+This research was supported by the CESAR project under the ICT Policy Support Programme (grant 271022). The authors are grateful to Attila Zséder for his work on Wikipedia parsing.
 
 \begin{thebibliography}{}
 
