@@ -83,32 +83,18 @@ corpora is given for less resourced languages, as well. Since our method is larg
 \section{Creating the English Corpus} 
 \label{sec:create}
 
-Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. We follow a similar path to Nothman et al.~\shortcite{Nothman:08}, who broke down the process into four steps:
+Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. We follow a similar path to Nothman et al.~\shortcite{Nothman:08}, and we broke down the process into four steps:
 
 \begin{enumerate}
-\item Classify all articles into entity classes.
-\item Split Wikipedia articles into sentences.
+\item Classify Wikipedia articles into entity classes.
+\item Parse Wikipedia and split articles into sentences.
 \item Label NEs according to link targets.
 \item Select sentences for inclusion in the corpus.
 \end{enumerate}
 
-%Subsectionöket valahogy ez alapján kéne.
+In this section, we describe how these steps were implemented. This section explains the general approach and its execution for English; the next section describes how the idea is adapted to Hungarian.
 
-In this section, we describe how these steps were implemented. While the approach in essence is language-independent, the exact details XXX have to be accomodated to the target language. 
-%Ez utóbbi mondat mit jelent?
-
-%This section explains the general idea and its execution for English; the next section describes how the idea is adapted to Hungarian.
-
-\subsection{Parsing Wikipedia}
-
-Wikipedia is a very rich source of information; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Our task requires the use of only the links between the articles and the article text. In addition to in-article links, our method takes advantage of the redirect and interlanguage links, available as SQL dumps.
-
-The English corpus is based on the Wikipedia snapshot as of January 15, 2011. The XML files were parsed by the mwlib parser\footnote{http://code.pediapress.com}. The raw text was tokenized by a modified version of the Punkt sentence and word tokenizers \cite{Kiss:06} in NLTK. 
-%\cite{Loper:02}. 
-Lemmatization was performed using the Wordnet Lemmatizer, also in NLTK. Part-of-speech tagging was performed by HunPos \cite{Halacsy:07}.
-%The words were lemmatized with the Wordnet Lemmatizer, also in NLTK, and POS tagged with \texttt{HunPos} \cite{Halacsy:07}.
-
-%Chunking was performed with HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
+%While the approach in essence is language-independent, the exact details have to be accomodated to the target language. 
 
 \subsection{Articles as Entities}
 \label{dbpedia}
@@ -137,6 +123,14 @@ As of version 3.7, the DBpedia ontology allows multiple superclasses, making a d
 Using the mapping described above, we compile a list that contains all entities in DBpedia tagged with the appropriate CoNLL category.
 
 We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a NE tagset themselves. We leave the exploration of these possibilities for future work.
+
+\subsection{Parsing Wikipedia}
+
+Wikipedia is a very rich source of information; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Our task requires the use of only the links between the articles and the article text. In addition to in-article links, our method takes advantage of the redirect and interlanguage links, available as SQL dumps.
+
+The English corpus is based on the Wikipedia snapshot as of January 15, 2011. The XML files were parsed by the mwlib parser\footnote{http://code.pediapress.com}. The raw text was tokenized by a modified version of the Punkt sentence and word tokenizers \cite{Kiss:06}. Lemmatization was performed using the Wordnet Lemmatizer in NLTK \cite{Bird:09}. Part-of-speech tagging was performed by HunPos \cite{Halacsy:07}.
+
+%Chunking was performed by HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
 
 \subsection{Named Entity Labeling}
 
@@ -195,7 +189,7 @@ To tackle personal titles, we extracted a list from the Wikipedia page \textit{L
 \item[Incidental capitalization] Various non-\texttt{NNP} words in English are capitalized: names of months, the \textit{I} pronoun and non-entity acronyms, such as \textit{RSVP}. While the latter two group is unlikely to appear in Wikipedia text, we assembled a list of these words and tag them as \texttt{O} unless they are part of the alias set.
 \end{description}
 
-\subsubsection{Sentence Filtering}
+\subsection{Sentence Filtering}
 
 As mentioned above, sentences with words tagged as \texttt{UNK} are discarded. Furthermore, there are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is known to be noisy and fragmented. As a compromise solution, we included these fragments in the corpus, but labelled them as "low quality", so that users of the corpus can decide whether they want to use them or not. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs.
 
@@ -404,11 +398,11 @@ András Kornai, Péter Rebrus, Péter Vajda, Péter Halácsy, András Rung, Vikt
 \newblock Általános célú morfológiai elemző kimeneti formalizmusa (The output formalism of a general-purpose morphological analyzer).
 \newblock In: {\em Proceedings of the 2nd Hungarian Computational Linguistics Conference}.
 
-\bibitem[\protect\citename{Loper and Bird}2002]{Loper:02}
-Edward Loper, Steven Bird.
-\newblock 2002.
-\newblock NLTK: the Natural Language Toolkit. 
-\newblock In: {\em Proceedings of the ACL-02 Workshop on Effective tools and methodologies for teaching natural language processing and computational linguistics}, Volume 1, pages 63--70.
+\bibitem[\protect\citename{Bird et al.}2009]{Bird:09}
+Steven Bird, Ewan Klein, Edward Loper.
+\newblock 2009.
+\newblock {\em Natural Language Processing with Python}.
+\newblock O'Reilly Media Inc.
 
 \bibitem[\protect\citename{Medelyan  \bgroup et al.\egroup}2009]{Medelyan:09}
 Olena Medelyan, David Milne, Catherine Legg, and Ian H. Witten.
