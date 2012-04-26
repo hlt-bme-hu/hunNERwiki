@@ -116,7 +116,7 @@ To avoid such kind of misclassification,
 we created a file of DBpedia class--NE category mappings. Whenever an entity is evaluated, we look up its class and the ancestors of its class, and assign to it the category of the class that matches it most closely. If no match is found, the entity is tagged with \texttt{O}. 
 %Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main hierarchies, exceptions like those mentioned above, and the various classes that belong to the MISC category according to the CoNLL annotation guideline.
 
-As of version 3.7, the DBpedia ontology allows multiple superclasses, making a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since selecting the right superclass, and hence, CoNLL tag for classes with more than one parent cannot be reliably done automatically, the class-to-category mapping has to be determined manually. The only such class in version 3.7 (\texttt{Library}) can be traced back to both \texttt{Place} and \texttt{Organisation}; its CoNLL tag is \texttt{LOC}.
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since selecting the right superclass, and hence, CoNLL tag for classes with more than one parent can not be reliably done automatically, the class-to-category mapping has to be determined manually. The only such class in version 3.7 (\texttt{Library}) can be traced back to both \texttt{Place} and \texttt{Organisation}; its CoNLL tag is \texttt{LOC}.
 
 %The full mapping can be found in Appendix~\ref{sec:appa}.
 
@@ -219,7 +219,7 @@ Although Hungarian is reckoned to be a less resourced language, and it is not su
 
 %Although HunPos, as its name implies, is fully capable of POS tagging Hungarian text, we opted for Hunmorph (CITE), a morphological analyzer that, apart from PAS tagging, also lemmatizes the words. Hundisambig (CITE) was used to select the right analysis based on the word context\footnote{Incidentally, Hundisambig relies on HunPos for its HMM model.}.
 
-Hungarian is called a synthetic language: for the most part, it expresses grammatical elements in a single word form using affixes, as opposed to isolating languages (as English), which tend to employ separate words, e.g.~prepositions, pronouns, auxiliaries, for expressing grammatical phenomena. The Hungarian morphological analyzer outputs KR-codes \cite{Kornai:04}, which, in addition to the POS category, also includes inflectional information, which makes it much better suited to agglutinative languages, than Penn Treebank POS tags. One shortcoming of the KR-code is that it does not differenciate between common and proper nouns. Since in Hungarian only proper nouns are capitalized, we can usually decide whether a noun is proper or not based on the initial letter. However, this rule cannot be used if the noun is at the beginning of a sentence, as words at the beginning of sentences are always capitalized. Hence, all sentences that begin with nouns have been removed from the corpus.
+Hungarian is called a synthetic language: for the most part, it expresses grammatical elements in a single word form using affixes, as opposed to isolating languages (as English), which tend to employ separate words, e.g.~prepositions, pronouns, auxiliaries, for expressing grammatical phenomena. The Hungarian morphological analyzer outputs KR-codes \cite{Kornai:04}, which, in addition to the POS category, also includes inflectional information, which makes it much better suited to agglutinative languages, than Penn Treebank POS tags. One shortcoming of the KR-code is that it does not differenciate between common and proper nouns. Since in Hungarian only proper nouns are capitalized, we can usually decide whether a noun is proper or not based on the initial letter. However, this rule can not be used if the noun is at the beginning of a sentence, as words at the beginning of sentences are always capitalized. Hence, all sentences that begin with nouns have been removed from the corpus.
 
 \subsection{Named Entity Labeling in Hungarian}
 
@@ -244,7 +244,9 @@ The Szeged NER guideline relies heavily on the rules of capitalization to decide
 %\item names of special events and wars.
 %\end{itemize}
 
-There is another special case in Hungarian: opposite to English, the number of compund words is quite large and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. The solution of this problem is not obvious, and needs more investigation.
+There is another special case in Hungarian: opposite to English, the number of compund words is quite large and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{Nobel-díj} ['Nobel Prize'] the common noun changes the labeling from PER to MISC, while 
+%\textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but 
+in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. The solution of this problem is not obvious, and needs more investigation.
 
 % TODO: <NE>-<random kisbetűs szó> => nem NE (magyar). Lásd: "a tű nélküli mezoterápia alapja a <Nobel, PER>-díjas"
 
@@ -253,9 +255,9 @@ There is another special case in Hungarian: opposite to English, the number of c
 \section{Data Description}
 \label{sec:data}
 
-The corpora are available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from ...\footnote{To be filled in in the camera-ready version.}.
+The corpora are available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from XXX. The corpora will also be distributed through META-SHARE network, which is an open, distributed facility for exchanging and sharing resources, and is one of the lines of action of META-NET, a Network of Excellence funded by the European Commission. 
 
-The files are in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its part-of-speech tag. Two NE tags are included with each word: the most specific DBpedia category it belongs to and the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
+The files are in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its POS tag. Two NE tags are included with each word: the most specific DBpedia category it belongs to and the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
 
 \begin{table*}[ht]
 \begin{center}
@@ -304,7 +306,9 @@ We used the CoNLL standard method for evaluation. According to this, an automati
 
 \subsection{Wikipedia data}
 
-Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our corpora and gold standard corpora (see Table \ref{size}), we decided not to include the sentences without NEs in evaluation datasets. 
+Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our corpora and gold standard corpora, we decided not to include the sentences without NEs in evaluation datasets. 
+
+Table \ref{size} summarizes the data regarding corpus size and NE density. The English (enwiki) and the Hungarian Wikipedia (huwiki) corpora originally have the NE density of 5.23\% and 2.38\%, respectively. In comparison to the gold standard datasets (CoNLL, Szeged NER) these counts are quite low. It can be due to the difference between domains: newswire articles usually contain more NEs, typically ORG. The other reason might be that we discarded sentences containing unidentified NEs (cf.~Section \ref{sec:create}).    
 
 \subsection{Experiments and results}
 
