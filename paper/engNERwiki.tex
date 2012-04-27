@@ -83,13 +83,14 @@ corpora is given for less resourced languages, as well. Since our method is larg
 \section{Creating the English Corpus} 
 \label{sec:create}
 
-Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. We follow a similar path to Nothman et al.~\shortcite{Nothman:08} and we broke down the process into four steps:
+Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. Following Nothman et al.~\shortcite{Nothman:08}, we broke down the process into four steps:
 
 \begin{enumerate}
-\item Classify Wikipedia articles into entity classes.
-\item Parse Wikipedia and split articles into sentences.
-\item Label named entities in the text.
-\item Select which sentences are included in the corpus.
+\item Classify Wikipedia articles into entity classes
+%\item Parse Wikipedia and split articles into sentences
+\item Parse Wikipedia into sentences
+\item Label named entities in the text
+\item Select the sentences to include in the corpus
 \end{enumerate}
 
 In this section, we describe how these steps were implemented. This section explains the general approach and its execution for English; the next section describes how the idea is adapted to Hungarian.
@@ -143,7 +144,7 @@ Our approach is based on the work of Nothman et al.~\shortcite{Nothman:08}. The 
 Discovered entities are tagged with the CoNLL label assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity, and tag it as UNK. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
 %  TODO , and -> and?
 
-The following sub-sections describe how the method explained above can be improved to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines.
+The following sub-sections describe how the method explained above can be improved to increase precision, sentence coverage and to account for peculiarities in English orthography and the CoNLL guidelines.
 
 \subsubsection{Non-entity Links}
 
@@ -243,7 +244,7 @@ in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the 
 \section{Data Description}
 \label{sec:data}
 
-The corpora are available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from XXX. The corpora will also be distributed through META-SHARE network, which is an open, distributed facility for exchanging and sharing resources, and is one of the lines of action of META-NET, a Network of Excellence funded by the European Commission. 
+The corpora are available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from \texttt{http://hlt.sztaki.hu}. The corpora will also be distributed through META-SHARE network, which is an open, distributed facility for exchanging and sharing resources, and is one of the lines of action of META-NET, a Network of Excellence funded by the European Commission. 
 
 The files are in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its POS tag. Two NE tags are included with each word: the most specific DBpedia category it belongs to and the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
 
