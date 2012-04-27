@@ -116,7 +116,7 @@ To avoid such kind of misclassification,
 we created a file of DBpedia class--NE category mappings. Whenever an entity is evaluated, we look up its class and the ancestors of its class, and assign to it the category of the class that matches it most closely. If no match is found, the entity is tagged with \texttt{O}. 
 %Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main hierarchies, exceptions like those mentioned above, and the various classes that belong to the MISC category according to the CoNLL annotation guideline.
 
-As of version 3.7, the DBpedia ontology allows multiple superclasses, making a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since selecting the right superclass, and hence, CoNLL tag for classes with more than one parent can not be reliably done automatically, the class-to-category mapping has to be determined manually. The only such class in version 3.7 (\texttt{Library}) can be traced back to both \texttt{Place} and \texttt{Organisation}; its CoNLL tag is \texttt{LOC}.
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since selecting the right superclass, and hence, CoNLL tag for classes with more than one parent can not be reliably done automatically, the class-to-category mapping has to be determined manually. The only such class in version 3.7, texttt{Library}, can be traced back to both \texttt{Place} and \texttt{Organisation}; its CoNLL tag is \texttt{LOC}.
 
 %The full mapping can be found in Appendix~\ref{sec:appa}.
 
@@ -126,7 +126,7 @@ We would like to note that even though we use CoNLL categories, our method can b
 
 \subsection{Parsing Wikipedia}
 
-Wikipedia is a very rich source of information; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Our task requires the use of only the links between the articles and the article text. In addition to in-article links, our method takes advantage of the redirect and interlanguage links, available as SQL dumps.
+Wikipedia is a rich source of information; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Our task requires the use of only the links between the articles and the article text. In addition to in-article links, our method takes advantage of the redirect and interlanguage links, available as SQL dumps.
 
 The English corpus is based on the Wikipedia snapshot as of January 15, 2011. The XML files were parsed by the mwlib parser\footnote{http://code.pediapress.com}. The raw text was tokenized by a modified version of the Punkt sentence and word tokenizers \cite{Kiss:06}. Lemmatization was performed using the Wordnet Lemmatizer in NLTK \cite{Bird:09}. Part-of-speech tagging was performed by HunPos \cite{Halacsy:07}.
 
@@ -142,6 +142,12 @@ Discovered entities are tagged with the CoNLL label assigned to them in the enti
 
 The following sub-sections describe how the method explained above can be improved to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines.
 
+\subsubsection{Nothman}
+
+First, many pages describe common nouns (Book, Aircraft), dates or other concepts that fall outside the scope of NER. Second, not all entities are marked with links: in a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. Finally, 
+...
+Nothman et al.~\shortcite{Nothman:08} 
+
 \subsubsection{Non-entity Links}
 
 Strictly speaking, our original assumption of equating Wikipedia articles with NEs is not valid: many pages describe common nouns (Book, Aircraft), calendar-related concepts (March 15, 2007), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
@@ -151,6 +157,10 @@ Strictly speaking, our original assumption of equating Wikipedia articles with N
 \item[Dates] Time expressions require special attention, because dates and months are often linked to the respective Wikipedia pages. We circumvented this problem by compiling a list of calendar-related pages and adding them to the main entity list tagged with the CoNLL category \texttt{O}. 
 \item[Lowercase links] Entities are sometimes referred to by common nouns, such as \textit{republic} to \textit{Roman Republic}, \texttt{LOC}, which results in a lowercase link. These references are not considered NEs and are ignored.
 \end{description}
+
+\subsubsection{Unmarked Entities}
+
+In a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. To account for such mentions, we try to associate capitalized words in the article text with entities we have tagged thus far.
 
 \subsubsection{Unmarked Entities}
 
