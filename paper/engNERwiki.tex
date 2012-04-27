@@ -99,7 +99,8 @@ In this section, we describe how these steps were implemented. This section expl
 \subsection{Articles as Entities}
 \label{dbpedia}
 
-Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et al.~\shortcite{Nothman:08} used semi-supervised methods based on Wikipedia categories and text to classify articles into NE types. To avoid the inevitable classification errors, we obtain entity type information from the DBpedia knowledge base \cite{Bizer:09}. This enables us to have high precision information about entity types at the expense of recall: of the 3,903,467 English Wikipedia pages, 1,470,293 are covered by DBpedia.
+Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et al.~\shortcite{Nothman:08} used semi-supervised methods based on Wikipedia categories and text to classify articles into NE types. To avoid the inevitable classification errors, we obtain entity type information from the DBpedia knowledge base \cite{Bizer:09}. This enables us to have high precision information about entity types at the expense of recall: of the 3,903,467 English Wikipedia pages, 1,470,293 are covered by DBpedia\footnote{as of 18 March, 2012.}.
+% TODO as of?
 
 DBpedia is an open database that presents information about entities in Wikipedia in structured form. Each entity corresponds to a Wikipedia article. DBpedia provides various information about entities including type, properties, home pages, etc. Here we limit our interest to the type system.
 
@@ -136,17 +137,13 @@ The English corpus is based on the Wikipedia snapshot as of January 15, 2011. Th
 
 In order to automatically prepare sentences where NEs are accurately tagged, two tasks need to be performed: identifying entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus.
 
-Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular NE.
+Our approach is based on the work of Nothman et al.~\shortcite{Nothman:08}. The Wikipedia cross-references found in the article text are used to identification entities. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular NE.
+% TODO identifies -> ? vagy with -> as
 
 Discovered entities are tagged with the CoNLL label assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity, and tag it as UNK. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
+%  TODO , and -> and?
 
 The following sub-sections describe how the method explained above can be improved to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines.
-
-\subsubsection{Nothman}
-
-First, many pages describe common nouns (Book, Aircraft), dates or other concepts that fall outside the scope of NER. Second, not all entities are marked with links: in a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. Finally, 
-...
-Nothman et al.~\shortcite{Nothman:08} 
 
 \subsubsection{Non-entity Links}
 
@@ -165,6 +162,7 @@ In a Wikipedia article, typically only the first occurrence of a particular enti
 To account for such mentions, we apply Nothman's \shortcite{Nothman:08} solution. For each page, we maintain a list of entities discovered in the page so far and try to associate capitalized words in the article text with these entities. We augment the list with the aliases of every entity, such as titles of redirect pages that target it, the first and last names in case of a \texttt{PER} entity and any numbers in the name. If the current page is a named entity, the title and its aliases are added to the list as well; moreover, as Wikipedia usually includes the original name of foreign entities in the article text, localized versions of the title are also added to the list as aliases.
 
 Nothman's solution used a trie to store the entity list. Ours uses a set, albeit with more alias types than what he used. We expect more precise tagging from our slightly more rigorous solution.
+% TODO: change at least use
 
 \subsubsection{Special Cases}
 
@@ -221,7 +219,7 @@ First, in order to identify which pages denote entities in the Hungarian Wikiped
 
 Second, entities without a page in the English Wikipedia are absent from the entity list. This gives rise to two potential problems. One is that compared to English, the list is relatively shorter: the entity/page ratio is 12.12\%, as opposed to the 37.66\% of the English Wikipedia. The other, since mostly Hungarian people, places and organizations are missing, a NER tagger that takes the surface forms of words into account might be mislead as to the language model of entity names. To overcome these problems, the list has to be extended with Hungarian entity pages that do not have a corresponding English page. We leave this for future work.
 
-To annotate our corpus with NE tags, we chose to follow the annotation guidelines of the largest human-annotated NER corpus for Hungarian, Szeged NER corpus \cite{Szarvas:06}. It is similar to CoNLL standards: contains newswire texts, comprises ca.~200,000 tokens, and is annotated with NE class labels in line with the CoNLL annotation scheme. However, the convention of what constitutes a NE is slightly different for Hungarian. 
+To annotate our corpus with NE tags, we chose to follow the annotation guidelines of the largest human-annotated NER corpus for Hungarian, the Szeged NER corpus \cite{Szarvas:06}. It is similar to CoNLL standards: contains newswire texts, comprises ca.~200,000 tokens, and is annotated with NE class labels in line with the CoNLL annotation scheme. However, the convention of what constitutes a NE is slightly different for Hungarian. 
 
 \subsubsection{Special cases}
 
@@ -236,7 +234,7 @@ The Szeged NER guideline relies heavily on the rules of capitalization to decide
 
 There is another special case in Hungarian: opposite to English, the number of compund words is quite large and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{Nobel-díj} ['Nobel Prize'] the common noun changes the labeling from PER to MISC, while 
 %\textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but 
-in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. The solution of this problem is not obvious, and needs more investigation.
+in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. The solution to this problem is not obvious, and needs more investigation.
 
 % TODO: <NE>-<random kisbetűs szó> => nem NE (magyar). Lásd: "a tű nélküli mezoterápia alapja a <Nobel, PER>-díjas"
 
