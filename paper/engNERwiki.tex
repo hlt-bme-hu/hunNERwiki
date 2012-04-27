@@ -160,31 +160,11 @@ Strictly speaking, our original assumption of equating Wikipedia articles with N
 
 \subsubsection{Unmarked Entities}
 
-In a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. To account for such mentions, we try to associate capitalized words in the article text with entities we have tagged thus far.
+In a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names.
 
-\subsubsection{Unmarked Entities}
+To account for such mentions, we apply Nothman's \shortcite{Nothman:08} solution. For each page, we maintain a list of entities discovered in the page so far and try to associate capitalized words in the article text with these entities. We augment the list with the aliases of every entity, such as titles of redirect pages that target it, the first and last names of a \texttt{PER} entity and any numbers in the name. If the current page is a named entity, the title and its aliases are added to the list as well; moreover, as Wikipedia usually includes the original name of foreign entities in the article text, localized versions of the title are also added to the list as aliases.
 
-Not all entities are marked with links. Authors may neglect to add references to their text. Furthermore, in a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names. To account for such mentions, we try to associate capitalized words in the article text with entities we have tagged thus far.
-
-For each article, we build a set that contains all entities discovered so far, as well as their aliases:
-\begin{itemize}
-\item If the current page is a NE:
-  \begin{itemize}
-  \item The page title, with Wikipedia antics, such as a category name in parentheses removed
-  \item Title of redirect pages that target the current page
-  \item Title of the current page in other languages, as Wikipedia usually mentions the original name of foreign entities
-  \end{itemize}
-\item Entities marked with links in the text thus far
-\item Certain subsets of the above:
-  \begin{itemize}
-  \item First and last names of \texttt{PER} entities
-  \item Numbers, such as \textit{737} in \textit{Boeing 737}
-  \end{itemize}
-\end{itemize}
-
-When an unmarked entity is encountered, the set is consulted to find an item that contains it in its entirety; i.e.~all of its words, in the same order. If either exactly one such item is found, or the matching entities in the list all have the same NE tag, the unmarked entity is tagged accordingly; otherwise it is tagged as \texttt{UNK}.
-
-Our solution is similar to Nothman's \shortcite{Nothman:08}. Instead of a trie, however, we use a set, albeit with more alias types. We expect more precise tagging from our slightly more rigorous solution.
+Nothman's solution used a trie to store the entity list. Ours uses a set, albeit with more alias types than what he used. We expect more precise tagging from our slightly more rigorous solution.
 
 \subsubsection{Special Cases}
 
