@@ -138,7 +138,7 @@ In order to automatically prepare sentences where NEs are accurately tagged, two
 
 Our approach to entity identification relies on Wikipedia cross-references found in the article text. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular NE.
 
-Discovered entities are tagged with the CoNLL label assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we can not determine the type of the entity, and tag it as UNK. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
+Discovered entities are tagged with the CoNLL label assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity, and tag it as UNK. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
 
 The following sub-sections describe how the method explained above can be improved to increase precision, sentence coverage and to account for peculiarities in the CoNLL guidelines.
 
@@ -162,7 +162,7 @@ Strictly speaking, our original assumption of equating Wikipedia articles with N
 
 In a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names.
 
-To account for such mentions, we apply Nothman's \shortcite{Nothman:08} solution. For each page, we maintain a list of entities discovered in the page so far and try to associate capitalized words in the article text with these entities. We augment the list with the aliases of every entity, such as titles of redirect pages that target it, the first and last names of a \texttt{PER} entity and any numbers in the name. If the current page is a named entity, the title and its aliases are added to the list as well; moreover, as Wikipedia usually includes the original name of foreign entities in the article text, localized versions of the title are also added to the list as aliases.
+To account for such mentions, we apply Nothman's \shortcite{Nothman:08} solution. For each page, we maintain a list of entities discovered in the page so far and try to associate capitalized words in the article text with these entities. We augment the list with the aliases of every entity, such as titles of redirect pages that target it, the first and last names in case of a \texttt{PER} entity and any numbers in the name. If the current page is a named entity, the title and its aliases are added to the list as well; moreover, as Wikipedia usually includes the original name of foreign entities in the article text, localized versions of the title are also added to the list as aliases.
 
 Nothman's solution used a trie to store the entity list. Ours uses a set, albeit with more alias types than what he used. We expect more precise tagging from our slightly more rigorous solution.
 
@@ -181,7 +181,7 @@ To tackle personal titles, we extracted a list from the Wikipedia page \textit{L
 
 \subsection{Sentence Filtering}
 
-As mentioned above, sentences with words tagged as \texttt{UNK} are discarded. Furthermore, there are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may prove to be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is known to be noisy and fragmented. As a compromise solution, we included these fragments in the corpus, but labelled them as "low quality", so that users of the corpus can decide whether they want to use them or not. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs.
+As mentioned above, sentences with words tagged as \texttt{UNK} are discarded. Furthermore, there are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is known to be noisy and fragmented. As a compromise solution, we included these fragments in the corpus, but labelled them as "low quality", so that users of the corpus can decide whether they want to use them or not. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs.
 
 \section{Creating the Hungarian Corpus}
 \label{sec:hun}
