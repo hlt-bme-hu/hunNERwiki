@@ -22,7 +22,7 @@
 \author{Dávid Márk Nemeskey \\
   Research Institute for \\ Computer Science and Automation \\
   Hungarian Academy of Sciences \\
-  H-1111 Lágymányosi út 11, Budapest \\
+  H-1111 Kende utca 13-17, Budapest \\
   {\tt nemeskey.david@sztaki.mta.hu} \\\And
   Eszter Simon \\
   Research Institute for Linguistics \\
@@ -36,134 +36,228 @@
 \maketitle
 \begin{abstract}
 
-Supervised Named Entity Recognizers require large amount of annotated texts. However, manual annotation is a highly costly procedure, thus reducing the annotation cost is essential. We present a fully automatic method to build NE annotated corpora from Wikipedia. In contrast to recent work, we apply a new method, which maps the DBpedia classes into CoNLL NE types. Since our method is mainly language-independent, we used it for generating corpora for English and Hungarian, as well. The corpora are freely available. 
+Supervised Named Entity Recognizers require large amounts of annotated
+text. Since manual annotation is a highly costly procedure, reducing the
+annotation cost is essential. We present a fully automatic method to build NE
+annotated corpora from Wikipedia. In contrast to recent work, we apply a new
+method, which maps the DBpedia classes into CoNLL NE types. Since our method
+is mainly language-independent, we used it to generate corpora for English
+and Hungarian. The corpora are freely available.
 
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
-Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. The NER task was introduced with the 6th Message Understanding Conference (MUC) in 1995 \cite{Grishman:96}. In MUC shared tasks the NER consists of three subtasks: entity names, temporal and number expressions. Although there is a general agreement in the NER community about the inclusion of temporal expressions and some numerical expressions, the most studied types are names of persons, locations and organizations. The fourth type, called "miscellaneous'', was introduced in the CoNLL NER tasks in 2002 \cite{Tjong:02} and 2003 \cite{Tjong:03}, and includes proper names falling outside the three classic types. Since then, MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
+Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. The NER task was introduced with the 6th Message Understanding Conference (MUC) in 1995 \cite{Grishman:96}. In MUC shared tasks the NER consists of three subtasks: entity names, temporal and number expressions. Although there is a general agreement in the NER community about the inclusion of temporal expressions and some numerical expressions, the most studied types are names of persons, locations and organizations. The fourth type, called ``miscellaneous'', was introduced in the CoNLL NER tasks in 2002 \cite{Tjong:02} and 2003 \cite{Tjong:03}, and includes proper names falling outside the three classic types. Since then, MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
 
-The standard datasets are highly domain-specific (mostly newswire), and are restricted in size, as well. 
-%Thus they are not large enough to train and test robust NE taggers on them. Moreover, 
-Merging these datasets to get a bigger training corpus faces NLP researchers with the problem of combining different tagsets and annotation schemes. However, to build a robust supervised machine learning system for NER, large enough, accurately annotated corpora are essential. Annotating large amount of texts with linguistic information is a time-consuming, highly skilled and delicate work. Mainly due to this fact, one of the main challenges in NLP is reducing the annotation cost. 
+The standard datasets are highly domain-specific (mostly newswire) and are
+restricted in size. Researchers attempting to merge these datasets to get a bigger training corpus are faced with the
+problem of combining different tagsets and annotation schemes. Manually
+annotating large amounts of text with linguistic information is a
+time-consuming, highly skilled and delicate job, but large, accurately
+annotated corpora are essential for building robust supervised machine
+learning NER systems. Therefore, reducing the annotation cost is a key
+challenge.
 
-One approach to reduce the manual intervention required in language resource production, and thus ultimately production costs is automatically generating resources. Another approach to achieve this aim is using collaborative annotation and/or collaboratively constructed resources, such as Wikipedia, Wiktionary or Linked Open Data. Researchers apply the Web-as-corpus approach, often dealing with such datasets as Google Web 1T 5-gram collection or DBpedia.  
+One approach is to generate the resources automatically, another one is to use
+collaborative annotation and/or collaboratively constructed resources, such as
+Wikipedia, Wiktionary, Linked Open Data, or DBpedia. In this paper we combine
+these approaches by automatically generating freely available NE tagged
+corpora from Wikipedia.
 
-%The first approach is the application of unsupervised and semi-supervised learning techniques. Researchers following this approach try to not only reduce, but avoid the annotation cost with minimizing the need for annotated data. These methods can be applied to any language or genre for which adequate raw text resources are available. 
-
-In this paper we present a kind of combination of these approaches, namely automatically generating resources and using collaboratively constructed resources. We built freely available NE tagged corpora for English and Hungarian -- fully automatically generated from Wikipedia. %Our goal was to create gold standard corpora which can serve as train, devel and test datasets for automatic NE taggers. 
-
-The paper is structured as follows. In Section~\ref{sec:related} we give an overview of related work. Section \ref{sec:create} contains a description of our method, while Section \ref{sec:hun} shows how it is applied to Hungarian. The corpus format is described in Section~\ref{sec:data}. In Section \ref{sec:eval} we present experiments and results on the newly generated datasets. Section \ref{sec:conclusion} concludes the paper with a summary. 
-
-%Our method is introduced in Section~\ref{sec:create}, and showed how it is applied to Hungarian in Section~\ref{sec:hun}. The corpus format is described in Section~\ref{sec:data}. Section~\ref{sec:eval} contains evaluations and Section~\ref{sec:conclusion} our conclusion.
+The paper is structured as follows. In
+Section~\ref{sec:related} we give an overview of related work. Section
+\ref{sec:create} contains a description of our method, and Section
+\ref{sec:hun} shows how it is applied to Hungarian. The corpus format is
+described in Section~\ref{sec:data}. In Section \ref{sec:eval} we present
+experiments and results on the newly generated datasets. Section
+\ref{sec:conclusion} concludes the paper with a summary.
 
 \section{Wikipedia and NER}
 \label{sec:related}
-% Wikify!
 
-Wikipedia is a free, multilingual Internet encyclopedia, written collaboratively by volunteers\footnote{http://en.wikipedia.org/wiki/Wikipedia}. It is a goldmine of information; at the time of writing, Wikipedia contains about 21 million interlinked articles. Of these, 3,903,467 are English, and 212,120 are Hungarian. 
+Wikipedia (WP, see {\tt http://wikipedia.org}), a free
+multilingual Internet encyclopedia, written collaboratively by volunteers, is
+a goldmine of information: at the time of writing, WP contains about 21
+million interlinked articles. Of these, 3,903,467 are English, and 212,120 are
+Hungarian. WP has been applied to several NLP tasks such as word sense
+disambiguation, ontology and thesaurus building, and question answering (see
+Medelyan et al.~\shortcite{Medelyan:09} for a survey). It is recognized as one
+of the largest available collections of entities, and also as a resource that
+can improve the accuracy of NER. The most obvious utilization of WP for NER is
+extracting gazetteers containing person names, locations or organizations
+(e.g.~Toral and Mu\~noz \shortcite{Toral:06}). Creating dictionaries of
+entities is also a common step of NE disambiguation
+\cite{Bunescu:06,Cucerzan:07}. Both supervised and unsupervised NER systems
+use such lists, see e.g.~Nadeau et al.~\shortcite{Nadeau:06} The knowledge
+embodied in WP may also be incorporated in NER learning as features,
+e.g.~Kazama and Torisawa \shortcite{Kazama:07} showed that automatic
+extraction of category labels from WP improves the accuracy of a supervised NE
+tagger.
 
-Wikipedia has been applied to several NLP tasks, e.g.~word sense disambiguation, ontology and thesaurus building, and question answering, as Medelyan et al.~\shortcite{Medelyan:09} point out in their fully detailed survey about mining meaning from Wikipedia. 
+Another approach to improve NER with WP is the automatic creation of training
+data. Richman and Schone \shortcite{Richman:08} built corpora for less
+commonly taught languages annotated with NE tags. They used the inherent
+category structure of WP to determine the NE type of a proposed
+entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create
+a NE annotated text in English. They transformed the WP links into NE
+annotations by classifying the target articles into standard entity
+classes. Their approach to classification is based primarily on category head
+nouns and the opening sentences of articles where definitions are often given.
 
-Wikipedia is recognized as one of the largest available collection of entities, and also as a resource that can improve the accuracy of NER. The most obvious utilization of Wikipedia for NER is extracting gazetteers containing person names, locations or organizations (e.g.~Toral and Mu\~noz \shortcite{Toral:06}). Creating dictionaries of entities is also a common step of NE disambiguation \cite{Bunescu:06,Cucerzan:07}. Not only supervised systems use lists generated from Wikipedia: Nadeau et al.~\shortcite{Nadeau:06} use similar lists in an unsupervised NER system. 
-
-The knowledge in Wikipedia may be incorporated as features in NER learning, e.g.~Kazama and Torisawa \shortcite{Kazama:07} showed that automatic extraction of category labels from Wikipedia improves the accuracy of a supervised NE tagger. 
-
-A third approach to improve NER with Wikipedia is the automatic creation of training data. Richman and Schone \shortcite{Richman:08} built corpora for less commonly taught languages annotated with NE tags. They used the inherent category structure of Wikipedia to determine the NE type of a proposed entity. Nothman et al.~\shortcite{Nothman:08} used a similar method to create a NE annotated text in English. They transformed the Wikipedia links into NE annotations by classifying the target articles into standard entity classes. Their approach to classification is based primarily on category head nouns and definitional opening sentences of articles. 
-
-In contrast to the aforementioned methods, we applied a new approach to recognize and classify NEs in corpora generated from Wikipedia. We mapped the DBpedia ontology classes to standard NE tags and assigned them to Wikipedia entities (see more details in Section \ref{dbpedia}).
-
-To our knowledge, such type of automatically built corpora are not freely available, with the one exception of the Semantically Annotated Snapshot of the English Wikipedia \cite{Zaragoza:07}. It provides a wide range of linguistic information: POS tags, dependency labels, WordNet super senses and NE annotation according to WSJ and CoNLL tagsets. However, they followed a different way: the NEs were tagged by high quality open source softwares. In contrast, our approach relies on the manual judgement of thousands of Wikipedia volunteers.
-
-Thanks to the huge amount of Wikipedia articles, the possibility of building large enough 
-corpora is given for less resourced languages, as well. Since our method is largely language-independent, it can be easily applied for languages which are structurally differing from English. Hungarian is a highly agglutinative language, with free word order and other particularities detailed later in Section \ref{sec:hun}. There are human annotated CoNLL-style datasets, but the one presented here is the first automatically NE annotated corpus for Hungarian.
+Our approach to recognize and classify NEs in corpora generated from WP was to
+map the DBpedia ontology classes to standard NE tags and assign these to WP
+entities (see more details in Section \ref{dbpedia}). Except for the
+Semantically Annotated Snapshot of the English WP (SASWP) \cite{Zaragoza:07},
+no such automatically built corpora are freely available. SASWP provides a
+wide range of linguistic information: POS tags, dependency labels, WordNet
+super senses and NE annotation according to WSJ and CoNLL tagsets. Even though
+the SASWP NEs were tagged by the best available open source taggers, the tags 
+provided here, being based on the manual judgement of thousands of WP
+volunteers, are more reliable. Given the huge number of WP articles we can
+build sufficiently large corpora for less resourced languages as well, as our
+method is largely language-independent. We demonstrate this on Hungarian, a
+highly agglutinative language, with free word order and other typological 
+characteristics detailed later in Section \ref{sec:hun}. There are smaller, manually annotated CoNLL-style datasets, but the one presented here is the first automatically NE annotated corpus for Hungarian.
 
 \section{Creating the English Corpus} 
 \label{sec:create}
 
-Our goal is to create a large NE annotated corpus, automatically generated from Wikipedia articles. Following Nothman et al.~\shortcite{Nothman:08}, we broke down the process into four steps:
+Our goal is to create a large NE annotated corpus, automatically generated
+from WP articles. We followed a similar path to Nothman et
+al.~\shortcite{Nothman:08} and broke down the process into four steps:
 
 \begin{enumerate}
-\item Classify Wikipedia articles into entity classes
-%\item Parse Wikipedia and split articles into sentences
-\item Parse Wikipedia into sentences
-\item Label named entities in the text
-\item Select the sentences to include in the corpus
+\item Classify WP articles into entity classes.
+\item Parse WP and split articles into sentences.
+\item Label named entities in the text.
+\item Select the sentences for inclusion in the corpus.
 \end{enumerate}
 
-In this section, we describe how these steps were implemented. This section explains the general approach and its execution for English; the next section describes how the idea is adapted to Hungarian.
+In this section, we describe how these steps were implemented. This section explains the general approach and its execution for English; Section \ref{sec:hun} describes how the idea is adapted to Hungarian.
 
 %While the approach in essence is language-independent, the exact details have to be accomodated to the target language.
 
 \subsection{Articles as Entities}
 \label{dbpedia}
 
-Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et al.~\shortcite{Nothman:08} used semi-supervised methods based on Wikipedia categories and text to classify articles into NE types. To avoid the inevitable classification errors, we obtain entity type information from the DBpedia knowledge base \cite{Bizer:09}. This enables us to have high precision information about entity types at the expense of recall: of the 3,903,467 English Wikipedia pages, 1,470,293 are covered by DBpedia\footnote{as of 18 March, 2012.}.
-% TODO as of?
+Many authors, such as Kazama and Torisawa \shortcite{Kazama:07} and Nothman et
+al.~\shortcite{Nothman:08} used semi-supervised methods based on WP categories
+and text to classify articles into NE types. To avoid the inevitable
+classification errors, we obtain entity type information from the DBpedia
+knowledge base \cite{Bizer:09}, which presents type, properties, home pages,
+etc. information about pages in WP in structured form. With DBpedia we have
+high precision information about entity types at the expense of recall: of the
+3,903,467 English WP pages, 1,470,293 are covered by DBpedia (as of 18 March,
+2012).
 
-DBpedia is an open database that presents information about entities in Wikipedia in structured form. Each entity corresponds to a Wikipedia article. DBpedia provides various information about entities including type, properties, home pages, etc. Here we limit our interest to the type system.
+The types in DBpedia are organized into a class hierarchy, available as an OWL\footnote{http://www.w3.org/TR/owl-ref/}
+ontology containing 320 frequent
+entity categories, arranged into a taxonomy under the base class
+\texttt{owl:Thing}. Most of the classes belong to the 6 largest
+sub-hierarchies: \texttt{Person}, \texttt{Organisation}, \texttt{Event},
+\texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather
+flat: the top level contains 44 classes and there are several nodes with a
+branching factor of 20.
 
-The types in DBpedia are organized into a class hierarchy, available as an OWL\footnote{http://www.w3.org/TR/owl-ref/} ontology. The ontology contains the 320 most frequent entity categories, arranged into a taxonomy under the base class \texttt{owl:Thing}. Most of the classes belong to the 6 largest sub-hierarchies (here named after their topmost classes): \texttt{Person}, \texttt{Organisation}, \texttt{Event}, \texttt{Place}, \texttt{Species} and \texttt{Work}. The taxonomy is rather flat: the top level contains 44 classes and there are several nodes with a branching factor of 20.
-
-The type of entities is extracted automatically from Wikipedia categories. However, the mapping between Wikipedia categories and classes in the DBpedia ontology is manually defined. This, together with the fact that the existence of the reference ontology prevents the proliferation of categories observable in Wikipedia \cite{Bizer:09}, ensures that type information in DBpedia can be considered gold quality.
+The type of entities is extracted automatically from WP categories. However, the mapping between WP categories and classes in the DBpedia ontology is manually defined. This, together with the fact that the existence of the reference ontology prevents the proliferation of categories observable in WP \cite{Bizer:09}, ensures that type information in DBpedia can be considered gold quality.
 
 From the available NER annotation standards we elected to use the CoNLL \cite{Tjong:03} NE types. It is not difficult to see the parallels between the DBpedia sub-hierarchies \texttt{Person}, \texttt{Organisation} and \texttt{Place} and the CoNLL NE types \texttt{PER}, \texttt{ORG} and \texttt{LOC}. The fourth category, \texttt{MISC} is more elusive; according to the CoNLL NER annotation guide\footnote{http://www.cnts.ua.ac.be/conll2003/ner/annotation.txt}, the sub-hierarchies \texttt{Event} and \texttt{Work} belong to this category, as well as various other classes outside the main hierarchies. 
 
-While the correspondence described above holds for most classes in the sub-hierarchies, there are some exceptions. For instance, the class \texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but according to the CoNLL annotation scheme, they should be tagged as \texttt{MISC}. 
-
-To avoid such kind of misclassification, 
+While the correspondence described above holds for most classes in the
+sub-hierarchies, there are some exceptions. For instance, the class
+\texttt{SportsLeague} is part of the \texttt{Organisation} sub-hierarchy, but
+according to the CoNLL annotation scheme, they should be tagged as
+\texttt{MISC}.  To avoid misclassification,
 %as well as the miscellaneous classes outside the main hierarchies, we have introduced a mapping mechanism. 
 we created a file of DBpedia class--NE category mappings. Whenever an entity is evaluated, we look up its class and the ancestors of its class, and assign to it the category of the class that matches it most closely. If no match is found, the entity is tagged with \texttt{O}. 
 %Since we take advantage of the inheritance hierarchy, the mapping list remains short: it contains only the root classes of the main hierarchies, exceptions like those mentioned above, and the various classes that belong to the MISC category according to the CoNLL annotation guideline.
 
-As of version 3.7, the DBpedia ontology allows multiple superclasses, making a directed acyclic graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since selecting the right superclass, and hence, CoNLL tag for classes with more than one parent can not be reliably done automatically, the class-to-category mapping has to be determined manually. The only such class in version 3.7, texttt{Library}, can be traced back to both \texttt{Place} and \texttt{Organisation}; its CoNLL tag is \texttt{LOC}.
+As of version 3.7, the DBpedia ontology allows multiple superclasses, making a
+directed acyclic
+graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since
+selecting the right superclass, and hence, CoNLL tag for classes with more
+than one parent, cannot be reliably done automatically, the class-to-category
+mapping had to be determined manually. The only such class in version 3.7,
+\texttt{Library}, can be traced back to both \texttt{Place} and
+\texttt{Organisation}; its CoNLL tag is \texttt{LOC}.  Using the mapping thus
+created, we compile a list that contains all entities in DBpedia tagged with
+the appropriate CoNLL category.
 
-%The full mapping can be found in Appendix~\ref{sec:appa}.
-
-Using the mapping described above, we compile a list that contains all entities in DBpedia tagged with the appropriate CoNLL category.
-
-We would like to note that even though we use CoNLL categories, our method can be modified to work with any tagset compatible with the DBpedia ontology. Indeed, the DBpedia classes define a NE tagset themselves. We leave the exploration of these possibilities for future work.
+We note here that our method can be trivially modified to work with any tagset
+compatible with the DBpedia ontology (indeed, the DBpedia classes define a NE
+tagset themselves), but we leave the exploration of these possibilities for
+future work.
 
 \subsection{Parsing Wikipedia}
 
-Wikipedia is a rich source of information; aside from the article text, a huge amount of data is encompassed in infoboxes, templates and the category structure. Our task requires the use of only the links between the articles and the article text. In addition to in-article links, our method takes advantage of the redirect and interlanguage links, available as SQL dumps.
-
-The English corpus is based on the Wikipedia snapshot as of January 15, 2011. The XML files were parsed by the mwlib parser\footnote{http://code.pediapress.com}. The raw text was tokenized by a modified version of the Punkt sentence and word tokenizers \cite{Kiss:06}. Lemmatization was performed using the Wordnet Lemmatizer in NLTK \cite{Bird:09}. Part-of-speech tagging was performed by HunPos \cite{Halacsy:07}.
+WP is a rich source of information; in addition to the article text, a huge
+amount of data is embedded in infoboxes, templates, and the category
+structure. Our task requires only the links between the articles and the
+article text. In addition to in-article links, our method takes advantage of
+the redirect and interlanguage links, available as SQL dumps. The English
+corpus is based on the WP snapshot as of January 15, 2011. The XML files were
+parsed by the mwlib parser\footnote{http://code.pediapress.com}, the raw
+text was tokenized by a modified version of the Punkt sentence and word
+tokenizers \cite{Kiss:06}. For lemmatization we used the Wordnet Lemmatizer in
+NLTK \cite{Bird:09}, and for part-of-speech tagging the HunPOS tagger
+\cite{Halacsy:07}.
 
 %Chunking was performed by HunChunk (CITE). Experiments have shown that HunPos obtains STAT f-score on the Brown corpus; HunChunk performs at around STAT, CITE?.
 
 \subsection{Named Entity Labeling}
 
-In order to automatically prepare sentences where NEs are accurately tagged, two tasks need to be performed: identifying entities in the sentence and tagging them with the correct tag. Sentences, for which accurate tagging could not be accomplished, must be removed from the corpus.
+In order to automatically prepare sentences where NEs are accurately tagged,
+two tasks need to be performed: identifying entities in the sentence and
+tagging them with the correct tag. Sentences for which accurate tagging could
+not be accomplished must be removed from the corpus. Our approach is based on
+the work of Nothman et al.~\shortcite{Nothman:08}. The WP cross-references
+found in the article text are used to identify entities. We assume that
+individual WP articles describe NEs. A link to an article can then be
+perceived as a mapping that identifies its anchor text with a particular NE.
 
-Our approach is based on the work of Nothman et al.~\shortcite{Nothman:08}. The Wikipedia cross-references found in the article text are used to identification entities. We assume that individual Wikipedia articles describe NEs. A link to an article can then be perceived as a mapping that identifies its anchor text with a particular NE.
-% TODO identifies -> ? vagy with -> as
+The discovered entities are tagged with the CoNLL label assigned to them in
+the entity list extracted from DBpedia. If the link target is not in the
+entity list, or the link points to a disambiguation page, we cannot determine
+the type of the entity, and tag it as UNK for subsequent removal from the
+corpus. Links to redirect pages are resolved to point instead to the redirect
+target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
 
-Discovered entities are tagged with the CoNLL label assigned to them in the entity list extracted from DBpedia. If the link target is not in the entity list, or the link points to a disambiguation page, we cannot determine the type of the entity, and tag it as UNK. Links to redirect pages are resolved to point instead to the redirect target, after which they are handled as regular cross-references. Finally, sentences with UNK links in them are removed from the corpus.
-%  TODO , and -> and?
-
-The following sub-sections describe how the method explained above can be improved to increase precision, sentence coverage and to account for peculiarities in English orthography and the CoNLL guidelines.
+The following sub-sections describe how the method explained above can be
+improved to increase precision, sentence coverage and to account for
+peculiarities in the CoNLL guidelines.
 
 \subsubsection{Non-entity Links}
 
-Strictly speaking, our original assumption of equating Wikipedia articles with NEs is not valid: many pages describe common nouns (Book, Aircraft), calendar-related concepts (March 15, 2007), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
+Strictly speaking, our original assumption of equating WP articles with NEs is not valid: many pages describe common nouns (Book, Aircraft), calendar-related concepts (March 15, 2007), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
 
 \begin{description}
-\item[Common nouns] Links to common nouns are filtered by POS tags; if a link contains no \texttt{NNP}s, it is ignored.
-\item[Dates] Time expressions require special attention, because dates and months are often linked to the respective Wikipedia pages. We circumvented this problem by compiling a list of calendar-related pages and adding them to the main entity list tagged with the CoNLL category \texttt{O}. 
-\item[Lowercase links] Entities are sometimes referred to by common nouns, such as \textit{republic} to \textit{Roman Republic}, \texttt{LOC}, which results in a lowercase link. These references are not considered NEs and are ignored.
+\item[Common noun] links are filtered by POS tags; if a link contains no \texttt{NNP}s, it is ignored.
+\item[Time expression] links require special attention, because dates and
+  months are often linked to the respective WP pages. We circumvented this
+  problem by compiling a list of calendar-related pages and adding them to the
+  main entity list tagged with the CoNLL category \texttt{O}.
+\item[Lowercase] links for entities referred to by common nouns, such as \textit{republic} to \textit{Roman Republic} are not considered NEs and are ignored.
 \end{description}
 
 \subsubsection{Unmarked Entities}
 
-In a Wikipedia article, typically only the first occurrence of a particular entity is linked to the corresponding page. Subsequent mentions are unmarked and often incomplete -- e.g.~family names are used instead of full names.
-
-To account for such mentions, we apply Nothman's \shortcite{Nothman:08} solution. For each page, we maintain a list of entities discovered in the page so far and try to associate capitalized words in the article text with these entities. We augment the list with the aliases of every entity, such as titles of redirect pages that target it, the first and last names in case of a \texttt{PER} entity and any numbers in the name. If the current page is a named entity, the title and its aliases are added to the list as well; moreover, as Wikipedia usually includes the original name of foreign entities in the article text, localized versions of the title are also added to the list as aliases.
-
-Nothman's solution used a trie to store the entity list. Ours uses a set, albeit with more alias types than what he used. We expect more precise tagging from our slightly more rigorous solution.
-% TODO: change at least use
+In a WP article, typically only the first occurrence of a particular entity is
+linked to the corresponding page. Subsequent mentions are unmarked and often
+incomplete -- e.g.~family names are used instead of full names. To account
+for such mentions, we apply Nothman's \shortcite{Nothman:08} solution. For
+each page, we maintain a list of entities discovered in the page so far and
+try to associate capitalized words in the article text with these entities. We
+augment the list with the aliases of every entity, such as titles of redirect
+pages that target it, the first and last names in case of a \texttt{PER}
+entity and any numbers in the name. If the current page is a NE, the
+title and its aliases are added to the list as well; moreover, as WP usually
+includes the original name of foreign entities in the article text, localized
+versions of the title are also added to the list as aliases. Nothman's
+solution used a trie to store the entity list, while we use a set, with more
+alias types than what he used. We expect more precise tagging from our
+slightly more rigorous solution.
 
 \subsubsection{Special Cases}
 
@@ -172,20 +266,44 @@ Nothman's solution used a trie to store the entity list. Ours uses a set, albeit
 \begin{description}
 \item[Derived words] According to the CoNLL guidelines, words derived from NEs are tagged as \texttt{MISC}. We complied with this rule by tagging each entity whose head is not a noun, as well as when the link's anchor text is not contained in the entity's name, as \texttt{MISC}. The most prominent example for such entities are nationalities, which can be linked to their home country, a \texttt{LOC}; e.g.~\textit{Turkish} to \textit{Turkey}. Our solution assigns the correct tag to these entities.
 \item[First word in a sentence] As first words are always capitalized, labeling them is difficult if they are unlinked and not contained in the entity alias set. We base the decision on the POS tag of the first word: if it is \texttt{NNP}, we tag it as \texttt{UNK}; otherwise, \texttt{O}.
-\item[Reference cleansing] Page titles and anchor texts may contain more than just the entity name. Personal titles are part of the entity name in Wikipedia, but not in CoNLL, and punctuation marks around the entity may become part of the link by mistake. We tag all punctuation marks after the entity name as \texttt{O}.
-
-To tackle personal titles, we extracted a list from the Wikipedia page \textit{List of titles}, which contains titles in many languages. We manually removed all titles that also function as given names, such as \textit{Regina}. If a link to a \texttt{PER} or \texttt{UNK} entity, or an unlinked entity starts with, or consists solely of a title in the list, we tag the words that make up the title as \texttt{O}.
-\item[Incidental capitalization] Various non-\texttt{NNP} words in English are capitalized: names of months, the \textit{I} pronoun and non-entity acronyms, such as \textit{RSVP}. While the latter two group is unlikely to appear in Wikipedia text, we assembled a list of these words and tag them as \texttt{O} unless they are part of the alias set.
+\item[Reference cleansing] Page titles and anchor texts may contain more than
+  just the entity name. Personal titles are part of the entity name in WP, but
+  not in CoNLL, and punctuation marks around the entity may become part of the
+  link by mistake. We tag all punctuation marks after the entity name as
+  \texttt{O}. To handle personal titles, we extracted a list from the WP page
+  \textit{List of titles}, which contains titles in many languages. We
+  manually removed all titles that also function as given names, such as
+  \textit{Regina}. If a link to a \texttt{PER} or \texttt{UNK} entity, or an
+  unlinked entity starts with, or consists solely of a title in the list, we
+  tag the words that make up the title as \texttt{O}.
+\item[Incidental capitalization] Various non-\texttt{NNP} words in English are
+  capitalized: names of months, the pronoun \textit{I}, and non-entity
+  acronyms such as \textit{RSVP}. While the latter two types are unlikely to
+  appear in WP text, we assembled a list of these words and tag them as
+  \texttt{O} unless they are part of the alias set.
 \end{description}
 
 \subsection{Sentence Filtering}
 
-As mentioned above, sentences with words tagged as \texttt{UNK} are discarded. Furthermore, there are many incomplete sentences in the Wikipedia text: image captions, enumerations items, contents of table cells, etc. On the one hand, these sentence fragments may be of too low quality to be of any use in the traditional NER task. On the other hand, they could prove to be invaluable when training a NER tagger for User Generated Content, which is known to be noisy and fragmented. As a compromise solution, we included these fragments in the corpus, but labelled them as "low quality", so that users of the corpus can decide whether they want to use them or not. A sentence is labelled as such if it either lacks a punctuation mark at the end, or it contains no finite verbs.
+As mentioned above, sentences with words tagged as \texttt{UNK} are
+discarded. Furthermore, there are many incomplete sentences in the WP text:
+image captions, enumerations items, contents of table cells, etc. On the one
+hand, these sentence fragments may be of too low quality to be of any use in
+the traditional NER task. On the other hand, they could prove to be invaluable
+when training a NER tagger for User Generated Content, which is known to be
+noisy and fragmented. As a compromise we included these fragments in the
+corpus, but labelled them as ``low quality", so that users of the corpus can
+decide whether they want to use them or not. A sentence is labelled as such if
+it either lacks a punctuation mark at the end, or it contains no finite verb.
 
 \section{Creating the Hungarian Corpus}
 \label{sec:hun}
 
-The procedure described in the previous section was used to generate the Hungarian corpus, as well. However, linguistic diversity pose several problems. In this section we describe the differences between the two languages related to labeling NEs, and the changes they prompted in the method.
+The procedure described in the previous section was used to generate the
+Hungarian corpus as well. However, typological differences posed several
+problems. In this section we describe the differences between the two
+languages related to labeling NEs, and the changes they prompted in the
+method.
 
 \begin{table*}[ht]
 \begin{center}
@@ -204,27 +322,63 @@ Szeged NER with wikitags & Szeged NER & 95.38 & 94.92 & 95.15 \\
 
 \subsection{Parsing the Hungarian Wikipedia}
 
-Although Hungarian is reckoned to be a less resourced language, and it is not supperted in NLTK, several high quality language processing tools have been developed for Hungarian in recent years. For tokenization and sentence segmentation we used an in-house statistical tool tailored for Hungarian. It has been trained on the largest manually annotated Hungarian corpus \cite{Csendes:04}, and it handles the peculiarities of Hungarian ortography, such as the periods placed after numbers in date expressions. Lemmatization was performed by hunmorph \cite{Tron:05} and hundisambig, the latter being an in-house disambiguator to select the right analysis based on the word context. 
+Although Hungarian is reckoned to be a less resourced language, and it is not
+supperted in NLTK, several high quality language processing tools have been
+developed for Hungarian in recent years. For tokenization and sentence
+segmentation we used an in-house statistical tool tailored for Hungarian. It
+has been trained on the largest manually annotated Hungarian corpus
+\cite{Csendes:04}, and it handles the peculiarities of Hungarian ortography,
+such as the periods placed after numbers in date expressions. Lemmatization
+was performed by HunMorph \cite{Tron:05} and HunDisambig, an in-house
+disambiguator to select the right analysis based on the word context.
 
 %Although HunPos, as its name implies, is fully capable of POS tagging Hungarian text, we opted for Hunmorph (CITE), a morphological analyzer that, apart from PAS tagging, also lemmatizes the words. Hundisambig (CITE) was used to select the right analysis based on the word context\footnote{Incidentally, Hundisambig relies on HunPos for its HMM model.}.
 
-Hungarian is called a synthetic language: for the most part, it expresses grammatical elements in a single word form using affixes, as opposed to isolating languages (as English), which tend to employ separate words, e.g.~prepositions, pronouns, auxiliaries, for expressing grammatical phenomena. The Hungarian morphological analyzer outputs KR-codes \cite{Kornai:04}, which, in addition to the POS category, also includes inflectional information, which makes it much better suited to agglutinative languages, than Penn Treebank POS tags. One shortcoming of the KR-code is that it does not differenciate between common and proper nouns. Since in Hungarian only proper nouns are capitalized, we can usually decide whether a noun is proper or not based on the initial letter. However, this rule can not be used if the noun is at the beginning of a sentence, as words at the beginning of sentences are always capitalized. Hence, all sentences that begin with nouns have been removed from the corpus.
+For the most part Hungarian expresses grammatical elements within a word form
+using affixes. HunMorph outputs KR-codes \cite{Kornai:04}, which, in addition
+to the POS category, also include inflectional information, making it much
+better suited to agglutinative languages than Penn Treebank POS tags. One
+shortcoming of the KR-code is that it does not differentiate between common
+and proper nouns. Since in Hungarian only proper nouns are capitalized, we can
+usually decide whether a noun is proper based on the initial letter. However,
+this rule can not be used if the noun is at the beginning of a sentence, so
+sentences that begin with nouns have been removed from the corpus.
 
 \subsection{Named Entity Labeling in Hungarian}
 
 For well-resourced languages, DBpedia has internationalized chapters, 
-%data dumps based on Wikipedia. 
-but not for Hungarian. Instead, the Hungarian entity list comprises of the pages in the English list that have their equivalents in the Hungarian Wikipedia. Two consequences follow.
+but not for Hungarian. Instead, the Hungarian entity list comprises of the
+pages in the English list that have their equivalents in the Hungarian WP. Two
+consequences follow.  First, in order to identify which pages denote entities
+in the Hungarian WP, an additional step is required, in which the Hungarian
+equivalents of the English pages are added to the entity list. The English
+titles are retained because (due to the medium size of the Hungarian WP)
+in-article links sometimes point to English articles.
 
-First, in order to identify which pages denote entities in the Hungarian Wikipedia, an additional step is required, in which the Hungarian equivalents of the English pages are added to the entity list. The English titles are retained, as due to the medium size of the Hungarian Wikipedia, in-article links sometimes point to English articles.
+Second, entities without a page in the English WP are absent from the entity
+list. This gives rise to two potential problems. One is that compared to
+English, the list is relatively shorter: the entity/page ratio is 12.12\%, as
+opposed to the 37.66\% of the English WP. The other, since mostly Hungarian
+people, places and organizations are missing, a NER tagger that takes the
+surface forms of words into account might be mislead as to the language model
+of entity names. To overcome these problems, the list has to be extended with
+Hungarian entity pages that do not have a corresponding English page. We leave
+this for future work.
 
-Second, entities without a page in the English Wikipedia are absent from the entity list. This gives rise to two potential problems. One is that compared to English, the list is relatively shorter: the entity/page ratio is 12.12\%, as opposed to the 37.66\% of the English Wikipedia. The other, since mostly Hungarian people, places and organizations are missing, a NER tagger that takes the surface forms of words into account might be mislead as to the language model of entity names. To overcome these problems, the list has to be extended with Hungarian entity pages that do not have a corresponding English page. We leave this for future work.
-
-To annotate our corpus with NE tags, we chose to follow the annotation guidelines of the largest human-annotated NER corpus for Hungarian, the Szeged NER corpus \cite{Szarvas:06}. It is similar to CoNLL standards: contains newswire texts, comprises ca.~200,000 tokens, and is annotated with NE class labels in line with the CoNLL annotation scheme. However, the convention of what constitutes a NE is slightly different for Hungarian. 
+To annotate our corpus with NE tags, we chose to follow the annotation
+guidelines of the largest human-annotated NER corpus for Hungarian, the Szeged
+NER corpus \cite{Szarvas:06}. It is similar to CoNLL standards: contains
+newswire texts, comprises ca.~200,000 tokens, and is annotated with NE class
+labels in line with the CoNLL annotation scheme. However, the convention of
+what constitutes a NE is slightly different for Hungarian.
 
 \subsubsection{Special cases}
 
-The Szeged NER guideline relies heavily on the rules of capitalization to decide which words should be marked as NEs. As mentioned earlier, in Hungarian, apart from the first word in the sentence, only proper nouns are capitalized. The following concepts are not proper nouns in Hungarian, and thus are not considered as NEs: names of languages, nationalities, religions, political ideologies; adjectives derived from NEs; names of months, days, holidays; names of special events and wars.
+The Szeged NER guideline relies heavily on the rules of capitalization to
+decide which words should be marked as NEs. The following concepts are not
+proper nouns in Hungarian, and thus are not considered as NEs: names of
+languages, nationalities, religions, political ideologies; adjectives derived
+from NEs; names of months, days, holidays; names of special events and wars.
 
 %\begin{itemize}
 %\item names of languages, nationalities, religions, political ideologies;
@@ -233,20 +387,31 @@ The Szeged NER guideline relies heavily on the rules of capitalization to decide
 %\item names of special events and wars.
 %\end{itemize}
 
-There is another special case in Hungarian: opposite to English, the number of compund words is quite large and NEs can also be subjects of compounding. In this case the common noun following the NE is joint with a hyphen, so they constitute one token. However, the joint common noun can modify the original sense of NE, depending on the semantics of the common noun. For example: in the compound \textit{Nobel-díj} ['Nobel Prize'] the common noun changes the labeling from PER to MISC, while 
-%\textit{SAP-szoftvercég} ['SAP software company'] the common noun does not change the labeling, but 
-in the case of the compound \textit{WorldCom-botrány} ['WorldCom scandal'] the NE tag changes from ORG to O. The solution to this problem is not obvious, and needs more investigation.
-
-% TODO: <NE>-<random kisbetűs szó> => nem NE (magyar). Lásd: "a tű nélküli mezoterápia alapja a <Nobel, PER>-díjas"
+There is another special case in Hungarian: unlike in English, the number of
+compund words is quite large, and NEs can also be subject to compounding. In
+this case the common noun following the NE is joined with a hyphen, so they
+constitute one token. However, the joint common noun can modify the original
+sense of NE, depending on the semantics of the common noun. For example in
+the compound \textit{Nobel-díj} [`Nobel Prize'] the common noun changes the
+labeling from \texttt{PER} to \texttt{MISC}, while
+%\textit{SAP-szoftvercég} ['SAP software company'] the common noun does not
+%change the labeling, but
+in the case of the compound \textit{WorldCom-botrány} [`WorldCom scandal'] the NE tag changes from \texttt{ORG} to \texttt{O}. The solution to this problem is not obvious, and needs more investigation.
 
 %Inflections of acronyms and foreign names ending with non-pronounced vowel have similar surface forms to the aforementioned compounds, e.g.~\textit{MTI-t} ['MTI'+ACC], \textit{Shakespeare-rel} ['with Shakespeare']. It is important to distinguish these types of hyphenated NEs, because inflections do not change NE labeling in contrast to some type of compounds. Due to the surface similarity of these phenomena the solution of this problem is not obvious, and needs more investigation. 
 
 \section{Data Description}
 \label{sec:data}
 
-The corpora are available under the Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA), the same license under which the text of Wikipedia is released. The data files can be freely downloaded from \texttt{http://hlt.sztaki.hu}. The corpora will also be distributed through META-SHARE network, which is an open, distributed facility for exchanging and sharing resources, and is one of the lines of action of META-NET, a Network of Excellence funded by the European Commission. 
+The corpora are available under the Creative Commons Attribution-Sharealike
+3.0 Unported License (CC-BY-SA), the same license under which the text of WP
+is released. The data files can be freely downloaded from \texttt{http://hlt.sztaki.hu}. The corpora
+will also be distributed through the META-SHARE network, which is an open,
+distributed facility for exchanging and sharing resources, and is one of the
+lines of action of META-NET, a Network of Excellence funded by the European
+Commission.
 
-The files are in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its POS tag. Two NE tags are included with each word: the most specific DBpedia category it belongs to and the CoNLL NE tag. While the NE tags can be considered as a "silver standard", the linguistic features are provided on a "best-effort" basis.
+The files are in multitag format. Content lines are tab separated; there is one column for the tokens plus one column per tagset. Sentence boundaries are marked by empty lines. The linguistic features include the lemmatized form of the word and its POS tag. Two NE tags are included with each word: the most specific DBpedia category it belongs to and the CoNLL NE tag. While the NE tags can be considered as a ``silver standard", the linguistic features are provided on a ``best-effort" basis.
 
 \begin{table*}[ht]
 \begin{center}
@@ -279,55 +444,113 @@ CoNLL with wikitags & CoNLL & 85.88 & 85.94 & 85.91 \\
 \section{Evaluation}
 \label{sec:eval}
 
-Having the obvious advantages, an automatically generated corpus can not serve as a gold standard dataset. Then what can we do with silver standard corpora? They can be very useful for improving NER in more ways: (a) for less resourced languages, they can serve as training corpora in absence of gold standard datasets; (b) they can serve as (supplementary or independent) training sets for domains differing from newswire; (c) they can be sources of huge entity lists, and (d) feature extraction. 
+Having the obvious advantages, an automatically generated corpus can not serve as a gold standard dataset. Then what can we do with silver standard corpora? They can be very useful for
+improving NER in several ways: (a) for less resourced languages, they can
+serve as training corpora in lieu of gold standard datasets; (b) they can
+serve as supplementary or independent training sets for domains differing
+from newswire; (c) they can be sources of huge entity lists, and (d) feature
+extraction.
 
-To evaluate our corpora we used a maximum entropy NE tagger \cite{Varga:07}, which was originally developed for labeling NEs in Hungarian texts, but it can be tuned for different languages, as well. Corpus-specific features (e.g.~NP chunks, Wikipedia links) were removed to get better comparability, so the feature set consists of gazetteer features; sentence start and end position; Boolean-valued orthographic properties of the word form; string-valued surface properties of the word form; and morphological information.
-
-%\begin{itemize}
-%\item gazetteer features;
-%\item sentence start and end position;
-%\item Boolean-valued orthographic properties of the word form;
-%\item string-valued surface properties of the word form;
-%\item morphological information.
-%\end{itemize}
+To evaluate our corpora we used a maximum entropy NE tagger \cite{Varga:07},
+which was originally developed for labeling NEs in Hungarian texts, but can
+be tuned for different languages as well. Corpus-specific features (e.g.~NP
+chunks, WP links) were removed to get better comparability, so the feature set
+consists of gazetteer features; sentence start and end position;
+Boolean-valued orthographic properties of the word form; string-valued surface
+properties of the word form; and morphological information.
 
 We used the CoNLL standard method for evaluation. According to this, an automatic labeling is correct if it gives the same start and end position, and the same NE class as the gold standard. Based on this, precision and recall can be calculated, and the F-measure, as usual, the harmonic mean of these two values.  
 
 \subsection{Wikipedia data}
 
-Our automatic annotation process retains all of the Wikipedia sentences, which remained after our two-fold filtering method. Thus sentences without NEs are also included in the corpus. The rationale behind this is that we wanted to reserve the original distribution of names in Wikipedia as much as possible. However, after further investigation of the NE density in our corpora and gold standard corpora, we decided not to include the sentences without NEs in evaluation datasets. 
+Our automatic annotation process retains all of the WP sentences which
+remained after our two-step filtering method, so sentences without NEs are
+also included in the corpus. The rationale behind this is that we wanted to
+reserve the original distribution of names in WP as much as possible. However,
+after further investigation of the NE density in our corpora and gold standard
+corpora, we decided not to include the sentences without NEs in evaluation
+datasets.
 
-Table \ref{size} summarizes the data regarding corpus size and NE density. The English (enwiki) and the Hungarian Wikipedia (huwiki) corpora originally have the NE density of 5.23\% and 2.38\%, respectively. In comparison to the gold standard datasets (CoNLL, Szeged NER) these counts are quite low. It can be due to the difference between domains: newswire articles usually contain more NEs, typically ORG. The other reason might be that we discarded sentences containing unidentified NEs (cf.~Section \ref{sec:create}).    
+Table \ref{size} summarizes the data regarding corpus size and NE density. The
+English (enwiki) and the Hungarian WP (huwiki) corpora originally have the NE
+density of 5.23\% and 2.38\%, respectively. In comparison to the gold standard
+datasets (CoNLL, Szeged NER) these counts are quite low. It can be due to the
+difference between domains: newswire articles usually contain more NEs,
+typically ORG. The other reason might be that we discarded sentences
+containing unidentified NEs (cf.~Section \ref{sec:create}).
 
 \subsection{Experiments and results}
 
-The English Wikipedia corpus was evaluated against itself and a manually annotated English corpus. Since the filtered English Wikipedia corpus, containing only the sentences with NEs, is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
+The English WP corpus was evaluated against itself and a manually annotated
+English corpus. Since the filtered English WP corpus, containing only the
+sentences with NEs, is still very large, our experiments were performed with a
+sample of 3.5 million tokens, the size of our filtered Hungarian corpus,
+divided into train and test sets (90\%-10\%).
 
-For English cross-corpus evaluation the CoNLL-2003 corpus was chosen. It is well-studied that cross-checking between different corpora decrease F-measure. Domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs better on corresponding test sets than on test sets from other sources. The situation here is similar (see Table \ref{enresults} for results): the NE tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set (enwiki-CoNLL) as one trained on the own train set (enwiki-enwiki). 
+For English cross-corpus evaluation the CoNLL-2003 corpus was chosen. As is
+well known, training and testing across different corpora decreases
+F-measure. Domain differences certainly affect NER performance, and the
+different annotation schemes pose several compatibility problems. Nothman et
+al.~\shortcite{Nothman:08} showed that each set of gold standard training data
+performs better on corresponding test sets than on test sets from other
+sources. The situation here is similar (see Table \ref{enresults} for
+results): the NE tagger trained on WP does not achieve as high performance
+tested against CoNLL test set (enwiki-CoNLL) as one trained on its own train
+set (enwiki-enwiki).
 
-However, Wikipedia-derived corpora can also be used for improving NER accuracy in other ways. First, we collected gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE tagger training and testing on CoNLL dataset (CoNLL with wikilists). A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train (CoNLL with wikitags). Both methods result in improved F-measure on CoNLL test set.  
+WP-derived corpora can also be used for improving NER accuracy in other
+ways. First, we collected gazetteer lists from the corpus for each NE
+category, which improved the overall F-measure given to the NE tagger training
+and testing on CoNLL dataset (CoNLL with wikilists). A second trial was
+labeling the CoNLL datasets by the model trained on WP corpus, and giving
+these labels as extra features to the next CoNLL train (CoNLL with
+wikitags). Both methods result in improved F-measure on CoNLL test set.
 
-Since in Hungarian NE tagging we followed the Szeged NER corpus annotation guidelines, we performed the experiments on this dataset. Hungarian results are similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency of this class is smaller (cf.~Section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was accurately annotated with an inter-annotator agreement over 99\%.  
+Since in Hungarian NE tagging we followed the Szeged NER corpus annotation
+guidelines, we performed the experiments on this dataset. Hungarian results
+are similar to the English ones (see Table \ref{huresults}), the only
+difference is that F-measures for Hungarian are significantly higher. This can
+be due to the fact that the MISC category for Hungarian contains less types of
+names, thus the inconsistency of this class is smaller (cf.~Section
+\ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was
+accurately annotated with an inter-annotator agreement over 99\%.
 
-Due to the quite good F-measure of training on our Hungarian train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE taggers for domains falling out of newswire. 
+Due to the quite good F-measure of training on our Hungarian train corpus and
+testing on the corresponding test set, our Hungarian corpus can serve as a
+training corpus to build NE taggers for non-newswire domains.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08}, the process can be divided into four main steps:  classifying Wikipedia articles into entity classes; parsing Wikipedia and splitting articles into sentences; labeling NEs in the text; and selecting sentences for inclusion in the corpus. 
+We have presented freely available NE tagged corpora for English and
+Hungarian, fully automatically generated from WP. In contrast to the methods
+used so far for automatic annotation of NEs in WP texts, we applied a new
+approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags,
+and assigning them to WP entities. 
+Following Nothman \shortcite{Nothman:08},
+the process can be divided into four main steps: classifying WP articles into
+entity classes; parsing WP and splitting articles into sentences; labeling NEs
+in the text; and selecting sentences for inclusion in the corpus.
 
-Thanks to the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of Hungarian, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
+The huge amount of WP articles opens the possibility of building large enough
+corpora for otherwise less resourced languages such as Hungarian. Due to the
+particularities of Hungarian, some steps are slightly different, and special
+linguistic phenomena pose several problems related to the NER task to solve.
 
-Automatically generated corpora can be useful for improving NER in more ways. We showed that gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves F-measure. Moreover, our Hungarian corpus can serve as a training corpus for more general domains, than the classic newswire.  
+Automatically generated corpora can be useful for improving NER in more
+ways. We showed that gazetteer lists extracted from our corpora, and training
+with extra features given by the model trained on our corpora, improve
+F-measure. Moreover, our Hungarian corpus can serve as a training corpus for
+more general domains than the classic newswire.
 
 %az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
 
 %később majd kirakjuk a scripteket is, és akár újra és újra frissíthető lesz
 
-\section*{Acknowledgments}
+\section*{Acknowledgements}
 
 % TODO: the corpora will be published in the META-SHARE repository.
-This research was supported by the CESAR project under the ICT Policy Support Programme (grant no. 271022). The authors are grateful to Attila Zséder for his work on Wikipedia parsing.
+This research was supported by the OTKA grant no. 82333 and the CESAR project under the ICT Policy Support Programme (grant no. 271022). The authors are grateful to Attila Zséder for his work on Wikipedia parsing and to András Kornai for his help.
 
 \begin{thebibliography}{}
 
