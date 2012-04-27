@@ -322,25 +322,24 @@ Table \ref{size} summarizes the data regarding corpus size and NE density. The E
 
 \subsection{Experiments and results}
 
-The English train corpus was evaluated against itself and a manually annotated English corpus. Since the filtered English Wikipedia corpus, containing only the sentences with NEs, is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
+The English Wikipedia corpus was evaluated against itself and a manually annotated English corpus. Since the filtered English Wikipedia corpus, containing only the sentences with NEs, is still very huge, and we are limited by time and memory, our experiments were performed with a portion of 3.5 million tokens (the size of our filtered Hungarian corpus). It was divided into train and test sets (90\%-10\%). 
 
-For English cross-corpus evaluation the CoNLL-2003 corpus was chosen. It is well-studied that cross-checking between different corpora decrease F-measure. Domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs better on corresponding test sets than on test sets from other sources. The situation here is similar: the NE tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set as one trained on the own train set (see Table \ref{enresults}). 
+For English cross-corpus evaluation the CoNLL-2003 corpus was chosen. It is well-studied that cross-checking between different corpora decrease F-measure. Domain differences certainly affect NER performance, and the different annotation schemes pose several compatibility problems. Nothman et al.~\shortcite{Nothman:08} showed that each set of gold standard training data performs better on corresponding test sets than on test sets from other sources. The situation here is similar (see Table \ref{enresults} for results): the NE tagger trained on Wikipedia does not achieve as high performance tested against CoNLL test set (enwiki-CoNLL) as one trained on the own train set (enwiki-enwiki). 
 
-However, Wikipedia-derived corpora can also be used for improving NER accuracy in other ways. First, we collected gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE tagger training and testing on CoNLL dataset. A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train. Both methods result in improved F-measure on CoNLL test set.  
+However, Wikipedia-derived corpora can also be used for improving NER accuracy in other ways. First, we collected gazetteer lists from the corpus for each NE category, which improved the overall F-measure given to the NE tagger training and testing on CoNLL dataset (CoNLL with wikilists). A second trial was labeling the CoNLL datasets by the model trained on Wikipedia corpus, and giving these labels as extra features to the next CoNLL train (CoNLL with wikitags). Both methods result in improved F-measure on CoNLL test set.  
 
-Since in Hungarian NE tagging we followed the Szeged NER corpus annotation guidelines, we performed the experiments on this dataset. Hungarian results are similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency of this class is smaller (see section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was accurately annotated with an inter-annotator agreement over 99\%.  
+Since in Hungarian NE tagging we followed the Szeged NER corpus annotation guidelines, we performed the experiments on this dataset. Hungarian results are similar to the English ones (see Table \ref{huresults}), the only difference is that F-measures for Hungarian are significantly higher. It can be due to the fact that the MISC category for Hungarian contains less types of names, thus the inconsistency of this class is smaller (cf.~Section \ref{sec:hun}). In contrast to the CoNLL corpus, the Szeged NER corpus was accurately annotated with an inter-annotator agreement over 99\%.  
 
 Due to the quite good F-measure of training on our Hungarian train corpus and testing on the corresponding test set, our Hungarian corpus can serve as a training corpus to build NE taggers for domains falling out of newswire. 
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08}, the process can be divided into four main steps:  classifying all articles into entity classes; splitting Wikipedia articles into sentences; labeling NEs according to link targets; and selecting sentences for inclusion in the corpus. 
+We have presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from Wikipedia. In contrast to the methods used so far for automatic annotation of NEs in Wikipedia texts, we applied a new approach, namely mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to Wikipedia entities. Following Nothman \shortcite{Nothman:08}, the process can be divided into four main steps:  classifying Wikipedia articles into entity classes; parsing Wikipedia and splitting articles into sentences; labeling NEs in the text; and selecting sentences for inclusion in the corpus. 
 
-Thanks for the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of Hungarian, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
+Thanks to the huge amount of Wikipedia articles, the possibility of building large enough corpora is given for less resourced languages, like Hungarian, as well. Due to the particularities of Hungarian, some steps are slightly different, and special linguistics phenomena pose several problems related to the NER task to solve. 
 
-Automatically generated corpora can be useful for improving NER in more ways. We showed that gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves F-measure. Moreover, our Hungarian corpus can serve as a training corpus for more general domains. 
-%than the classic newswire.  
+Automatically generated corpora can be useful for improving NER in more ways. We showed that gazetteer lists extracted from our corpora, and training with extra features given by the model trained on our corpora, improves F-measure. Moreover, our Hungarian corpus can serve as a training corpus for more general domains, than the classic newswire.  
 
 %az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
 
@@ -349,7 +348,7 @@ Automatically generated corpora can be useful for improving NER in more ways. We
 \section*{Acknowledgments}
 
 % TODO: the corpora will be published in the META-SHARE repository.
-This research was supported by the CESAR project under the ICT Policy Support Programme (grant 271022). The authors are grateful to Attila Zséder for his work on Wikipedia parsing.
+This research was supported by the CESAR project under the ICT Policy Support Programme (grant no. 271022). The authors are grateful to Attila Zséder for his work on Wikipedia parsing.
 
 \begin{thebibliography}{}
 
@@ -358,6 +357,12 @@ This research was supported by the CESAR project under the ICT Policy Support Pr
 %\newblock 2009.
 %\newblock Named Entity Recognition in Wikipedia.
 %\newblock In: {\em Proceedings of the 2009 Workshop on the People's Web Meets NLP, ACL-IJCNLP}, pages 10--18.
+
+\bibitem[\protect\citename{Bird et al.}2009]{Bird:09}
+Steven Bird, Ewan Klein, Edward Loper.
+\newblock 2009.
+\newblock {\em Natural Language Processing with Python}.
+\newblock O'Reilly Media Inc.
 
 \bibitem[\protect\citename{Bizer \bgroup et al.\egroup}2009]{Bizer:09} 
 Christian Bizer, Jens Lehmann, Georgi Kobilarov, Sören Auer, Christian Becker, Richard Cyganiak, Sebastian Hellmann.
@@ -414,12 +419,6 @@ András Kornai, Péter Rebrus, Péter Vajda, Péter Halácsy, András Rung, Vikt
 \newblock Általános célú morfológiai elemző kimeneti formalizmusa (The output formalism of a general-purpose morphological analyzer).
 \newblock In: {\em Proceedings of the 2nd Hungarian Computational Linguistics Conference}.
 
-\bibitem[\protect\citename{Bird et al.}2009]{Bird:09}
-Steven Bird, Ewan Klein, Edward Loper.
-\newblock 2009.
-\newblock {\em Natural Language Processing with Python}.
-\newblock O'Reilly Media Inc.
-
 \bibitem[\protect\citename{Medelyan  \bgroup et al.\egroup}2009]{Medelyan:09}
 Olena Medelyan, David Milne, Catherine Legg, and Ian H. Witten.
 \newblock 2009.
@@ -439,7 +438,7 @@ Joel Nothman, James R. Curran, and Tara Murphy.
 \newblock In: {\em Proceedings of the Australasian Language Technology Workshop}, Vol 6., pages 124--132.
 
 \bibitem[\protect\citename{Nothman \bgroup et al.\egroup}2009]{Nothman:09}
-Joel Nothman and Tara Murphy and James R. Curran.
+Joel Nothman, Tara Murphy and James R. Curran.
 \newblock 2009.
 \newblock Analysing Wikipedia and Gold-Standard Corpora for NER Training.
 \newblock In: {\em Proceedings of the 12th Conference of the European Chapter of the ACL}, pages 612--620.
