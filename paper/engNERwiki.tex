@@ -17,6 +17,7 @@
 \usepackage[utf8]{inputenc}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \setlength\titlebox{6.5cm}    % Expanding the titlebox
+\hyphenation{DBpedia}
 
 \title{Automatically generated NE tagged corpora for English and Hungarian}
 
@@ -138,7 +139,7 @@ al.~\shortcite{Nothman:08} and broke down the process into four steps:
 
 In this section, we describe how these steps were implemented. This section explains the general approach and its execution for English; Section \ref{sec:hun} describes how the idea is adapted to Hungarian.
 
-%While the approach in essence is language-independent, the exact details have to be accomodated to the target language.
+%While the approach in essence is language-independent, the exact details have to be accommodated to the target language.
 
 \subsection{Articles as Entities}
 \label{dbpedia}
@@ -178,8 +179,8 @@ we created a file of DBpedia class--NE category mappings. Whenever an entity is 
 As of version 3.7, the DBpedia ontology allows multiple superclasses, making a
 directed acyclic
 graph\footnote{http://blog.dbpedia.org/2011/09/11/dbpedia-37-released-including-15-localized-editions}. Since
-selecting the right superclass, and hence, CoNLL tag for classes with more
-than one parent, cannot be reliably done automatically, the class-to-category
+selecting the right superclass, and hence, CoNLL tag, for classes with more
+than one parent cannot be reliably done automatically, the class-to-category
 mapping had to be determined manually. The only such class in version 3.7,
 \texttt{Library}, can be traced back to both \texttt{Place} and
 \texttt{Organisation}; its CoNLL tag is \texttt{LOC}.  Using the mapping thus
@@ -227,7 +228,7 @@ target, after which they are handled as regular cross-references. Finally, sente
 
 The following sub-sections describe how the method explained above can be
 improved to increase precision, sentence coverage and to account for
-peculiarities in the CoNLL guidelines.
+peculiarities in the English orthography and the CoNLL guidelines.
 
 \subsubsection{Non-entity Links}
 
@@ -271,12 +272,15 @@ slightly more rigorous solution.
   just the entity name. Personal titles are part of the entity name in WP, but
   not in CoNLL, and punctuation marks around the entity may become part of the
   link by mistake. We tag all punctuation marks after the entity name as
-  \texttt{O}. To handle personal titles, we extracted a list from the WP page
+  \texttt{O}.
+  
+  To handle personal titles, we extracted a list from the WP page
   \textit{List of titles}, which contains titles in many languages. We
   manually removed all titles that also function as given names, such as
   \textit{Regina}. If a link to a \texttt{PER} or \texttt{UNK} entity, or an
   unlinked entity starts with, or consists solely of a title in the list, we
   tag the words that make up the title as \texttt{O}.
+  % TODO 2 paragraphs?
 \item[Incidental capitalization] Various non-\texttt{NNP} words in English are
   capitalized: names of months, the pronoun \textit{I}, and non-entity
   acronyms such as \textit{RSVP}. While the latter two types are unlikely to
@@ -324,11 +328,11 @@ Szeged NER with wikitags & Szeged NER & 95.38 & 94.92 & 95.15 \\
 \subsection{Parsing the Hungarian Wikipedia}
 
 Although Hungarian is reckoned to be a less resourced language, and it is not
-supperted in NLTK, several high quality language processing tools have been
+supported in NLTK, several high quality language processing tools have been
 developed for Hungarian in recent years. For tokenization and sentence
 segmentation we used an in-house statistical tool tailored for Hungarian. It
 has been trained on the largest manually annotated Hungarian corpus
-\cite{Csendes:04}, and it handles the peculiarities of Hungarian ortography,
+\cite{Csendes:04}, and it handles the peculiarities of Hungarian orthography,
 such as the periods placed after numbers in date expressions. Lemmatization
 was performed by HunMorph \cite{Tron:05} and HunDisambig, an in-house
 disambiguator to select the right analysis based on the word context.
@@ -389,7 +393,7 @@ from NEs; names of months, days, holidays; names of special events and wars.
 %\end{itemize}
 
 There is another special case in Hungarian: unlike in English, the number of
-compund words is quite large, and NEs can also be subject to compounding. In
+compound words is quite large, and NEs can also be subject to compounding. In
 this case the common noun following the NE is joined with a hyphen, so they
 constitute one token. However, the joint common noun can modify the original
 sense of NE, depending on the semantics of the common noun. For example in
@@ -544,14 +548,11 @@ with extra features given by the model trained on our corpora, improve
 F-measure. Moreover, our Hungarian corpus can serve as a training corpus for
 more general domains than the classic newswire.
 
-%az eredeti DBpedia osztályokat is megtarthatnánk, hiszen nem mindig célravezető a CoNLL osztályok használata, mivel azok elég tág kategóriák, amikbe olyan dolgok is tartoznak, amik nagyon eltérőek is lehetnek
-
 %később majd kirakjuk a scripteket is, és akár újra és újra frissíthető lesz
 
 \section*{Acknowledgements}
 
-% TODO: the corpora will be published in the META-SHARE repository.
-This research was supported by the OTKA grant no. 82333 and the CESAR project under the ICT Policy Support Programme (grant no. 271022). The authors are grateful to Attila Zséder for his work on Wikipedia parsing and to András Kornai for his help.
+This research was supported by OTKA grant no. 82333 and the CESAR project under the ICT Policy Support Programme (grant no. 271022). The authors are grateful to Attila Zséder for his work on Wikipedia parsing and to András Kornai for his insightful comments.
 
 \begin{thebibliography}{}
 
