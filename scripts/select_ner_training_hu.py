@@ -72,7 +72,8 @@ class SentenceData(object):
     def write(self, out):
         """Writes the sentence to the output file."""
         for word in self.sentence:
-            out.write(word.encode('iso-8859-2', 'xmlcharrefreplace') + '\n')
+            out.write(word.encode('utf-8') + "\n")
+            #out.write(word.encode('iso-8859-2', 'xmlcharrefreplace') + '\n')
         out.write('\n')
         self.num_words += len(self.sentence)
         self.num_train += 1
@@ -527,7 +528,8 @@ class NERTrainingCallback(DefaultConllCallback):
                 elif self._keep_filtered:
     #                print "FILTERED"
                     for attributes in self.sentence_words:
-                        self._filtered.write(u"\t".join(attributes).encode('iso-8859-2', 'xmlcharrefreplace') + "\n")
+                        #self._filtered.write(u"\t".join(attributes).encode('iso-8859-2', 'xmlcharrefreplace') + "\n")
+                        self._filtered.write(u"\t".join(attributes).encode('utf-8') + "\n")
                     self._filtered.write("\n")
             self.sentence_words = []
 
