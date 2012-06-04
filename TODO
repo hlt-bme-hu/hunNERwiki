@@ -1,3 +1,15 @@
+TODOs till ACL (9-12 July):
+
+-huwiki: 
+	-ahol a morf. elemzo elrontja (+?), ott javitani, kulonben nem jon ki az oszlopszam
+	-utana ujracsinalni UTF-8-ban
+-enwiki:
+	-futtatni azt, ami nem konvertalja at latin2-re
+-hlt.sztaki.hu-ra kirakni & vmi szoveg kene hozza, de legalabb a cikket be kell linkelni
+-ACL slide-okat megcsinalni, Berend Gabort felkesziteni
+
+************************
+
 - hunner: utf-8
 - DBpedia tag is
 - chunking
