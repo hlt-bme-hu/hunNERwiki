@@ -3,7 +3,7 @@ TODOs till ACL (9-12 July):
 -huwiki: 
 	-ahol a morf. elemzo elrontja (+?), ott javitani, kulonben nem jon ki az oszlopszam
 	-utana ujracsinalni UTF-8-ban
--enwiki:
+-enwiki: DONE
 	-futtatni azt, ami nem konvertalja at latin2-re
 -hlt.sztaki.hu-ra kirakni & vmi szoveg kene hozza, de legalabb a cikket be kell linkelni
 -ACL slide-okat megcsinalni, Berend Gabort felkesziteni
@@ -32,6 +32,9 @@ Az anyag feltuningolása:
 	a NE nelkuli mondatok azert szamithatnak, mert a feature-ok sulyat lehet, hogy megvaltoztatja az, ha tobb nem nagybetus nem-NE van a szovegben -- ebben nem vagyok biztos, ki kene merni 
 
 DONE:
+-enwiki:
+	-futtatni azt, ami nem konvertalja at latin2-re
+
 -CoNLL guideline-ban megnezni, hogy mit hogyan annotalnak --> mi is ugy!
 -linkelt datumot tartalmazo mondatok nem kiszuresenek a megoldasa
   - year, date, etc. template-ek alapján lista a dátum oldalakról
