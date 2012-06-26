@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resourceInfo xmlns="http://www.ilsp.gr/META-XMLSchema"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.ilsp.gr/META-XMLSchema http://metashare.ilsp.gr/META-XMLSchema/v2.1/META-SHARE-Resource.xsd">
+   <identificationInfo>
+      <resourceName>Hungarian NER Corpus based on Wikipedia</resourceName>
+      <description>The text of the corpus will be auto-generated from Hungarian Wikipedia articles. It will contain Named Entity (NE) tagging according to the CoNLL standard (Person, Organization, Location and Miscellaneous), and additional morphological and shallow syntactic annotation. The corpus will be the largest ever NE-tagged corpus for Hungarian, which can be used for training and testing NE recognizer applications. Thanks to the standard tagset, the performance of systems trained on the hunNERwiki corpus will be comparable with the performance of other state-of-the-art systems.Besides the obvious advantages of fully automatic building and annotation procedure (reducing the annotation cost), the novelty of the corpus is the application of collaboratively constructed resources(Wikipedia, DBpedia).</description>
+      <resourceShortName>hunNERwiki</resourceShortName>
+      <url>http://www.nytud.hu/depts/corpus/index.html</url>
+      <metaShareId>
+				XXX
+	  		</metaShareId>
+      <identifier>XXX</identifier>
+   </identificationInfo>
+   <distributionInfo>
+      <availability>avaiable-unrestricted use</availability>
+      <licenceInfo>
+         <licence>Creative Commons Attribution-ShareAlike 3.0 License</licence>
+         <restrictionsOfUse>shareAlike</restrictionsOfUse>
+         <restrictionsOfUse>attribution</restrictionsOfUse>
+         <distributionAccessMedium>downloadable</distributionAccessMedium>
+      </licenceInfo>
+   </distributionInfo>
+   
+   <contactPerson>
+      <surname>Nemeskey</surname>
+      <givenName>Dávid Márk</givenName>
+      <communicationInfo>
+         <email>nemeskey.david@sztaki.hu</email>
+         <url>http://www.sztaki.hu/munkatars/008007760/</url>
+         <address>Lágymányosi u. 11.</address>
+         <zipCode>1111</zipCode>
+         <city>Budapest</city>
+         <telephoneNumber>+ 36 1 279 6154</telephoneNumber>
+         <faxNumber>XX</faxNumber>
+      </communicationInfo>
+      <position>CEO</position>
+      <affiliation>
+         <organizationName>Magyar Tudományos Akadémia Számítástechnikai és Automatizlási Kutatóintézet</organizationName>
+         <organizationShortName>MTA SZTAKI</organizationShortName>
+         <communicationInfo>
+            <email>nemeskey.david@sztaki.hu</email>
+         <url>http://www.sztaki.hu/</url>
+         <address>Lágymányosi u. 11.</address>
+         <zipCode>1111</zipCode>
+         <city>Budapest</city>
+         <telephoneNumber>+ 36 1 279 6154</telephoneNumber>
+         <faxNumber>XXX</faxNumber>
+         </communicationInfo>
+			
+		    </affiliation>
+   </contactPerson>  
+   <metadataInfo>
+      <metadataCreationDate>2012-06-25</metadataCreationDate>
+      <metadataCreator>
+         <surname>Pinter</surname>
+         <givenName>Tibor</givenName>
+      <communicationInfo>
+         <email>pinter.tibor@nytud.mta.hu</email>
+         <url>http://www.nytud.hu/oszt/korpusz/Pinter_Tibor.html</url>
+         <address>Benczur utca 33.</address>
+         <zipCode>1068</zipCode>
+         <city>Budapest</city>
+         <telephoneNumber>+ 36 1 321 4830 ext.119</telephoneNumber>
+         <faxNumber>+36 1 322 9297</faxNumber>
+      </communicationInfo>
+      <position>research fellow</position>
+      <affiliation>
+         <organizationName>Research Institute for Linguistics, Hungarian Academy of Sciences</organizationName>
+         <organizationShortName>RIL HAS</organizationShortName>
+         <departmentName>Department of Language Technology</departmentName>
+         <communicationInfo>
+		 <email>pinter.tibor@nytud.mta.hu</email>
+         <url>http://www.nytud.hu/oszt/korpusz/Pinter_Tibor.html</url>
+         <address>Benczur utca 33.</address>
+         <zipCode>1068</zipCode>
+         <city>Budapest</city>
+         <telephoneNumber>+ 36 1 321 4830 ext.119</telephoneNumber>
+         <faxNumber>+36 1 322 9297</faxNumber>
+         </communicationInfo>
+      </affiliation>
+      </metadataCreator>
+      <source>CESAR</source>
+      <metadataLanguageId>en</metadataLanguageId>
+      <metadataLastDateUpdated>2012-06-25</metadataLastDateUpdated>
+   </metadataInfo>
+   <versionInfo>
+		    <version>1.0</version>
+	  </versionInfo> 
+   <resourceCreationInfo>
+      <fundingProject>
+         <projectName>Central and South-East European Resources</projectName>
+         <projectShortName>CESAR</projectShortName>
+         <url>http://www.cesar-project.net</url>
+         <fundingType>euFunds</fundingType>
+         <fundingType>ownFunds</fundingType>
+         <funder>European Commission (50%)</funder>
+         <funder>Research Institute for Linguistics, Hungarian academy of Sciences (50%)</funder>
+         <fundingCountry>Hungary</fundingCountry>
+         <projectStartDate>2011-02-01</projectStartDate>
+         <projectEndDate>2013-01-31</projectEndDate>
+      </fundingProject>
+   </resourceCreationInfo>
+
+ <resourceComponentType>
+      <corpusInfo>
+         <resourceType>corpus</resourceType>
+         <corpusMediaType>
+            <corpusTextInfo>
+               <mediaType>text</mediaType>
+               <lingualityInfo>
+			               <lingualityType>monolingual</lingualityType>			
+		             </lingualityInfo>
+               <languageInfo>
+                  <languageId>hun</languageId>
+                  <languageName>Hungarian</languageName>
+                  <sizePerLanguage>
+				                 <size>1400000</size>
+				                 <sizeUnit>words</sizeUnit>
+			               </sizePerLanguage>
+
+              <textFormatInfo>
+ XXX                 <mimeType>html</mimeType> - ez biztos? egyáltalán milyen formátumban vannak?
+                  <sizePerTextFormat>
+				                 <size>1400000</size>
+				
+				                 <sizeUnit>words</sizeUnit>
+			               </sizePerTextFormat>
+               </textFormatInfo>
+               <characterEncodingInfo>
+ XXX                 <characterEncoding>UTF-8</characterEncoding> - ezt jó lenne tudni...
+                  <sizePerCharacterEncoding>
+				                 <size>1400000</size>
+				
+				                 <sizeUnit>words</sizeUnit>
+			               </sizePerCharacterEncoding>
+               </characterEncodingInfo>
+ XXX              <annotationInfo> - az annotationinfo cucc így jó? javítsd lécci
+                  <annotationType>NER tagging</annotationType>
+                  <segmentationLevel>words</segmentationLevel>
+                  <annotationFormat>text/html</annotationFormat>
+                  <conformanceToStandardsBestPractices>TEI</conformanceToStandardsBestPractices>
+                  <annotationMode>mixed</annotationMode>
+                  <annotationTool>
+                     <targetResourceNameURI>in-house software</targetResourceNameURI>
+                  </annotationTool>
+                  <sizePerAnnotation>
+				                 <size>1400000</size>
+				
+				                 <sizeUnit>words</sizeUnit>
+			               </sizePerAnnotation>
+ XXX                 <annotator> - ezt is ki kellene tölteni
+                     <personInfo>
+                        <surname>???</surname>
+                        <givenName>??</givenName>
+                        <communicationInfo>
+                           <email>??</email>
+                           <url>??</url>
+                           <address>??</address>
+                           <zipCode>??</zipCode>
+                           <city>??</city>
+                           <country>Hungary</country>
+                           <telephoneNumber>??</telephoneNumber>
+                        </communicationInfo>
+                        <position>??</position>
+                        <affiliation>
+                           <organizationName>??</organizationName>
+                           <organizationShortName>??</organizationShortName>
+                           <departmentName>??</departmentName>
+                           <communicationInfo>
+                              <email>??</email>
+                              <url>??</url>
+                              <address>??</address>
+                              <zipCode>??</zipCode>
+                              <city>??</city>
+                              <country>Hungary</country>
+                              <telephoneNumber>??</telephoneNumber>
+                           </communicationInfo>
+				        </affiliation>
+                     </personInfo>
+                  </annotator>
+
+
+            </corpusTextInfo>
+         </corpusMediaType>
+      </corpusInfo>
+   </resourceComponentType>
+</resourceInfo>
+
