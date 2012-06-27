@@ -19,7 +19,7 @@
       application of collaboratively constructed resources (Wikipedia, DBpedia).
     </description>
     <resourceShortName>hunNERwiki</resourceShortName>
-    <url>http://www.nytud.hu/depts/corpus/index.html</url>
+    <url>http://hlt.sztaki.hu/resources/hunnerwiki.html</url>
     <metaShareId>XXX</metaShareId>
     <identifier>XXX</identifier>
   </identificationInfo>
@@ -27,6 +27,7 @@
     <availability>available-unrestrictedUse</availability>
     <licenceInfo>
       <licence>CC_BY-SA</licence>
+      <!-- Creative Commons Attribution-Sharealike 3.0 Unported License -->
       <restrictionsOfUse>shareAlike</restrictionsOfUse>
       <restrictionsOfUse>attribution</restrictionsOfUse>
       <distributionAccessMedium>downloadable</distributionAccessMedium>
