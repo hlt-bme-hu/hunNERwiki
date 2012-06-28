@@ -1,0 +1,120 @@
+% $Header: /home/vedranm/bitbucket/beamer/solutions/generic-talks/generic-ornate-15min-45min.en.tex,v 90e850259b8b 2007/01/28 20:48:30 tantau $
+
+\documentclass[utf8x]{beamer}
+
+\mode<presentation>
+{
+%  \usetheme[height=7mm]{Rochester}
+  \usetheme{Rochester}
+  \useinnertheme{rounded}
+%  \useoutertheme{infolines}
+  % or ...
+
+  \setbeamercovered{transparent}
+}
+\usefonttheme[onlymath]{serif}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+%% to draw trees without jpg figures
+%\usepackage{synttree}
+% For code blocks
+\usepackage{algorithm}  % Conflict w/ synttree
+\usepackage{algorithmic}
+% for sane tabular handling
+\usepackage{array}
+% For strikethrough (normalem keeps it as emph)
+\usepackage[normalem]{ulem}
+
+\usepackage{mathrsfs}
+\usepackage{bm}  % For bold math
+
+\newcommand{\vitem}{\vfill \item}
+
+\title % (optional, use only with long paper titles)
+{Reinforcement Learning End of Term Presentation}
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author % (optional, use only with lots of authors)
+{Eszter ~Simon, David Márk ~Nemeskey}
+
+% TODO: RILHAS
+\institute[Computer and Automation Research Institue of the Hungarian Academy of Sciences] % (optional, but mostly needed)
+{
+  Data Mining and Search Research Group\\
+  MTA SZTAKI
+}
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date % (optional)
+{2012.07.12.}
+
+% \subject{Talks}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+\AtBeginSection[]
+{
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents[currentsection]
+   \end{frame}
+}
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+% TODO: kell outline?
+\begin{frame}{Outline}
+  \titlepage
+\end{frame}
+
+\section{Creating the English Corpus}
+\subsection*{Motivation}
+\begin{frame}{Blabla}
+\end{frame}
+\subsection{Articles to Entities}
+\begin{frame}{Problem Statement}
+  In many real world applications the problem is to predict outputs with a nontrivial structure given some inputs.
+  \vfill
+  Example: \textit{\small It was love at first sight.}
+  \vfill
+\end{frame}
+
+
+\section{Conclusions}
+\begin{frame}{Results -- cont.}
+  Single hold-out vs. cross-validation:
+  \begin{itemize}
+  \vitem Single hold-out is biased
+  \vitem cross-validation gives more stable results
+  \end{itemize}
+  \vfill
+\end{frame}
+
+\end{document}
+
+
