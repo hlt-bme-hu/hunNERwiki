@@ -1,6 +1,6 @@
 % $Header: /home/vedranm/bitbucket/beamer/solutions/generic-talks/generic-ornate-15min-45min.en.tex,v 90e850259b8b 2007/01/28 20:48:30 tantau $
 
-\documentclass[utf8x]{beamer}
+\documentclass[utf8x,t]{beamer}
 
 \mode<presentation>
 {
@@ -183,7 +183,7 @@ this is the first automatically annotated corpus for Hungarian
   \vitem The process consists of four steps:
     \begin{enumerate}
     \vitem Classify WP articles into entity classes.
-    \vitem Parse WP and split articles into sentences.
+    \vitem \textit{Parse WP and split articles into sentences.}
     \vitem Label named entities in the text.
     \vitem Select the sentences for inclusion in the corpus.
     \end{enumerate}
@@ -191,16 +191,52 @@ this is the first automatically annotated corpus for Hungarian
 \end{frame}
 
 \subsection{Articles to Entities}
-\begin{frame}{Problem Statement}
-  In many real world applications the problem is to predict outputs with a nontrivial structure given some inputs.
-  \vfill
-  Example: \textit{\small It was love at first sight.}
-  \vfill
+\begin{frame}{Articles to Entities}
+  Our method is based on thinking of WP articles as NEs.
+  \begin{itemize}
+  \vitem Usual approach: semi-supervised learning (infoboxes, first sentence)
+  \vitem Our approach: create entity list from DBpedia
+    \begin{itemize}
+    \vitem OWL ontology with 320 classes
+    \vitem We take the most specific class
+    \vitem Manual mapping to CoNLL categories that exploits inheritence
+    \end{itemize}
+  \vitem Decreased coverage, increased precision
+  \end{itemize}
 \end{frame}
 
-\subsection{}
-\subsection{}
-\subsection{}
+\subsection{Named Entity Tagging}
+\begin{frame}{Named Entity Tagging}
+  The entity list from DBpedia is used for NE tagging.
+  \begin{itemize}
+  \vitem Entity identification:
+    \begin{itemize}
+    \vitem Look up linked pages in the entity list
+    \vitem References to the current page, if in the list
+    \end{itemize}
+  \vitem NE tagging: from the DBpedia - CoNLL category mapping
+  \vitem Exceptions:
+    \begin{itemize}
+    \vitem Not entities: common nouns, date expressions, etc.
+    \vitem Unmarked entities: link to already identified entities
+    \vitem Special cases: derived words, first word in a sentence, etc.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{Sentence Filtering}
+\begin{frame}{Sentence Filtering}
+  We only include fully tagged sentences in the corpus.
+  \begin{itemize}
+  \vitem Sentences that contain unknown links / uppercase words
+  \vitem To filter incomplete sentences:
+    \begin{itemize}
+    \vitem Sentences without an EOS punctuation mark
+    \vitem Sentences without a predicate (verb)
+    \end{itemize}
+  \end{itemize}
+  \vfill
+\end{frame}
 
 \section{Creating the Hungarian Corpus}
 
