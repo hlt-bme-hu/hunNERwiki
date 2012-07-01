@@ -37,6 +37,7 @@
 
 \newcommand{\vitem}{\vfill \item}
 \newcommand{\nyil}{$\rightarrow$\ }
+\newcommand{\nagytilde}{$\sim$}
 
 \newtheorem{nix}{}[section]
 
@@ -55,7 +56,7 @@
 % - Keep it simple, no one is interested in your street address.
 
 \date % (optional)
-{2012.07.12.}
+{2012.07.12. \\ ACL NEWS2012 workshop}
 
 % \subject{Talks}
 % This is only inserted into the PDF information catalog. Can be left
@@ -98,22 +99,26 @@
 The standard datasets are
 
 \begin{itemize}
-\item highly domain-specific
-\item restricted in size
+\vitem highly domain-specific
+\vitem restricted in size
 \end{itemize}
+\vfill
 
 \bigskip
 
 To get a bigger training corpus:
 
 \begin{itemize}
-\item merging datasets \nyil problems of combining different tagsets
-\item manual annotation \nyil not cost-effective
+\vitem merging datasets \nyil problems of combining different tagsets
+\vitem manual annotation \nyil not cost-effective
 \end{itemize}
+\vfill
 
 \end{frame}
 
 \begin{frame}{Reducing the annotation cost}
+
+\bigskip
 
 Reducing the annotation cost:
 
@@ -214,7 +219,7 @@ this is the first automatically annotated corpus for Hungarian
     \vitem Look up linked pages in the entity list
     \vitem References to the current page, if in the list
     \end{itemize}
-  \vitem NE tagging: from the DBpedia - CoNLL category mapping
+  \vitem NE tagging: from the DBpedia--CoNLL category mapping
   \vitem Exceptions:
     \begin{itemize}
     \vitem Not entities: common nouns, date expressions, etc.
@@ -240,15 +245,16 @@ this is the first automatically annotated corpus for Hungarian
 
 \section{Creating the Hungarian Corpus}
 
-\begin{frame}{The Hungarian Corpus}
-  The algorithm is, in theory, language-agnostic. We tested this property by
-  applying it to a medium-sized language, Hungarian. \\
-  Difference from bigger, well-resourced languages:
-  \begin{itemize}
-  \vitem E % TODO: ide mit?
-  \end{itemize}
-\end{frame}
+%\begin{frame}{The Hungarian Corpus}
+%  The algorithm is, in theory, language-agnostic. We tested this property by
+%  applying it to a medium-sized language, Hungarian. \\
+%  Difference from bigger, well-resourced languages:
+%  \begin{itemize}
+%  \vitem E % TODO: ide mit?
+%  \end{itemize}
+%\end{frame}
 
+%TODO: the "Hungarian Corpus" phrase must appear in the frame title 
 \begin{frame}{Differences from English}
   \begin{itemize}
   \vitem Language processing tools
@@ -259,7 +265,7 @@ this is the first automatically annotated corpus for Hungarian
     \end{itemize}
   \vitem Wikipedia size and coverage
     \begin{itemize}
-    \vitem Hungarian is medium-size language: ~200k articles vs. ~4M English pages
+    \vitem Hungarian is medium-size language: \nagytilde 200k articles vs.~\nagytilde 4M English pages
     \vitem Cross-references may point to English pages
     \vitem Templates are in Hungarian: per-language template configuration
     \end{itemize}
@@ -282,8 +288,8 @@ this is the first automatically annotated corpus for Hungarian
   \vitem NE conventions
     \begin{itemize}
     \vitem Szeged NER guideline: similar to CoNLL
-    \vitem Common nouns in Hungarian: names of languages, religions, months, etc.
-    % TODO: compounding
+    \vitem Common nouns in Hungarian: names of languages, religions, months, etc. \nyil more consistent MISC category
+    \vitem NEs can be subject of compounding \nyil the joint common noun can modify the original sense of NE: \\ \textit{WorldCom} (\texttt{ORG}) \nyil \textit{WorldCom-botrány} ['WorldCom scandal'] (\texttt{O})
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -318,18 +324,53 @@ Korea &  I-link & South Korea &  NNP &  Korea   & I-LOC\\
 \begin{itemize}
 \item available under CC-BY-SA 3.0 Unported License
 \item freely downloadable from {\tt http://hlt.sztaki.hu/resources/} 
-\item also distributed through META-SHARE (from 1 August)
+\item also distributed through META-SHARE (from August)
 \end{itemize}
 
 \end{frame}
 
 \section{Evaluation}
 
+\begin{frame}{Silver standard corpora}
+
+Silver standard corpora can be useful for improving NER in several ways:
+
+\smallskip
+
+\begin{itemize}
+\item for less resourced languages they can serve as training corpora in lieu of gold standard datasets
+\item they can serve as training sets for domains differing from newswire
+\item they can be sources of huge entity lists
+\item they can be sources of feature extraction
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Evaluation}
+
+\smallskip
+
+A maxent NE tagger was used with the feature set consisting of
+
+\smallskip
+
+\begin{itemize}
+\item gazetteer features
+\item sentence start and end position
+\item Boolean-valued orthographic properties of the word form
+\item string-valued properties of the word form
+\item morphological information
+\end{itemize}
+
+\bigskip
+
+The CoNLL standard method was used for evaluation.
+
+\end{frame}
+
 \begin{frame}{Corpus size and NE density}
 
 English: 
-
-\smallskip
 
 \begin{center}
 \begin{tabular}{llll}
@@ -340,11 +381,9 @@ NE density & 5.23\% & 14.59\% & 16.76\% \\ \hline
 \end{tabular}
 \end{center}
 
-\smallskip
+%\smallskip
 
 Hungarian:
-
-\smallskip
 
 \begin{center}
 \begin{tabular}{llll}
@@ -354,6 +393,26 @@ NE & 456,281 & 456,281  & 25,896 \\
 NE density & 2.38\% & 12.99\%  & 11.46\% \\ \hline 
 \end{tabular}
 \end{center}
+
+quite low NE density \nyil sentences without NEs were filtered out from the evaluation datasets
+
+\end{frame}
+
+\begin{frame}{Experiments}
+
+\begin{nix}
+our experiments were performed with a sample of 3.5 million tokens
+\end{nix}
+
+\bigskip
+
+\begin{itemize}
+\item \textit{CoNLL} train -- \textit{CoNLL} test
+\item \textit{enwiki} train -- \textit{enwiki} test
+\item \textit{enwiki} train -- \textit{CoNLL} test
+\item \textit{CoNLL} train with \textit{wikilists} (gazetteer lists extracted from WP) -- \textit{CoNLL} test
+\item \textit{CoNLL} train with \textit{wikitags} (labeling the CoNLL datasets by the model trained on WP, and giving these labels as extra features) -- \textit{CoNLL} test
+\end{itemize}
 
 \end{frame}
 
@@ -371,6 +430,12 @@ CoNLL with wikitags & CoNLL & 85.88 & 85.94 & 85.91 \\
 \end{tabular}
 \end{center}
 
+\begin{itemize}
+\item training and testing across different corpora decreases F-measure
+\item the NE tagger trained on WP does not achieve as high performance tested against CoNLL test set as one trained on its own train set
+\item gazetteer lists extracted from WP and training with extra features given by the model trained on WP improve F-measure
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}{Hungarian results}
@@ -387,17 +452,63 @@ Szeged  with wikitags & Szeged  & 95.38 & 94.92 & 95.15 \\
 \end{tabular}
 \end{center}
 
+\begin{itemize}
+\item F-measures for Hungarian are higher 
+\begin{itemize}
+\item the MISC category is more consistent
+\item the Szeged NER corpus is highly accurately tagged 
+\end{itemize}
+\item the Hungarian corpus can serve as a training corpus to build NE taggers for non-newswire domains
+\end{itemize}
 
 \end{frame}
 
+%\begin{frame}{Results -- analysis}
+
+%\begin{itemize}
+%\vitem training and testing across different corpora decreases F-measure
+%\vitem the NE tagger trained on WP does not achieve as high performance tested against CoNLL test set as one trained on its own train set
+%\vitem gazetteer lists extracted from WP and training with extra features given by the model trained on WP improve F-measure
+%\vitem F-measures for Hungarian are higher 
+%\begin{itemize}
+%\vitem the MISC category is more consistent
+%\vitem the Szeged NER corpus is highly accurately tagged 
+%\end{itemize}
+%\end{itemize}
+%  \vfill
+
+%\end{frame}
+
 \section{Conclusions}
-\begin{frame}{Results -- cont.}
-  Single hold-out vs. cross-validation:
+\begin{frame}{Conclusions}
   \begin{itemize}
-  \vitem Single hold-out is biased
-  \vitem cross-validation gives more stable results
+ \vitem we presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from WP
+  \vitem we applied a new approach: mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to WP entities
+  \vitem the huge amount of WP articles opens the possibility of building large enough corpora for less resourced languages such as Hungarian
+  \vitem silver standard corpora can improve NER accuracy in more ways
+  \vitem the Hungarian corpus can serve as a training corpus to build NE taggers for non-newswire domains
   \end{itemize}
   \vfill
+\end{frame}
+
+\begin{frame}
+
+\bigskip
+
+\bigskip
+
+{\LARGE Thank you for your attention!}
+
+\bigskip
+\bigskip
+
+emails: {\tt simon.eszter@nytud.mta.hu \\ nemeskey.david@sztaki.mta.hu} \\
+
+\bigskip
+
+the corpora are freely downloadable from {\tt http://hlt.sztaki.hu/resources/} 
+
+
 \end{frame}
 
 \end{document}
