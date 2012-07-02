@@ -7,7 +7,7 @@
     <description>
       The text of the corpus is automatically generated from Hungarian Wikipedia
       articles. It contains Named Entity (NE) tagging according to the CoNLL
-      standard (Person, Organization, Location and Miscellaneous), andadditional
+      standard (Person, Organization, Location and Miscellaneous), and additional
       morphological annotation. The corpus is the largest ever NE tagged corpus
       for Hungarian, and it can be used for training and testing NE recognizer
       applications. Thanks to the standard tagset, the performance of systems
@@ -97,9 +97,8 @@
   </metadataInfo>
   <ResourceDocumentationInfo>Eszter Simon, Dávid M. Nemeskey. 2012. Automatically generated NE tagged corpora for English and Hungarian. In: Proceedings of the 50th Annual Meeting of the Association for Computational Linguistics, pages 38-46.
   </ResourceDocumentationInfo>
-  <ResourceDocumentationInfo>Eszter Simon, Dávid M. Nemeskey. 2012. Automatically generated NE tagged corpora for English and Hungarian. In: Proceedings of the 2012 Named Entities Workshop, pages 38-46.
-  </ResourceDocumentationInfo>
-  <!-- TODO: which is the correct one? -->
+<!--  <ResourceDocumentationInfo>Eszter Simon, Dávid M. Nemeskey. 2012. Automatically generated NE tagged corpora for English and Hungarian. In: Proceedings of the 2012 Named Entities Workshop, pages 38-46.
+  </ResourceDocumentationInfo> -->
    
   <versionInfo>
     <version>1.0</version>
