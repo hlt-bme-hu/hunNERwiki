@@ -3,16 +3,16 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.ilsp.gr/META-XMLSchema http://metashare.ilsp.gr/META-XMLSchema/v2.1/META-SHARE-Resource.xsd">
   <identificationInfo>
-    <resourceName>Hungarian NER Corpus based on Wikipedia</resourceName>
+    <resourceName>HunNERwiki: Automatically generated NE tagged corpus for Hungarian</resourceName>
     <description>
-      The text of the corpus will be auto-generated from Hungarian Wikipedia
-      articles. It will contain Named Entity (NE) tagging according to the CoNLL
-      standard (Person, Organization, Location and Miscellaneous), and
-      additional morphological and shallow syntactic annotation. The corpus will
-      be the largest ever NE-tagged corpus for Hungarian, which can be used for
-      training and testing NE recognizer applications. Thanks to the standard
-      tagset, the performance of systems trained on the hunNERwiki corpus will
-      be comparable with the performance of other state-of-the-art systems.
+      The text of the corpus is automatically generated from Hungarian Wikipedia
+      articles. It contains Named Entity (NE) tagging according to the CoNLL
+      standard (Person, Organization, Location and Miscellaneous), andadditional
+      morphological annotation. The corpus is the largest ever NE tagged corpus
+      for Hungarian, and it can be used for training and testing NE recognizer
+      applications. Thanks to the standard tagset, the performance of systems
+      trained on the hunNERwiki corpus is comparable with the performance of
+      other state-of-the-art systems.
       
       Besides the obvious advantages of fully automatic building and annotation
       procedure (reducing the annotation cost), the novelty of the corpus is the
@@ -26,8 +26,7 @@
   <distributionInfo>
     <availability>available-unrestrictedUse</availability>
     <licenceInfo>
-      <licence>CC_BY-SA</licence>
-      <!-- Creative Commons Attribution-Sharealike 3.0 Unported License -->
+      <licence>CC_BY-SA 3.0</licence>
       <restrictionsOfUse>shareAlike</restrictionsOfUse>
       <restrictionsOfUse>attribution</restrictionsOfUse>
       <distributionAccessMedium>downloadable</distributionAccessMedium>
@@ -48,7 +47,7 @@
     </communicationInfo>
     <position>research associate</position>
     <affiliation>
-      <organizationName>Magyar Tudományos Akadémia Számítástechnikai és Automatizálási Kutatóintézet</organizationName>
+      <organizationName>Computer and Automation Research Institute, Hungarian Academy of Sciences</organizationName>
       <organizationShortName>MTA SZTAKI</organizationShortName>
       <communicationInfo>
         <email>nemeskey.david@sztaki.hu</email>
@@ -84,7 +83,7 @@
         <communicationInfo>
           <email>pinter.tibor@nytud.mta.hu</email>
           <url>http://www.nytud.hu/oszt/korpusz/Pinter_Tibor.html</url>
-          <address>Benczur utca 33.</address>
+          <address>Benczúr utca 33.</address>
           <zipCode>1068</zipCode>
           <city>Budapest</city>
           <telephoneNumber>+ 36 1 321 4830 ext.119</telephoneNumber>
@@ -96,6 +95,11 @@
   <metadataLanguageId>en</metadataLanguageId>
   <metadataLastDateUpdated>2012-06-25</metadataLastDateUpdated>
   </metadataInfo>
+  <ResourceDocumentationInfo>Eszter Simon, Dávid M. Nemeskey. 2012. Automatically generated NE tagged corpora for English and Hungarian. In: Proceedings of the 50th Annual Meeting of the Association for Computational Linguistics, pages 38-46.
+  </ResourceDocumentationInfo>
+  <ResourceDocumentationInfo>Eszter Simon, Dávid M. Nemeskey. 2012. Automatically generated NE tagged corpora for English and Hungarian. In: Proceedings of the 2012 Named Entities Workshop, pages 38-46.
+  </ResourceDocumentationInfo>
+  <!-- TODO: which is the correct one? -->
    
   <versionInfo>
     <version>1.0</version>
@@ -108,7 +112,7 @@
       <fundingType>euFunds</fundingType>
       <fundingType>ownFunds</fundingType>
       <funder>European Commission (50%)</funder>
-      <funder>Research Institute for Linguistics, Hungarian academy of Sciences (50%)</funder>
+      <funder>Research Institute for Linguistics, Hungarian Academy of Sciences (50%)</funder>
       <fundingCountry>Hungary</fundingCountry>
       <projectStartDate>2011-02-01</projectStartDate>
       <projectEndDate>2013-01-31</projectEndDate>
@@ -149,49 +153,16 @@
               <annotationType>semanticAnnotation-namedEntities</annotationType>
               <segmentationLevel>word</segmentationLevel>
               <annotationFormat>text/csv</annotationFormat>
-              <conformanceToStandardsBestPractices>TEI</conformanceToStandardsBestPractices>
-              <!-- Mit tudom én? -->
-              <annotationMode>mixed</annotationMode>
+              <annotationMode>automatic</annotationMode>
               <annotationTool>
                  <targetResourceNameURI>in-house software</targetResourceNameURI>
+                 <targetResourceNameURI>hunmorph</targetResourceNameURI>
+                 <targetResourceNameURI>hundisambig</targetResourceNameURI>
               </annotationTool>
               <sizePerAnnotation>
                 <size>19108597</size>
                 <sizeUnit>words</sizeUnit>
               </sizePerAnnotation>
-<!-- Maga az annotáció automatikus volt, csak az előfeldolgozásnál volt egy
-     minimális manuális munka. Kell akkor ez?                  
-              <annotator> - ezt is ki kellene tölteni
-                <personInfo>
-                  <surname>???</surname>
-                  <givenName>??</givenName>
-                  <communicationInfo>
-                    <email>??</email>
-                    <url>??</url>
-                    <address>??</address>
-                    <zipCode>??</zipCode>
-                    <city>??</city>
-                    <country>Hungary</country>
-                    <telephoneNumber>??</telephoneNumber>
-                  </communicationInfo>
-                  <position>??</position>
-                  <affiliation>
-                    <organizationName>??</organizationName>
-                    <organizationShortName>??</organizationShortName>
-                    <departmentName>??</departmentName>
-                    <communicationInfo>
-                      <email>??</email>
-                      <url>??</url>
-                      <address>??</address>
-                      <zipCode>??</zipCode>
-                      <city>??</city>
-                      <country>Hungary</country>
-                      <telephoneNumber>??</telephoneNumber>
-                    </communicationInfo>
-                  </affiliation>
-                </personInfo>
-              </annotator>
--->
             </annotationInfo>
           </languageInfo>
         </corpusTextInfo>
