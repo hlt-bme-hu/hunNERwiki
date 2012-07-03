@@ -232,7 +232,7 @@ peculiarities in the English orthography and the CoNLL guidelines.
 
 \subsubsection{Non-entity Links}
 
-Strictly speaking, our original assumption of equating WP articles with NEs is not valid: many pages describe common nouns (Book, Aircraft), calendar-related concepts (March 15, 2007), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
+Strictly speaking, our original assumption of equating WP articles with NEs is not valid: many pages describe common nouns (\textit{Book}, \textit{Aircraft}), calendar-related concepts (\textit{March 15}, \textit{2007}), or other concepts that fall outside the scope of NER. To increase sentence coverage, we modified the algorithm to prevent it from misclassifying links to these pages as unknown entities and discarding the sentence.
 
 \begin{description}
 \item[Common noun] links are filtered by POS tags; if a link contains no \texttt{NNP}s, it is ignored.
