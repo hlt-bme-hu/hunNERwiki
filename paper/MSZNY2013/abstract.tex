@@ -29,9 +29,9 @@ MTA Nyelvtudományi Intézet \break
 
 \maketitle
 
-\section{Introduction}
+%\section{Introduction}
 
-Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) a természetes nyelv feldolgozását célzó alkalmazások közül az egyik legnépszerűbb, mivel hatékonyan automatizálható, és eredménye hasznos bemenete különböző magasabb szintű információkinyerő és -feldolgozó rendszereknek. A feladat során strukturálatlan szövegben kell azonosítani és az előre definiált osztályok valamelyikébe besorolni a neveket. Az egyik leggyakrabban alkalmazott nemzetközi sztenderd a CoNLL-2003 verseny kiírását követi, amely szerint a négy névkategória a következő: személy-, intézmény-, földrajzi név és az ezek egyikébe sem tartozó egyéb kategória. 
+%Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) a természetes nyelv feldolgozását célzó alkalmazások közül az egyik legnépszerűbb, mivel hatékonyan automatizálható, és eredménye hasznos bemenete különböző magasabb szintű információkinyerő és -feldolgozó rendszereknek. A feladat során strukturálatlan szövegben kell azonosítani és az előre definiált osztályok valamelyikébe besorolni a neveket. Az egyik leggyakrabban alkalmazott nemzetközi sztenderd a CoNLL-2003 verseny kiírását követi, amely szerint a négy névkategória a következő: személy-, intézmény-, földrajzi név és az ezek egyikébe sem tartozó egyéb kategória. 
 
 %Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
 
@@ -55,35 +55,40 @@ adathalmazokat, vagy pedig olyan közösségi tartalmakat használunk fel, mint 
 %these approaches by automatically generating freely available NE tagged
 %corpora from Wikipedia.
 
-\section{Wikipedia and NER}
+%\section{Wikipedia and NER}
 
-Wikipedia (WP, see {\tt http://wikipedia.org}), a free
-multilingual Internet encyclopedia, written collaboratively by volunteers, is
-a goldmine of information.
-WP has been applied to several NLP tasks such as word sense
-disambiguation, ontology and thesaurus building, and question answering (see
-Medelyan et al.~\cite{Medelyan:09} for a survey). It is recognized as one
-of the largest available collections of entities, and also as a resource that
-can improve the accuracy of NER. The most obvious utilization of WP for NER is
-extracting gazetteers containing person names, locations or organizations
-(e.g.~Toral and Mu\~noz \cite{Toral:06}). Creating dictionaries of
-entities is also a common step of NE disambiguation
-\cite{Bunescu:06,Cucerzan:07}. Both supervised and unsupervised NER systems
-use such lists, see e.g.~Nadeau et al.~\cite{Nadeau:06} The knowledge
-embodied in WP may also be incorporated in NER learning as features,
-e.g.~Kazama and Torisawa \cite{Kazama:07} showed that automatic
-extraction of category labels from WP improves the accuracy of a supervised NE
-tagger.
-Another approach to improve NER with WP is the automatic creation of training
-data. Nothman et al.~\cite{Nothman:08} used a similar method to create
-a NE annotated text in English. They transformed the WP links into NE
-annotations by classifying the target articles into standard entity
-classes. Their approach to classification is based primarily on category head
-nouns and the opening sentences of articles where definitions are often given.
+A Wikipediát, mely a legismertebb, önkéntesek által szerkesztett nyílt internetes enciklopédia, számos NLP feladathoz sikeresen alkalmazták már. Mivel ez az egyik legnagyobb elérhető forrása az entitásoknak, az automatikus tulajdonnév-felismerés teljesítményének növelésére több módon is kiválóan használható. Nyilvánvaló felhasználási módja különböző névlisták kinyerése (pl. \cite{Toral_2006.a}); de a Wikipediában található tudás a tanuló algoritmus számára használható jegyek formájában is beépíthető felügyelt tanulási rendszerekbe (pl. \cite{KaTo07}). 
 
-Our approach to recognize and classify NEs in corpora generated from WP was to
-map the DBpedia ontology classes to standard NE tags and assign these to WP
-entities. the one presented here is the first automatically NE annotated corpus for Hungarian.
+Számos példát találunk arra is a nemzetközi irodalomban, amikor a Wikipediából építenek korpuszt, amelyben az entitásokra vonatkozó információt valamilyen formában megőrzik és feldolgozzák. Ezt a megközelítést követtük mi is, de az eddig alkalmazott módszerek helyett, melyek elsősorban a cikkek definíciójából nyerték ki az entitás kategóriájára vonatkozó információt, mi a DBPedia ontológiai osztályait képeztük le a sztenderd CoNLL névosztályokra, majd kötöttük őket Wikipédia-entitásokhoz. Az általunk létrehozott feldolgozólánc elemei nagyrészt nyelvfüggetlenek, vagyis módszerünkkel létrehozhatók tanítókorpuszok kevesebb erőforrással rendelkező nyelvekre is. Cikkünkben a feldolgozás folyamatát és eredményét: egy magyar és egy angol nyelvű automatikusan tulajdonnév-annotált korpuszt mutatunk be.
+
+%Wikipedia (WP, see {\tt http://wikipedia.org}), a free
+%multilingual Internet encyclopedia, written collaboratively by volunteers, is
+%a goldmine of information.
+%WP has been applied to several NLP tasks such as word sense
+%disambiguation, ontology and thesaurus building, and question answering (see
+%Medelyan et al.~\cite{Medelyan:09} for a survey). It is recognized as one
+%of the largest available collections of entities, and also as a resource that
+%can improve the accuracy of NER. The most obvious utilization of WP for NER is
+%extracting gazetteers containing person names, locations or organizations
+%(e.g.~Toral and Mu\~noz \cite{Toral:06}). Creating dictionaries of
+%entities is also a common step of NE disambiguation
+%\cite{Bunescu:06,Cucerzan:07}. Both supervised and unsupervised NER systems
+%use such lists, see e.g.~Nadeau et al.~\cite{Nadeau:06} The knowledge
+%embodied in WP may also be incorporated in NER learning as features,
+%e.g.~Kazama and Torisawa \cite{Kazama:07} showed that automatic
+%extraction of category labels from WP improves the accuracy of a supervised NE
+%tagger.
+
+%Another approach to improve NER with WP is the automatic creation of training
+%data. Nothman et al.~\cite{Nothman:08} used a similar method to create
+%a NE annotated text in English. They transformed the WP links into NE
+%annotations by classifying the target articles into standard entity
+%classes. Their approach to classification is based primarily on category head
+%nouns and the opening sentences of articles where definitions are often given.
+
+%Our approach to recognize and classify NEs in corpora generated from WP was to
+%map the DBpedia ontology classes to standard NE tags and assign these to WP
+%entities. the one presented here is the first automatically NE annotated corpus for Hungarian.
 
 \section{Creating the Corpus}
 \subsection{Creating the English Corpus}
