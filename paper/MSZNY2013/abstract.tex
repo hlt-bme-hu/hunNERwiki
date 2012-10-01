@@ -88,6 +88,24 @@ entities. the one presented here is the first automatically NE annotated corpus 
 \section{Creating the Corpus}
 \subsection{Creating the English Corpus}
 
+A korpuszt, hasonlóan Nothman et al.~\shortcite{Nothman:08} munkájához, a következő
+lépésekkel állítottuk elő:
+ 
+\begin{enumerate}
+\item a WP cikkeket entitás osztályokba soroltuk
+\item a cikkeket mondatokra bontottuk
+\item megjelöltük a névelemeket a szövegben
+\item kiszűrtük a rossz minőségű mondatokat
+\end{enumerate}
+
+Bár Nothman az első feladatot gépi tanulással oldotta meg, mi a nagyobb
+pontosság érdekében a DBpedia~\cite{Bizer:09} tudásbázis alapján osztályoztuk az
+entitásokat. A névelemeket WP kereszthivatkozások segítségével azonosítottuk. Minden
+olyan mondatot, ahol ismeretlen névelem fordult elő, eldobtunk.
+
+A fenti lépések mindegyike automatikus; emberi beavatkozást egyedül a DBpedia típusok
+névelemcímkékre történő leképezése jelent.
+
 \section{Data description}
 
 A korpusz a Wikipediához hasonlóan a Creative Commons Attribution-Sharealike
