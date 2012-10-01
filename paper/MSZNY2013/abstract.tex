@@ -35,22 +35,25 @@ Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) a termé
 
 %Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
 
-A gold standard adathalmazok 
+Az automatikus tulajdonnév-felismerés (NER) során alkalmazott gold standard korpuszok általában műfajspecifikusak (főleg rövidhírek), és korlátozott méretűek. Egy kellően robusztus alkalmazás építéséhez viszont nagy méretű és változatos nyelvi anyagot tartalmazó adathalmazra van szükség. A tanítókorpuszok előállítása hagyományosan kézi annotálás útján történik, ami meglehetősen sok időt, szakértelmet és pénzt kíván, vagyis kardinális kérdés az erőforrások minimalizálása. Nagyobb tanítóhalmazhoz juthatunk, ha már meglevő korpuszokat gyúrunk össze; ebben az esetben viszont azzal kell szembesülnünk, hogy ezek más és más annotációs útmutató alapján készültek, továbbá nem azonos címkekészletet használnak. 
 
-The standard datasets are highly domain-specific (mostly newswire) and are
-restricted in size. Researchers attempting to merge these datasets to get a bigger training corpus are faced with the
-problem of combining different tagsets and annotation schemes. Manually
-annotating large amounts of text with linguistic information is a
-time-consuming, highly skilled and delicate job, but large, accurately
-annotated corpora are essential for building robust supervised machine
-learning NER systems. Therefore, reducing the annotation cost is a key
-challenge.
+Ezen problémák kiküszöbölésére egy lehetséges módszer, ha automatikusan állítunk elő  
+adathalmazokat, vagy pedig olyan közösségi tartalmakat használunk fel, mint pl. a Wikipedia, a Wiktionary vagy a DBPedia. Cikkünkben ezek kombinációját mutatjuk be: a Wikipediából előállított, automatikusan tulajdonnév-annotált korpuszt.  
 
-One approach is to generate the resources automatically, another one is to use
-collaborative annotation and/or collaboratively constructed resources, such as
-Wikipedia, Wiktionary, Linked Open Data, or DBpedia. In this paper we combine
-these approaches by automatically generating freely available NE tagged
-corpora from Wikipedia.
+%The standard datasets are highly domain-specific (mostly newswire) and are
+%restricted in size. Researchers attempting to merge these datasets to get a bigger training corpus are faced with the
+%problem of combining different tagsets and annotation schemes. Manually
+%annotating large amounts of text with linguistic information is a
+%time-consuming, highly skilled and delicate job, but large, accurately
+%annotated corpora are essential for building robust supervised machine
+%learning NER systems. Therefore, reducing the annotation cost is a key
+%challenge.
+
+%One approach is to generate the resources automatically, another one is to use
+%collaborative annotation and/or collaboratively constructed resources, such as
+%Wikipedia, Wiktionary, Linked Open Data, or DBpedia. In this paper we combine
+%these approaches by automatically generating freely available NE tagged
+%corpora from Wikipedia.
 
 \section{Wikipedia and NER}
 
