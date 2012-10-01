@@ -35,10 +35,20 @@ MTA Nyelvtudományi Intézet \break
 
 %Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
 
-Az automatikus tulajdonnév-felismerés (NER) során alkalmazott gold standard korpuszok általában műfajspecifikusak (főleg rövidhírek), és korlátozott méretűek. Egy kellően robusztus alkalmazás építéséhez viszont nagy méretű és változatos nyelvi anyagot tartalmazó adathalmazra van szükség. A tanítókorpuszok előállítása hagyományosan kézi annotálás útján történik, ami meglehetősen sok időt, szakértelmet és pénzt kíván, vagyis kardinális kérdés az erőforrások minimalizálása. Nagyobb tanítóhalmazhoz juthatunk, ha már meglevő korpuszokat gyúrunk össze; ebben az esetben viszont azzal kell szembesülnünk, hogy ezek más és más annotációs útmutató alapján készültek, továbbá nem azonos címkekészletet használnak. 
+Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) során alkalmazott
+gold standard korpuszok általában műfajspecifikusak (főleg rövidhírek), és korlátozott
+méretűek. Egy kellően robusztus alkalmazás építéséhez viszont nagy méretű és változatos
+nyelvi anyagot tartalmazó adathalmazra van szükség. A tanítókorpuszok előállítása
+hagyományosan kézi annotálás útján tör\-té\-nik, ami meglehetősen sok időt, szakértelmet és
+pénzt kíván, vagyis kardinális kérdés az erőforrások minimalizálása. Nagyobb
+tanítóhalmazhoz juthatunk, ha már meglevő korpuszokat egyesítünk; ebben az esetben
+viszont azzal kell szembesülnünk, hogy ezek különböző annotációs sémát követnek. 
 
 Ezen problémák kiküszöbölésére egy lehetséges módszer, ha automatikusan állítunk elő  
-adathalmazokat, vagy pedig olyan közösségi tartalmakat használunk fel, mint pl. a Wikipédia, a Wiktionary vagy a DBPedia. Cikkünkben ezek kombinációját mutatjuk be: a Wikipediából előállított, automatikusan tulajdonnév-annotált korpuszt.  
+adathalmazokat, vagy pedig olyan közösségi tartalmakat használunk fel, mint pl. a
+Wikipédia, a Wiktionary vagy a DBpedia. Cikkünkben olyan módszert mutatunk be, mely ezek
+kombinációja, és amely a Wikipédiából automatikusan állít elő tulajdonnév-annotált
+korpuszokat.
 
 %The standard datasets are highly domain-specific (mostly newswire) and are
 %restricted in size. Researchers attempting to merge these datasets to get a bigger training corpus are faced with the
@@ -57,9 +67,20 @@ adathalmazokat, vagy pedig olyan közösségi tartalmakat használunk fel, mint 
 
 %\section{Wikipédia and NER}
 
-A Wikipediát, mely a legismertebb, önkéntesek által szerkesztett nyílt internetes enciklopédia, számos NLP feladathoz sikeresen alkalmazták már. Mivel ez az egyik legnagyobb elérhető forrása az entitásoknak, az automatikus tulajdonnév-felismerés teljesítményének növelésére több módon is kiválóan használható. Nyilvánvaló felhasználási módja különböző névlisták kinyerése (pl. \cite{Toral_2006.a}); de a Wikipediában található tudás a tanuló algoritmus számára használható jegyek formájában is beépíthető felügyelt tanulási rendszerekbe (pl. \cite{KaTo07}). 
+A Wikipédia a legismertebb, önkéntesek által szerkesztett nyílt internetes
+enciklopédia. Mivel ez az egyik
+legnagyobb elérhető forrása az entitásoknak, a NER teljesítményének növelésére több
+módon is kiválóan használható. Nyilvánvaló felhasználási
+módja különböző névlisták kinyerése (pl. \cite{Toral_2006.a}); de a Wikipédiában található
+tudás a tanuló algoritmus számára használható jegyek formájában is beépíthető felügyelt
+tanulási rendszerekbe (pl. \cite{KaTo07}). 
 
-Számos példát találunk arra is a nemzetközi irodalomban, amikor a Wikipediából építenek korpuszt, amelyben az entitásokra vonatkozó információt valamilyen formában megőrzik és feldolgozzák. Ezt a megközelítést követtük mi is, de az eddig alkalmazott módszerek helyett, melyek elsősorban a cikkek definíciójából nyerték ki az entitás kategóriájára vonatkozó információt, mi a DBPedia ontológiai osztályait képeztük le a sztenderd CoNLL névosztályokra, majd kötöttük őket Wikipédia-entitásokhoz. Az általunk létrehozott feldolgozólánc elemei nagyrészt nyelvfüggetlenek, vagyis módszerünkkel létrehozhatók tanítókorpuszok kevesebb erőforrással rendelkező nyelvekre is. Cikkünkben a feldolgozás folyamatát és eredményét: egy magyar és egy angol nyelvű automatikusan tulajdonnév-annotált korpuszt mutatunk be.
+Számos példát találunk arra is a nemzetközi irodalomban, amikor a Wikipédiából építenek
+korpuszt, amelyben az entitásokra vonatkozó információt valamilyen formában megőrzik és
+feldolgozzák. Ezt az irányt követtük mi is, de az eddig alkalmazott módszerek
+helyett új megközelítést alkalmaztunk. Cikkünkben bemutatjuk a feldolgozás
+folyamatát és eredményét: egy magyar és egy angol nyelvű automatikusan
+tulajdonnév-annotált korpuszt.
 
 %Wikipédia (WP, see {\tt http://wikipedia.org}), a free
 %multilingual Internet encyclopedia, written collaboratively by volunteers, is
@@ -93,41 +114,48 @@ Számos példát találunk arra is a nemzetközi irodalomban, amikor a Wikipedi�
 %\section{Creating the Corpus}
 %\subsection{Creating the English Corpus}
 
-A korpuszt, hasonlóan Nothman et al.~\cite{Nothman:08} munkájához, a következő
+A korpuszokat, hasonlóan Nothman et al.~\cite{Nothman:08} munkájához, a következő
 lépésekkel állítottuk elő:
  
 \begin{enumerate}
-\item a WP cikkeket entitás osztályokba soroltuk
-\item a cikkeket mondatokra bontottuk
-\item megjelöltük a névelemeket a szövegben
-\item kiszűrtük a rossz minőségű mondatokat
+\item a Wikipédia-cikkeket entitásosztályokba soroltuk;
+\item a cikkeket mondatokra bontottuk;
+\item felcímkéztük a tulajdonneveket a szövegben;
+\item kiszűrtük a rossz minőségű mondatokat.
 \end{enumerate}
 
 Bár Nothman az első feladatot gépi tanulással oldotta meg, mi a nagyobb
 pontosság érdekében a DBpedia~\cite{Bizer:09} tudásbázis alapján osztályoztuk az
-entitásokat. A névelemeket WP kereszthivatkozások segítségével azonosítottuk. Minden
-olyan mondatot, ahol ismeretlen névelem fordult elő, eldobtunk.
+entitásokat. A tulajdonneveket Wikipédia kereszthivatkozások segítségével azonosítottuk.
+Minden olyan mondatot, ahol ismeretlen név fordult elő, eldobtunk.
 
-A fenti lépések mindegyike automatikus; emberi beavatkozást egyedül a DBpedia típusok
-névelemcímkékre történő leképezése jelent. A módszer jórészt nyelvfüggetlen; ennek
-alátámasztására egy magyar és egy angol nyelvű korpuszt is előállítottunk. A cikkben
-részletesen is kitérünk a két Wikipédia sajátosságaira, a nyelvi és NER konvenciók
-különbségéből fakadó eltérésekre.
+A fenti lépések mindegyike automatikus; emberi beavatkozást egyedül a DBpedia-típusok
+sztenderd CoNLL névkategóriákra történő leképezése jelent. A módszer jórészt
+nyelvfüggetlen; ennek alátámasztására egy magyar és egy angol nyelvű korpuszt is
+előállítottunk. A cikkben részletesen is kitérünk a két Wikipédia sajátosságaira, a
+nyelvi és NER konvenciók különbségéből fakadó eltérésekre.
 
 %\section{Evaluation}
 
-Az automatikus annotálás nyilvánvaló előnyei mellett meg kell vizsgálnunk azt is, hogy az eredményül kapott  ún. ,,silver standard'' korpuszok hogyan hasznosíthatók a NER teljesítményének növelésére. A már említett lehetőségek (névlisták kinyerése, jegyként való beépítés) mellett ezek a korpuszok önmagukban vagy más adathalmazokkal együttesen tanítókorpuszként szolgálhatnak a kevesebb erőforrással rendelkező nyelvekre, illetve a rövidhírektől eltérő műfajokra is. A magyar és az angol korpuszon végzett kísérletek egyaránt azt igazolják, hogy a Wikipédiából automatikusan előállított adathalmazok javítják a NER teljesítményét. Ugyanakkor számos problémával szembesültünk, melyekre a jövőben megoldást kell találnunk. 
+Az automatikus annotálás nyilvánvaló előnyei mellett meg kell vizsgálnunk azt is, hogy az
+eredményül kapott  ún. ,,silver standard'' korpuszok hogyan hasznosíthatók a NER
+teljesítményének növelésére. A már említett lehetőségek (névlisták kinyerése, jegyként
+való beépítés) mellett ezek a korpuszok önmagukban vagy más adathalmazokkal együttesen
+tanítókorpuszként szolgálhatnak a kevesebb erőforrással rendelkező nyelvekre, illetve a
+rövidhírektől eltérő műfajokra is. A magyar és az angol korpuszon végzett kísérletek
+egyaránt azt igazolják, hogy a Wikipédiából automatikusan előállított adathalmazok
+javítják a NER teljesítményét. Cikkünkben részletes hibaelemzést adunk, és megvizsgáljuk
+a magyar Wikipédia és a Szeged NE korpusz\cite{Szarvas:06} annotációsémája közötti
+eltéréseket.
 
 %\section{Data description}
 
-A korpusz a Wikipediához hasonlóan a Creative Commons Attribution-Sharealike
-3.0 Unported (CC-BY-SA) licensz alatt érhető el. Szabadon letölthető a
-\footnote{\texttt{http://hlt.sztaki.hu}} oldalról és a META-SHARE tárhelyről
-\footnote{\texttt{http://nlp.ipipan.waw.pl/metashare}}.
+A korpusz a Wikipédiához hasonlóan a Creative Commons Attribution-Sharealike
+3.0 Unported (CC-BY-SA) licensz alatt érhető el. Szabadon letölthető a SZTAKI HLT
+csoportjának\footnote{\texttt{http://hlt.sztaki.hu}} oldaláról és a META-SHARE
+tárhelyről\footnote{\texttt{http://nlp.ipipan.waw.pl/metashare}}.
 
 %\section{Conclusion}
-
-%\cite{Nothman:08} \cite{Szarvas:06} \cite{Medelyan:09}
 
 %
 % ---- Bibliography ----
