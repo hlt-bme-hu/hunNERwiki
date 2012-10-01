@@ -21,7 +21,7 @@
 \institute{
 \inst{}%
 MTA SZTAKI \break
-1111 Budapest, Lágymányosi utca 11., e-mail:nemeskey@sztaki.hu \break
+1111 Budapest, Lágymányosi utca 11., e-mail:nemeskey@sztaki.mta.hu \break
 \and
 \inst{}%
 MTA Nyelvtudományi Intézet \break
@@ -31,7 +31,56 @@ MTA Nyelvtudományi Intézet \break
 
 \section{Introduction}
 
+Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) a természetes nyelv feldolgozását célzó alkalmazások közül az egyik legnépszerűbb, mivel hatékonyan automatizálható, és eredménye hasznos bemenete különböző magasabb szintű információkinyerő és -feldolgozó rendszereknek. A feladat során strukturálatlan szövegben kell azonosítani és az előre definiált osztályok valamelyikébe besorolni a neveket. Az egyik leggyakrabban alkalmazott nemzetközi sztenderd a CoNLL-2003 verseny kiírását követi, amely szerint a négy névkategória a következő: személy-, intézmény-, földrajzi név és az ezek egyikébe sem tartozó egyéb kategória. 
+
+%Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
+
+A gold standard adathalmazok 
+
+The standard datasets are highly domain-specific (mostly newswire) and are
+restricted in size. Researchers attempting to merge these datasets to get a bigger training corpus are faced with the
+problem of combining different tagsets and annotation schemes. Manually
+annotating large amounts of text with linguistic information is a
+time-consuming, highly skilled and delicate job, but large, accurately
+annotated corpora are essential for building robust supervised machine
+learning NER systems. Therefore, reducing the annotation cost is a key
+challenge.
+
+One approach is to generate the resources automatically, another one is to use
+collaborative annotation and/or collaboratively constructed resources, such as
+Wikipedia, Wiktionary, Linked Open Data, or DBpedia. In this paper we combine
+these approaches by automatically generating freely available NE tagged
+corpora from Wikipedia.
+
 \section{Wikipedia and NER}
+
+Wikipedia (WP, see {\tt http://wikipedia.org}), a free
+multilingual Internet encyclopedia, written collaboratively by volunteers, is
+a goldmine of information.
+WP has been applied to several NLP tasks such as word sense
+disambiguation, ontology and thesaurus building, and question answering (see
+Medelyan et al.~\cite{Medelyan:09} for a survey). It is recognized as one
+of the largest available collections of entities, and also as a resource that
+can improve the accuracy of NER. The most obvious utilization of WP for NER is
+extracting gazetteers containing person names, locations or organizations
+(e.g.~Toral and Mu\~noz \cite{Toral:06}). Creating dictionaries of
+entities is also a common step of NE disambiguation
+\cite{Bunescu:06,Cucerzan:07}. Both supervised and unsupervised NER systems
+use such lists, see e.g.~Nadeau et al.~\cite{Nadeau:06} The knowledge
+embodied in WP may also be incorporated in NER learning as features,
+e.g.~Kazama and Torisawa \cite{Kazama:07} showed that automatic
+extraction of category labels from WP improves the accuracy of a supervised NE
+tagger.
+Another approach to improve NER with WP is the automatic creation of training
+data. Nothman et al.~\cite{Nothman:08} used a similar method to create
+a NE annotated text in English. They transformed the WP links into NE
+annotations by classifying the target articles into standard entity
+classes. Their approach to classification is based primarily on category head
+nouns and the opening sentences of articles where definitions are often given.
+
+Our approach to recognize and classify NEs in corpora generated from WP was to
+map the DBpedia ontology classes to standard NE tags and assign these to WP
+entities. the one presented here is the first automatically NE annotated corpus for Hungarian.
 
 \section{Creating the English Corpus}
 
