@@ -1,0 +1,285 @@
+\documentclass{llncs}
+
+\usepackage[a4paper,includeheadfoot,top=1.65in,bottom=1.65in,left=1.73in,hcentering]{geometry}
+\usepackage[pdftex]{graphicx}
+
+% Ezek egyikÈnek bekapcsol·s·val a magyar Èkezetes karakterek
+% kˆzvetlen¸l is felhaszn·lhatÛk:
+%\usepackage[latin2]{inputenc} 
+\usepackage[utf8]{inputenc}
+
+\usepackage[hungarian]{babel}
+\selectlanguage{hungarian} 
+
+\begin{document}
+
+\pagestyle{myheadings}
+\def\leftmark{{\rm IV. Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia}}
+\def\rightmark{{\rm Szeged, d·tum}}
+
+\setcounter{page}{3}
+
+\title{\ \break Programcsomag inform\'aci\'okinyer\'esi\break
+kutat\'asok t\'amogat\'as\'ara}
+\author{Alexin Zolt\'an\inst{1}, Gyim\'othy Tibor\inst{1}}
+\institute{Szegedi Tudom\'anyegyetem, TTK, Informatikai Tansz\'ekcsoport,\break
+Szeged \'Arp\'ad t\'er 2., e-mail:\{alexin,gyimothy\}@inf.u-szeged.hu}
+
+\maketitle
+
+\begin{abstract}
+A publik\'aci\'oban bemutat\'asra ker\"ul egy inform\'aci\'okinyer\'esi
+kutat\'asokat t\'amogat\'o programcsomag, amelynek moduljai a
+nyers sz\"oveg beolvas\'as\'at\'ol kezdve a v\'egeredm\'eny
+webes megjelen\'\i t\'es\'eig minden sz\"uk- s\'eges funkci\'ot
+megval\'os\'\i tanak.
+\footnote{A szerz\H{o}k k\"osz\"onet\"uket fejezik ki az Oktat\'asi
+Miniszt\'eriumnak, amely az NKFP 2/017/2001 projekt keret\'eben az itt
+ismertet\'esre ker\"ul\H{o} kutat\'ast t\'amogatta.}
+\\[2mm]
+{\bf Kulcsszavak:} inform\'aci\'okinyer\'es, term\'eszetesnyelv-feldolgoz\'as,
+felsz\'\i ni szintaktikai elemz\'es
+\end{abstract}
+
+%
+\section{Bevezet\'es}
+%
+Az inform\'aci\'okinyer\'es (IE, Information Extraction) technol\'ogi\'aj\'anak
+kutat\'asa dinamikusan fejl\H{o}d\H{o} ter\"ulet a term\'eszetesnyelv-feldolgoz\'asban.
+Az Interneten megjelen\H{o} hatalmas inform\'aci\'ot\"omeg g\'epi feldolgoz\'asa \'es a
+k\'\i v\'ant inform\'aci\'o t\"om\"or form\'aban t\"ort\'en\H{o} \"osszegy\H{u}jt\'ese
+napi sz\"uks\'eglet, amelyre a gazdas\'ag, a tudom\'any, a politika, de ak\'ar a
+h\'\i rszerz\'es ter\"ulet\'en is van ig\'eny. M\'\i g az inform\'aci\'o visszakeres\'es
+(IR, Information Retrieval), amely a webes keres\H{o} prog- ramok jellemz\H{o}
+tev\'ekenys\'ege, arra ir\'anyul, hogy a felhaszn\'al\'o ig\'enyeinek megfelel\H{o}
+dokumentumokat v\'altozatlan form\'aban bocs\'assa rendelkez\'esre, addig
+az inform\'aci\'okinyer\'es c\'elja a megtal\'alt dokumentumokban a l\'enyeges
+inform\'aci\'o megjel\"ol\'ese, majd \"osszegy\H{u}jt\'ese. A sz\'am\'\i t\'og\'eppel
+t\'amogatott sz\"ovegt\"om\"or\'\i t\'es, kivonatol\'as \'es az inform\'aci\'okinyer\'es
+szoros kapcsolatban \'all egym\'assal.
+
+\section{Matematikai k\'epletek \'es formul\'ak}
+
+\begin{theorem}
+Tegy\"uk fel, hogy $H$ = $C^{2}$ \'es
+$\left(a_{\infty},b_{\infty}\right)$-subquadratkus a v\'egtelenben. Legyen
+$\xi_{1},\allowbreak\dots,\allowbreak\xi_{N}$  egyens\'ulyi pontok,
+azaz a $H' (\xi ) = 0$ megold\'asai.
+Jel\"olje $\omega_{k}$ a $H'' \left(\xi_{k}\right)$ legkisebb saj\'at\'ert\'ek\'et,
+\'es legyen:
+\begin{equation}
+  \omega : = {\rm Min\,} \left\{\omega_{1},\dots,\omega_{k}\right\}\ .
+\end{equation}
+Ha:
+\begin{equation}
+  \frac{T}{2\pi} b_{\infty} <
+  - E \left[- \frac{T}{2\pi}a_{\infty}\right] <
+  \frac{T}{2\pi}\omega
+  \label{eq:three}
+\end{equation}
+akkor $\psi$ minimaliz\'al\'asa egy nem-konstant $T$-periodikus megold\'ast eredm\'enyez
+$\overline{x}$.
+\end{theorem}
+%
+
+Eml\'ekeztet\"unk r\'a m\'egegyszer, hogy $\alpha \in \bbbr$ eset\'en az $E [\alpha ]$ 
+eg\'eszr\'esz\'en az $a\in \bbbz$ \'ertj\"uk, ahol $a< \alpha \le a+1$. P\'eld\'aul,
+ha $a_{\infty} = 0$, akkor a t\'etel azt \'all\'itja sz\'amunkra, hogy $\overline{x}$
+l\'etezik \'es nem konstans, felt\'eve, hogy teljes\"ul:
+
+\begin{equation}
+  \frac{T}{2\pi} b_{\infty} < 1 < \frac{T}{2\pi}
+\end{equation}
+vagy
+\begin{equation}
+  T\in \left(\frac{2\pi}{\omega},\frac{2\pi}{b_{\infty}}\right)\ .
+  \label{eq:four}
+\end{equation}
+
+\subsection{Az inform\'aci\'okinyer\'eshez kapcsol\'od\'o modulok fejleszt\'es\'et 
+t\'amogat\'o adatb\'azis: a Szeged Korpusz 2.0}
+
+Az Oktat\'asi Miniszt\'erum \'altal t\'amogatott IKTA 27/2000 projekt
+keret\'eben k\'esz\"ult el a Szeged Korpusz 1.0-s v\'altozata\cite{alexin:eacl2003},
+amely egy sz\'ofajilag elemzett,
+majd k\'ezzel egy\'ertem\H{u}s\'\i tett adatb\'azis volt. Ezt az inform\'aci\'okinyer\'esi
+kutat\'asok t\'amogat\'as\'ara az MTA Nyelvtudom\'anyi Int\'ezettel \'es a
+MorphoLogic Kft.-vel k\"oz\"os konzorcium jelent\H{o}sen tov\'abbfejlesztette.
+A Szeged Korpusz \'ujabb v\'alto- zata
+\footnote{SZTE, Informatikai Tansz\'ekcsoport, Nyelvtechnol\'ogiai
+Csoport: \url{http://www.inf.u-szeged.hu/hlt}}
+hat k\"ul\"onb\"oz\H{o} t\'emak\"orben
+gy\H{u}jt\"ott, \"osszesen 1,2 milli\'o sz\'ot tartalmaz\'o, sz\'am\'\i t\'og\'eppel
+feldolgozhat\'o sz\"oveg. Ennek az \'allom\'anynak egy mintegy 200 ezer szavas
+r\'esz\'et k\'epezi a bevezet\H{o}ben m\'ar eml\'\i tett 6453 MTI r\"ovidh\'\i rt
+tartalmaz\'o anyag.
+
+\begin{figure}[ht]
+\begin{verbatim}
+<xml>
+  <sentence id="1.1">
+    <word>A<mscat>NE</mscat></word>
+    <word>kutya<mscat>FN</mscat></word>
+    <word>ugat<mscat>IGE</mscat></word>
+    <punctuation>.</punctuation>
+  </sentence>
+</xml>
+\end{verbatim}	
+	\caption{Egy XML \'allom\'any r\'eszlete}
+	\label{fig:xmlsample}
+\end{figure}
+
+\subsection{A beolvasott sz\"oveg szegment\'al\'as\'at v\'egz\H{o} modul}
+
+A beolvasott sz\"oveg XML adatb\'aziss\'a alak\'\i t\'asa \'es az alapvet\H{o}
+metainform\'aci\'ok (fejezet-, bekezd\'es-, mondat-, sz\'ostrukt\'ura)
+meghat\'aroz\'asa a feldolgoz\'as els\H{o} l\'epcs\H{o}je\cite{bibok:mszny2003}
+\cite{mihaczi:mszny2003}. A term\'eszetes nyelvi sz\"ovegekben sz\'amos
+k\"ul\"onb\"oz\H{o} fajta sz\'o jelleg\H{u}, de a sz\'ot\'arakban nem szerepl\H{o}
+lexikai elem tal\'alhat\'o (sz\'am, d\'atum, g\'epkocsirendsz\'am, e-mail c\'\i m, stb.),
+amelyek felismer\'es\'ere valamint a mondat- hat\'arok meg\'allap\'\i t\'as\'ara
+egy form\'alis-nyelvi eszk\"oz\"oket alkalmaz\'o modul k\'esz\"ult. A modul a GNU Flex
+\footnote{A GNU Flex honlapja: \url{http://www.gnu.org/software/flex}}
+regul\'aris automatagener\'ator eszk\"ozt haszn\'alja. Ebben regul\'aris
+kifejez\'esek \'\i rj\'ak le az \'un. tokeneket (\ref{fig:regkif}. \'abra).
+A {\it flex} program a regul\'aris kifejez\'esekb\H{o}l C programot k\'esz\'\i t,
+amely a szegment\'al\'o modul magj\'at alkotja. A mondatokra \'es a szavakra bont\'as
+hat\'asfoka igen j\'o, a hib\'asan felismert tokenek ar\'anya nem t\"obb, mint 0,5\%.
+
+\begin{figure}[ht]
+\raggedright
+\begin{tt}
+%/* sz\'okoz\"okkel tagolt sz\'amok, pl. 12 000 */\\
+%NUMSPACE [0-9]\{1,3\}((\{SPACE\}|"\&thinsp;")[0-9]\{3\})+\\
+%\ \\
+/* ponttal tagolt sz\'amok, pl. 12.000 */\\
+NUMDOT [0-9]\{1,3\}("."[0-9]\{3\})+\\
+NUMDIGIT ([0-9]+",")?[0-9]+
+\end{tt}	
+\vspace{-2mm}
+	\caption{Regul\'aris kifejez\'esek a Flex defin\'\i ci\'os f\'ajlj\'aban}
+	\label{fig:regkif}
+\end{figure}
+\vspace{-3mm}
+
+\section{A felhaszn\'al\'oi fel\"ulet \'es a webes megjelen\'\i t\H{o} modul}
+
+A programcsomagban az utols\'o modul a felhaszn\'al\'oi fel\"ulet, amely
+egy HTML nyelv\H{u} weblapot k\'esz\'\i t. Ez egyr\'eszt tartalmazza
+a beolvasott nyers sz\"oveget, m\'asr\'eszt a programcsomag \'altal hozz\'aadott
+metainform\'aci\'okat. Ez ut\'obbiakat grafikus eszk\"oz\"okkel jelen\'\i ti meg.
+A modatokban azonos\'\i  tott szerepl\H{o}k k\"ul\"onb\"oz\H{o} sz\'\i nekkel,
+a szerepek nevei a weblapon lebeg\H{o} \"uzenetablakokban ({\em tooltip}ekben) jelennek
+meg. A mondatokra illesztett szemantikus keret \"osszes szerepl\H{o}j\'enek
+sz\'ama \'es az azonos\'\i tott szerepl\H{o}k sz\'ama a mondatok ut\'an
+tal\'alhat\'o. A \ref{fig:weboutput}. \'abr\'an a webes megjelen\'\i t\H{o} modul
+egy k\'eperny\H{o}je l\'athat\'o.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=\linewidth]{weboutput.png}
+	\end{center}
+  \vspace{-3mm}
+	\caption{A webes megjelen\'\i t\H{o} modul egy k\'eperny\H{o}je}
+  \vspace{-4mm}
+	\label{fig:weboutput}
+\end{figure}
+
+\begin{table}
+\caption{Ezt a p\'eld\'at a {\it The \TeX{}book,} 246. oldal\'ar\'ol vett\"uk}
+\vspace{2pt}
+\begin{tabular}{r@{\quad}rl}
+\hline
+\multicolumn{1}{l}{\rule{0pt}{12pt}
+  \'Ev}&\multicolumn{2}{l}{A vil\'ag n\'epess\'ege}\\[2pt]
+\hline\rule{0pt}{12pt}
+8000 B.C.  &     5,000,000& \\
+  50 A.D.  &   200,000,000& \\
+1650 A.D.  &   500,000,000& \\
+1945 A.D.  & 2,300,000,000& \\
+1980 A.D.  & 4,400,000,000& \\[2pt]
+\hline
+\end{tabular}
+\end{table}
+
+Egy alternat\'\i v megjelen\'\i t\H{o} modul az eredm\'enyeket nem
+weblapon, hanem Excel-ablakban jelen\'\i ti meg. Az azonos esem\'enyeket
+egy munkalapon, a mondatokat egy-egy sorban, az azonos szerepl\H{o}ket pedig
+azonos oszlopokban jelen\'\i ti meg. Ez a t\'abl\'azat tov\'abbi
+feldolgoz\'asok kiindul\'opontja lehet.
+
+\section{Eredm\'enyek}
+
+A cikkben bemutatott programcsomag tesztel\'es\'ere a kutat\'ok egy keretrend- szert
+(benchmark) k\'esz\'\i tettek. Ez k\'ezzel el\H{o}re annot\'alt, a rendszer
+sz\'am\'ara ismeretlen mondatokat tartalmaz k\'et el\H{o}re kiv\'alasztott
+t\'emak\"orben: a tulajdonos-v\'alt\'as \'es az \'uj telephely
+nyit\'asa t\'emak\"or\'eben.
+\footnote{A benchmarkban 176 r\"ovidh\'\i r, illetve 285 mondat szerepel.}
+Erre a k\'et t\'emak\"orre megfelel\H{o} sz\'am\'u
+szemantikuskeret-defin\'\i ci\'o \'es r\"ovidh\'\i r \'allt rendelkez\'esre.
+A tesztmondatok sz\"oveges alakj\'ara lefuttatt\'ak a programcsomag egyes
+komponenseit, majd \"osszehasonl\'\i tott\'ak a k\'ezzel k\'esz\'\i tett
+\'es a g\'ep \'altal el\H{o}\'all\'\i tott k\'et \'allom\'any metainform\'aci\'oit.
+Tekintve, hogy a programcsomag t\"obb elemb\H{o}l \'all, az egyes modulok hib\'aja
+kumul\'al\'odik a v\'egeredm\'enyben. Az eredm\'enyek megb\'\i zhat\'obb
+\'ert\'ekel\'ese \'erdek\'eben arra is van lehet\H{o}s\'eg, hogy az egyes
+modulok \'altal adott r\'eszeredm\'enyeket k\"ul\"on \'ert\'ekelj\'ek, \'es
+\"osszehasonl\'\i ts\'ak az etalonf\'ajllal.
+
+\section{K\"osz\"onetnyilv\'an\'\i t\'as}
+A szerz\H{o}k ez\'uton fejezik ki k\"osz\"onet\"uket az OM NKFP 2/017/2001
+projektbeli konzorciumi partnereiknek, az MTA Nyelvtudom\'anyi Int\'ezet
+Korpusznyelv\'eszeti Oszt\'aly\'anak \'es a MorphoLogic Kft.-nek, akikkel
+a tudom\'anyos \'es szakmai kap- csolatokon t\'ul szoros, szem\'elyes
+kapcsolatot alak\'\i tottak ki.
+%
+% ---- Bibliography ----
+%
+\begin{thebibliography}{15}
+%
+\bibitem{alexin:eacl2003}
+Alexin Z., Csirik, J., Gyim\'othy, T., Bibok K., Hatvani, Cs.,
+Pr\'osz\'eky, G., Tihanyi, L.:
+Manually Annotated Hungarian Corpus.
+in Proc. of the Research Note Sessions of the 10th Conference
+of the European Chapter of the Association for Computational
+Linguistics EACL'03, Budapest, Hungary, 53--56 (2003).
+%
+\bibitem{bibok:mszny2003}
+Bibok K.:
+A sz\'or\'ol \'es a sz\'ofajokr\'ol (a sz\'am\'\i t\'og\'epes nyelvfeldolgoz\'as kap- cs\'an),
+Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia (MSZNY 2003),
+Szeged, Magyarorsz\'ag, 31--36, (2003).
+%
+\bibitem{farkas:mszny2004}
+Farkas R., Konczer K., Szarvas Gy.:
+Szemantikus keretilleszt\'es \'es az IE rendszer automatikus ki\'ert\'ekel\'se
+Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia (MSZNY 2004),
+bek\"uldve, Szeged, Magyarorsz\'ag, (2004).
+%
+\bibitem{hocza:acta2004}
+H\'ocza, A.:
+Noun Phrase Recognition with Tree Patterns
+elfogadva az Acta Cybernetica c. lapban t\"ort\'en\H{o} megjelen\'esre (2004).
+%
+\bibitem{mihaczi:mszny2003}
+Mih\'aczi Andr\'as, N\'emeth L\'aszl\'o, R\'acz Mikl\'os:
+Magyar sz\"ovegek tem\'eszetes nyelvi el\H{o}feldolgoz\'asa
+Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia (MSZNY 2003),
+Szeged, Magyarorsz\'ag, 38--43, (2003).
+%
+\bibitem{proszeky:mszny2003}
+Pr\'osz\'eky G.:
+Automatikus inform\'aci\'oszerz\'es gazdas\'agi r\"ovidh\'\i rekb\H{o}l.
+Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia (MSZNY 2003),
+Szeged, Magyarorsz\'ag, 161--166, (2003).
+%
+\bibitem{proszeky:neumann2003}
+Pr\'osz\'eky G.:
+Automatikus inform\'aci\'oszerz\'es gazdas\'agi-politikai r\"ovidh\'\i rekb\H{o}l.
+VIII. Orsz\'agos (Centen\'ariumi) Neumann Kongresszus kiadv\'anya,
+Budapest, Magyarorsz\'ag, 359--367, (2003).
+%
+\end{thebibliography}
+\end{document}
