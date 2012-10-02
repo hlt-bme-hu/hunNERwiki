@@ -5,8 +5,11 @@
 
 \usepackage[utf8]{inputenc}
 
-\usepackage[hungarian]{babel}
-\selectlanguage{hungarian} 
+\usepackage[magyar]{babel}
+\selectlanguage{magyar} 
+\usepackage{t1enc}
+%\input huhyphn.tex
+\hyphenation{DBpedia Sharealike}
 
 \begin{document}
 
@@ -34,6 +37,9 @@ MTA Nyelvtudományi Intézet \break
 %Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) a természetes nyelv feldolgozását célzó alkalmazások közül az egyik legnépszerűbb, mivel hatékonyan automatizálható, és eredménye hasznos bemenete különböző magasabb szintű információkinyerő és -feldolgozó rendszereknek. A feladat során strukturálatlan szövegben kell azonosítani és az előre definiált osztályok valamelyikébe besorolni a neveket. Az egyik leggyakrabban alkalmazott nemzetközi sztenderd a CoNLL-2003 verseny kiírását követi, amely szerint a négy névkategória a következő: személy-, intézmény-, földrajzi név és az ezek egyikébe sem tartozó egyéb kategória. 
 
 %Named Entity Recognition (NER), the task of identifying Named Entities (NEs) in unstructured texts and classifying them into pre-selected classes, is one of the most important subtasks in many NLP tasks, such as information retrieval, information extraction or machine translation. MUC and CoNLL datasets and annotation schemes have been the major standards applied in the field of NER. 
+
+% So that DBpedia-típus and Sharealike do not generate overfull hbox.
+\pretolerance=1000
 
 Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) során alkalmazott
 gold standard korpuszok általában műfajspecifikusak (főleg rövidhírek), és korlátozott
