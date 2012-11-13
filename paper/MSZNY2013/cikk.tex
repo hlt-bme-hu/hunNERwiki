@@ -1,0 +1,132 @@
+\documentclass{llncs}
+
+\usepackage[a4paper,includeheadfoot,top=1.65in,bottom=1.65in,left=1.73in,hcentering]{geometry}
+\usepackage[pdftex]{graphicx}
+
+% Ezek egyikÈnek bekapcsol·s·val a magyar Èkezetes karakterek
+% kˆzvetlen¸l is felhaszn·lhatÛk:
+%\usepackage[latin2]{inputenc} 
+\usepackage[utf8]{inputenc}
+
+\usepackage[hungarian]{babel}
+\selectlanguage{hungarian} 
+
+\begin{document}
+
+\pagestyle{myheadings}
+\def\leftmark{{\rm IX. Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia}}
+\def\rightmark{{\rm Szeged, 2013. január 7-8.}}
+
+\setcounter{page}{3}
+
+\title{\ \break Automatikusan tulajdonnév-annotált korpuszok előállítása a Wikipédiából}
+%XXX a címet majd meg kéne változtatni, tényleg elég bénán hangzik magyarul
+%Automatikus korpuszépítés tulajdonnév-felismerés céljára
+\author{Nemeskey Dávid Márk\inst{1}, Simon Eszter\inst{2}}
+\institute{
+\inst{}%
+MTA SZTAKI \break
+1111 Budapest, Lágymányosi utca 11., e-mail:nemeskey@sztaki.mta.hu \break
+\and
+\inst{}%
+MTA Nyelvtudományi Intézet \break
+1068 Budapest, Benczúr u. 33., e-mail: simon.eszter@nytud.mta.hu}
+
+\maketitle
+
+\begin{abstract}
+A felügyelt gépi tanulási módszerek alkalmazásához nagy méretű annotált korpuszokra van szükség, amelyek előállítása rendkívül emberierőforrás-igényes. Több lehetőség van az annotációs költségek csökkentésére, ezek közül az egyik az automatikus annotálás. Cikkünkben egy nyelvfüggetlen módszert és azzal előállított magyar és angol nyelvű korpuszokat mutatunk be. A korpuszok szövege a Wikipédiából származik, és tulajdonnévi annotálást is tartalmaz. Az automatikus annotáláshoz egy új módszert alkalmaztunk: a DBpedia ontológiai kategóriáit képeztük le a CoNLL névosztályokra. A korpuszok szabadon felhasználhatóak további fejlesztésekhez.
+\\[2mm]
+{\bf Kulcsszavak:} tulajdonnév-felismerés, korpuszépítés,
+automatikus annotáció, Wikipédia
+\end{abstract}
+
+\section{Bevezet\'es}
+
+Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) a természetes nyelv feldolgozását célzó alkalmazások közül az egyik legnépszerűbb, mivel hatékonyan automatizálható, és eredménye hasznos bemenete különböző magasabb szintű információkinyerő és -feldolgozó rendszereknek. A feladat során strukturálatlan szövegben kell azonosítani és az előre definiált osztályok valamelyikébe besorolni a neveket. A tulajdonnév-felismerés feladata a 6. Message Understanding Conference (MUC) egyik versenykiírásában jelent meg először 1995-ben \cite{}. Itt három alfeladatot különítettek el: tulajdonneveket (ENAMEX), temporális (TIMEX) és különböző numerikus (NUMEX) kifejezéseket kellett felismerni. A NER-közösségen belül a temporális és a numerikus kifejezések annotálása is elfogadott, de a leginkább vizsgált típusok a személy-, földrajzi és intézménynevek. Ezek mellé vezettek be a CoNLL versenyeken \cite{} egy negyedik típust, amely az előző háromba nem tartozó egyéb tulajdonneveket foglalja magában. Az azóta eltelt időben ezek az annotációs sémák váltak nemzetközileg elfogadottá. 
+
+A versenyekre épített és aztán közzétett tulajdonnév-annotált korpuszok képezik azokat a sztenderdeket, amelyek összemérhetővé teszik az egyes tulajdonnév-felismerő rendszereket. Ezek a korpuszok viszont meglehetősen korlátozott méretűek és témaspecifikusak. Kellően robusztus tulajdonnév-felismerő rendszerek építéséhez viszont nagyméretű, a téma tekintetében heterogén korpuszokra van szükség. A kézi annotálás rendkívül idő-, erőforrás- és szakértelemigényes feladat, ezért az elmúlt időkben különösen nagy hangsúly került az annotált erőforrások automatikus előállítására. Ennek egy módja, ha már rendelkezésre álló korpuszokat dolgozunk össze; ekkor a különböző annotációs sémák és címkekészletek összeillesztése állít elénk sokszor megoldhatatlan problémákat. Egy másik lehetőség az olyan, önkéntesek által írt, szerkesztett közösségi tartalmak felhasználása, mint például a Wikipédia, a Wiktionary vagy a DBpedia. Megint másik megközelítés az annotáció automatizálása. 
+
+Cikkünkben egy olyan megközelítést mutatunk be, mely ezen lehetőségeket kombinálja: teljesen automatikus eszközökkel olyan korpuszokat építettünk, melyek Wikipédia-szócikkekből állnak, és tulajdonnévi annotációt tartalmaznak. Munkánk során új módszert alkalmaztunk: a DBpedia ontológiai kategóriáit képeztük le a CoNLL-névosztályokra. A létrehozott magyar és angol nyelvű korpuszok szabadon felhasználhatóak. 
+
+A cikk a következőképpen épül fel. %XXX 
+
+
+\section{Wikipédia és tulajdonnév-felismerés}
+
+A Wikipédia egy többnyelvű, nyílt tartalmú, a nyílt közösség által fejlesztett webes világenciklopédia \footnote{http://wikipedia.org}. Jelenlegi XXX számú szócikkével aranybánya a különböző természetesnyelv-feldolgozó fejlesztések számára; használták már többek között jelentésegyértelműsítére, ontológia- és tezauruszépítésre, valamint kérdésmegválaszoló rendszerekhez (további alkalmazási lehetőségekhez lásd \cite{Medelyan}). Mivel a Wikipédia-címszavak jelentős része tulajdonnév, adja magát a lehetőség, hogy az automatikus tulajdonnév-felismeréshez is felhasználjuk. 
+
+A Wikipédia legkézenfekvőbb felhasználási módja a nagyméretű névlisták előállítása az általánosan alkalmazott névosztályokra, melyek javítják az általános célú névfelismerők hatékonyságát, felügyelt és felügyelet nélküli módszerek esetében is (pl. \cite{Toral:Munoz, Nadeau}), továbbá a névegyértelműsítésben is fontos szerepet játszanak (pl. \cite{Bunescu:Pasca}). A Wikipédiában található tudás jegyek formájában is beépíthető tulajdonnév-felismerő rendszerekbe: például Kazama és Torisawa \cite{KaTo} kísérlete azt bizonyítja, hogy a Wikipédia kategóriacímkéinek automatikus kinyerése növeli egy felügyelt névfelismerő rendszer pontosságát. 
+
+A Wikipédia alkalmazására a tulajdonnév-felismerés területén egy másik lehetőség magának a szövegbázisnak a felhasználása. Richman és Schone \cite{Richman} kevés erőforrással rendelkező nyelvek Wikipédia-szócikkeiből építettek korpuszokat, amelyekben a Wikipédia inherens kategóriastruktúráját használták fel a tulajdonnevek annotálásához. Nothman et al. \cite{Nothman:2008} a szócikkek definíciójának első mondatából kiindulva címkézte fel a szövegben belinkelt neveket, így építve automatikusan tulajdonnév-annotált korpuszt. 
+
+Az általunk alkalmazott módszer az említettekétől annyiban tér el, hogy mi a DBpedia ontológiai osztályait képeztük le a sztenderd CoNLL névosztályokra, majd ezeket Wikipédia-entitásokhoz kötöttük. Az így létrehozott korpuszokat szabadon elérhetővé tettük. Tudomásunk szerint jelenleg csak egy automatikusan tulajdonnév-annotált korpusz létezik, amely szabadon felhasználható, a Semantically Annotated Snapshot of the English (SASWP) \cite{Zaragoza}. Bár a névfelismerést a jelenlegi legjobb szabadon hozzáférhető rendszerekkel végezték, azt gondoljuk, hogy a Wikipédia többezer szerkesztőjének döntésein alapuló kategorizálás megbízhatóbb eredményt ad. A Wikipédiából, tekintve a szócikkek nagy számát, kevés erőforrással rendelkező nyelvekre is tudunk kellően nagy méretű korpuszokat építeni, amelyek bemenetül szolgálhatnak névfelismerő rendszerek tanításához és teszteléséhez. Az általunk létrehozott korpusz az első magyar nyelvű automatikusan tulajdonnév-annotált korpusz. 
+%XXX ezt jobban magyarra kell szabni, az SASWP-t ki is lehet dobni, mert a magyar szempontjából nem releváns
+
+\section{A korpuszépítés}
+
+\section{Problémás esetek, hibaelemzés}
+
+\section{A korpusz leírása}
+
+\section{Kiértékelés}
+
+\subsection{Az adatok}
+
+\subsection{Kísérletek és eredmények}
+
+\section{Konklúzió, összegzés}
+
+\section*{Köszönetnyilvánítás}
+A fejlesztés az OTKA 82333 számú projektjén belül valósult meg. A fejlesztést támogatta továbbá a CESAR projekt (No. 271022). A szerzők ezúton fejezik ki köszönetüket Zséder Attilának a Wikipédia-szövegek feldolgozásában végzett munkájáért, és Kornai Andrásnak támogatásáért. %vagy mi
+
+%
+% ---- Bibliography ----
+%
+\begin{thebibliography}{15}
+%
+\bibitem{alexin:eacl2003}
+Alexin Z., Csirik, J., Gyim\'othy, T., Bibok K., Hatvani, Cs.,
+Pr\'osz\'eky, G., Tihanyi, L.:
+Manually Annotated Hungarian Corpus.
+in Proc. of the Research Note Sessions of the 10th Conference
+of the European Chapter of the Association for Computational
+Linguistics EACL'03, Budapest, Hungary, 53--56 (2003).
+%
+\bibitem{bibok:mszny2003}
+Bibok K.:
+A sz\'or\'ol \'es a sz\'ofajokr\'ol (a sz\'am\'\i t\'og\'epes nyelvfeldolgoz\'as kap- cs\'an),
+Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia (MSZNY 2003),
+Szeged, Magyarorsz\'ag, 31--36, (2003).
+%
+\bibitem{farkas:mszny2004}
+Farkas R., Konczer K., Szarvas Gy.:
+Szemantikus keretilleszt\'es \'es az IE rendszer automatikus ki\'ert\'ekel\'se
+Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia (MSZNY 2004),
+bek\"uldve, Szeged, Magyarorsz\'ag, (2004).
+%
+\bibitem{hocza:acta2004}
+H\'ocza, A.:
+Noun Phrase Recognition with Tree Patterns
+elfogadva az Acta Cybernetica c. lapban t\"ort\'en\H{o} megjelen\'esre (2004).
+%
+\bibitem{mihaczi:mszny2003}
+Mih\'aczi Andr\'as, N\'emeth L\'aszl\'o, R\'acz Mikl\'os:
+Magyar sz\"ovegek tem\'eszetes nyelvi el\H{o}feldolgoz\'asa
+Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia (MSZNY 2003),
+Szeged, Magyarorsz\'ag, 38--43, (2003).
+%
+\bibitem{proszeky:mszny2003}
+Pr\'osz\'eky G.:
+Automatikus inform\'aci\'oszerz\'es gazdas\'agi r\"ovidh\'\i rekb\H{o}l.
+Magyar Sz\'am\'\i t\'og\'epes Nyelv\'eszeti Konferencia (MSZNY 2003),
+Szeged, Magyarorsz\'ag, 161--166, (2003).
+%
+\bibitem{proszeky:neumann2003}
+Pr\'osz\'eky G.:
+Automatikus inform\'aci\'oszerz\'es gazdas\'agi-politikai r\"ovidh\'\i rekb\H{o}l.
+VIII. Orsz\'agos (Centen\'ariumi) Neumann Kongresszus kiadv\'anya,
+Budapest, Magyarorsz\'ag, 359--367, (2003).
+%
+\end{thebibliography}
+\end{document}
