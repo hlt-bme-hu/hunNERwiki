@@ -63,7 +63,45 @@ A Wikipédia alkalmazására a tulajdonnév-felismerés területén egy másik l
 Az általunk alkalmazott módszer az említettekétől annyiban tér el, hogy mi a DBpedia ontológiai osztályait képeztük le a sztenderd CoNLL névosztályokra, majd ezeket Wikipédia-entitásokhoz kötöttük. Az így létrehozott korpuszokat szabadon elérhetővé tettük. Tudomásunk szerint jelenleg csak egy automatikusan tulajdonnév-annotált korpusz létezik, amely szabadon felhasználható, a Semantically Annotated Snapshot of the English (SASWP) \cite{Zaragoza}. Bár a névfelismerést a jelenlegi legjobb szabadon hozzáférhető rendszerekkel végezték, azt gondoljuk, hogy a Wikipédia többezer szerkesztőjének döntésein alapuló kategorizálás megbízhatóbb eredményt ad. A Wikipédiából, tekintve a szócikkek nagy számát, kevés erőforrással rendelkező nyelvekre is tudunk kellően nagy méretű korpuszokat építeni, amelyek bemenetül szolgálhatnak névfelismerő rendszerek tanításához és teszteléséhez. Az általunk létrehozott korpusz az első magyar nyelvű automatikusan tulajdonnév-annotált korpusz. 
 %XXX ezt jobban magyarra kell szabni, az SASWP-t ki is lehet dobni, mert a magyar szempontjából nem releváns
 
-\section{A korpuszépítés}
+\section{Korpuszépítés}
+
+% TODO: lame wording, angol korpusz?
+A korpuszépítő algoritmus, hasonlóan Nothman et al.~\cite{Nothman:08} által
+leírthoz, a következő lépésekből áll:
+
+\begin{enumerate}
+\item a Wikipédia-cikkeket entitásosztályokba soroltuk;
+\item a cikkeket mondatokra bontottuk;
+\item felcímkéztük a tulajdonneveket a szövegben;
+\item kiszűrtük a rossz minőségű mondatokat.
+\end{enumerate}
+
+Az algoritmus alapjaiban nyelvfüggetlen: bármelyik nyelvre alkalmazható, amely
+rendelkezik megfelelő méretű Wikipédiával. Egyedül a harmadik lépés az, ahol
+figyelembe kell venni a nyelv, illetve a használt NER konvenció sajátosságait.
+Ennek oka, hogy az egyes nyelvek, illetve NER konvenciók eltérnek abban, hogy
+mit tekintenek névelemnek: pl. a \textit{római} szó a Szeged korpuszban nem
+számít annak, míg angol megfelelője, a \textit{Roman} a CoNLL annotációs sémában
+\textit{MISC} címkét kapna. A továbbiakban röviden ismertetjük a fenti lépéseket,
+a magyar nyelvű korpuszra koncentrálva. Részletes leírás, illetve az angol nyelvű
+korpuszban felmerülő problémák kifejtése \cite{simon-nemeskey:2012:NEWS2012}-ben
+található.
+
+% Argh, de nehéz magyarul írni
+
+\subsection{Wikipédia cikkek, mint entitások}
+
+A DBpedia nyelve 
+
+\subsection{A cikkek feldolgozása}
+\subsection{Tulajdonnevek címkézése}
+
+\subsection{Szűrés}
+
+Bár Nothman az első feladatot gépi tanulással oldotta meg, mi a nagyobb
+pontosság érdekében a DBpedia~\cite{Bizer:09} tudásbázis alapján osztályoztuk az
+entitásokat. A tulajdonneveket Wikipédia kereszthivatkozások segítségével azonosítottuk.
+Minden olyan mondatot, ahol ismeretlen név fordult elő, eldobtunk.
 
 \section{Problémás esetek, hibaelemzés}
 
