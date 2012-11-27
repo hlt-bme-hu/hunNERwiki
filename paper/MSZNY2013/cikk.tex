@@ -79,6 +79,7 @@ A korpuszépítő algoritmus a Wikipédia két feltételezett tulajdonságán al
       azonosítják.
 \end{enumerate}
 
+%TODO: itt kicsit kifejteni
 Algoritmusunk e két feltételezés következményeit használja ki. Hasonlóan Nothman
 et al.~\cite{Nothman:08} által leírthoz, a következő lépésekből áll:
 
@@ -102,6 +103,7 @@ koncentrálva. Részletes leírás, illetve az angol nyelvű korpuszban felmerü
 problémák kifejtése \cite{simon-nemeskey:2012:NEWS2012}-ben található.
 
 \subsection{Wikipédia cikkek mint entitások}
+\label{corpusbuilding:entities}
 
 Ahhoz, hogy a folyó szövegben lévő kereszthivatkozásokat felhasználhassuk a
 NER céljaira, a hivatkozott Wikipédia cikkeket tulajdonnév-osztályokba kell
@@ -140,11 +142,53 @@ használtuk. A szófajokat KR-kódban~\cite{Kornai:04} ábrázoljuk.
 
 \subsection{Tulajdonnevek címkézése}
 
-% TODO
+A címkézés két feladatot foglal magába: egyrészt azonosítani kell az
+entitásokat a folyó szövegben, másrészt besorolni őket a megfelelő NE
+kategóriába. Módszerünk Nothman et al.~\cite{Nothman:08} munkáján alapszik:
+a szövegben előforduló kereszthivatkozásokat tekintjük entitásoknak. Minden
+entitásnál megnézzük, hogy az oldal, amire mutat, szerepel-e a
+\ref{corpusbuilding:entities} fejezetben előállított listában. Ha igen,
+felcímkézzük a megfelelő címkével; ha nem, típusa \texttt{Unk} lesz. Végül
+minden mondatot, amiben \texttt{Unk} entitások szerepelnek, eldobunk.
+
+% TODO argh
+A fenti tiszta, még nyelvfüggetlen algoritmus többhelyütt is finomításra szorul.
+
+A Wikipédia nem minden szócikke szól entitásokról: köznevek, dátumok, stb. is
+alkalmasint saját oldalt kapnak. Annak érdekében, hogy az algoritmus ne
+kezelje ezeket \texttt{Unk} típusú entitásként, majd dobja el a mondatokat,
+amikben szerepelnek, szigorítottuk az entitásfelismerés szabályait: csak olyan
+kereszthivatkozást tekintünk entitásnak, melynek szavai nagybetűvel kezdődnek.
+Itt és később is kihasználtuk a magyar nyelv azon tulajdonságát, hogy a
+tulajdonneveket, és csak azokat kezdjük nagybetűvel.
+
+% TODO alias?!
+Az előző probléma inverze is gyakori: nem minden tulajdonnéven találunk ugyanis
+kereszthivatkozást. Ennek oka kettős: ha egy Wikipédia szócikkben adott entitás
+többször is előfordul, csak az első alkalommal linkelik a saját oldalához. De
+előfordulhat az is, hogy az entitás nem rendelkezik saját szócikkel. Az ilyen
+esetek kezelésére minden szócikknél fenntartunk egy listát, ahol az abban
+felismert entitásokat, illetve aliasaikat gyűjtjük, mint pl. a rájuk mutató
+átirányító és egyértelműsítő lapok címei. Ha ezután egy olyan mondattal
+találkozunk, amiben nagybetűs szócsoport szerepel, ellenőrizzük, hogy a csoport
+egyezik-e a listában szereplő egyik entitás nevével. Amennyiben igen,
+felcímkézzük; ha nem, a nagybetűs szavakat ismeretlen entitásnak tekintjük.
+
+Szigorúan véve, a fenti módszer minden mondatot eldobna, hiszen a mondat első
+szavát mindig nagybetűvel írjuk. Így annyit módosítottunk rajta, hogy ha a
+mondatkezdő szó egyedül alkot csoportot, csak akkor tekintjük potenciális
+entitásnak, ha szófaja főnév.
+
+% TODO: 3-ba
+Mivel célunk egy silver standard korpusz előállítása volt, ha választanunk
+kellett egy-egy lépésnél a pontosság (precision) vagy a teljesség (recall)
+között, mindig az utóbbi mellett döntöttünk. Ezt tükrözik a fenti, alkalmasint
+kicsit szigorú szabályok, illetve a DBpedia választása is. A Wikipédia mérete
+lehetővé teszi, hogy szigorú szűrések mellett is korábban nem látott méretű
+korpuszt állítsunk elő.
 
 \subsection{Szűrés}
 
-% TODO: első részt máshova
 A korpuszon a minőség javítása érdekében tartalmi és formai szűrést is
 végeztünk. Értelemszerűen eldobtunk minden mondatot, ami azonosítatlan típusú
 tulajdonnevet tartalmazott. Kiszűrtük továbbá a rossz minőségű, töredék
