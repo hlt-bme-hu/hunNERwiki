@@ -8,8 +8,9 @@
 %\usepackage[latin2]{inputenc} 
 \usepackage[utf8]{inputenc}
 
-\usepackage[hungarian]{babel}
-\selectlanguage{hungarian} 
+\usepackage{t1enc}
+\usepackage[magyar]{babel}
+\selectlanguage{magyar}
 
 \usepackage{booktabs}
 
@@ -70,8 +71,16 @@ Az általunk alkalmazott módszer az említettekétől annyiban tér el, hogy mi
 \label{corpusbuilding}
 
 % TODO: lame wording, angol korpusz?
-A korpuszépítő algoritmus, hasonlóan Nothman et al.~\cite{Nothman:08} által
-leírthoz, a következő lépésekből áll:
+A korpuszépítő algoritmus a Wikipédia két feltételezett tulajdonságán alapszik:
+
+\begin{enumerate}
+\item a szócikkek többsége nevesített entitásokról szól;
+\item a folyó szövegben előforduló tulajdonneveket a kereszthivatkozások
+      azonosítják.
+\end{enumerate}
+
+Algoritmusunk e két feltételezés következményeit használja ki. Hasonlóan Nothman
+et al.~\cite{Nothman:08} által leírthoz, a következő lépésekből áll:
 
 \begin{enumerate}
 \item a Wikipédia cikkeket entitásosztályokba soroltuk;
@@ -92,14 +101,46 @@ A továbbiakban röviden ismertetjük a fenti lépéseket, a magyar nyelvű korp
 koncentrálva. Részletes leírás, illetve az angol nyelvű korpuszban felmerülő
 problémák kifejtése \cite{simon-nemeskey:2012:NEWS2012}-ben található.
 
-% Argh, de nehéz magyarul írni :)
-
 \subsection{Wikipédia cikkek mint entitások}
 
-A DBpedia nyelve 
+Ahhoz, hogy a folyó szövegben lévő kereszthivatkozásokat felhasználhassuk a
+NER céljaira, a hivatkozott Wikipédia cikkeket tulajdonnév-osztályokba kell
+sorolnunk. A Wikipédia saját kategória-rendszere e célra a kategóriák nagy
+száma, illetve a rendszerezettség teljes hiánya miatt nem alkalmas. Egyes
+szerzők, mint Kazama és Torisawa \cite{KaTo07}, vagy Nothman at
+al.~\cite{Nothman:08} felügyelt tanulással oldották meg ezt a feladatot. Mi
+azonban a klasszifikációs hibák elkerülése miatt a DBpedia~\cite{Bizer:09}
+típushierarchiájának használata mellett döntöttünk.
+
+A DBpediában\footnote{A korpusz elkészítéséhez az akkor aktuális 3.7-es verziót
+használtuk.} a típusokat egy OWL\footnote{http://www.w3.org/TR/owl-ref/}
+ontológiába rendezték. A tudásbázis a Wikipédia entitások egy részhalmazát
+tartalmazza, és mindegyik entitáshoz hozzárendeli -- többet között -- azon
+ontológia-osztályokat, amikbe az tartozik. Mivel a DBpedia alapvetően az angol
+nyelvre koncentrál, a magyar entitáslista olyan angol oldalak adatait
+tartalmazza, melyeknek létezik megfelelője a magyar Wikipédiában. Az első
+lépésben ezért ennek a 58 337 oldalnak a magyar megfelelőit határoztuk meg.
+
+A kategorizálás az ontológia-osztályok alapján történt. Minden osztályt
+leképeztünk a neki megfelelő NER címkére (pl. \texttt{Organisation}:
+\texttt{Org}, de \texttt{Organisation/SportsLeague}: \texttt{Misc}).  %TODO: ez magyarul is?
+Ezután a listán szereplő minden entitáshoz hozzárendeltük az őt tartalmazó
+legszűkebb osztály címkéjét, vagy \texttt{O}-t, ha az osztály nem NE a Szeged
+NER sémában. Így egy 46 461 elemű, felcímkézett tulajdonnév-listát kaptunk,
+melyet gold standardként használtunk a továbbiakban.
 
 \subsection{A cikkek feldolgozása}
+
+A korpusz építéséhez a magyar Wikipédia 2012 március 9-ei állapotát vettük
+alapul. Az XML adatból az mwlib\footnote{http://code.pediapress.com}
+könyvtár segítségével nyertük ki a nyers szöveget. Ezt egy in-house statisztikai %TODO: in-house?, idézet (Csendes)
+eszközzel tokenizáltuk; a szavak lemmáit és szófajait a
+HunMorphot~\cite{Tron:05} és az erre épülő egyértelműsítőt, a HunDisambigot
+használtuk. A szófajokat KR-kódban~\cite{Kornai:04} ábrázoljuk.
+
 \subsection{Tulajdonnevek címkézése}
+
+% TODO
 
 \subsection{Szűrés}
 
@@ -109,11 +150,6 @@ végeztünk. Értelemszerűen eldobtunk minden mondatot, ami azonosítatlan típ
 tulajdonnevet tartalmazott. Kiszűrtük továbbá a rossz minőségű, töredék
 mondatokat, vagyis azokat, amelyek nem nagybetűvel kezdődnek, és nincs írásjel
 a végükön.
-
-Bár Nothman az első feladatot gépi tanulással oldotta meg, mi a nagyobb
-pontosság érdekében a DBpedia~\cite{Bizer:09} tudásbázis alapján osztályoztuk az
-entitásokat. A tulajdonneveket Wikipédia kereszthivatkozások segítségével azonosítottuk.
-Minden olyan mondatot, ahol ismeretlen név fordult elő, eldobtunk.
 
 \section{Problémás esetek, hibaelemzés}
 \label{probl}
