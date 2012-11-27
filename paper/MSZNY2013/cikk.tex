@@ -85,11 +85,12 @@ rendelkezik megfelelő méretű Wikipédiával. Egyedül a harmadik lépés az, 
 figyelembe kell venni a nyelv, illetve a használt NER konvenció sajátosságait.
 Ennek oka, hogy az egyes nyelvek, illetve NER konvenciók eltérnek abban, hogy
 mit tekintenek névelemnek: pl.~a \textit{római} szó a Szeged korpuszban nem
-számít annak, míg angol megfelelője, a \textit{Roman} a CoNLL annotációs sémában
-\texttt{Misc} címkét kapna. A továbbiakban röviden ismertetjük a fenti lépéseket,
-a magyar nyelvű korpuszra koncentrálva. Részletes leírás, illetve az angol nyelvű
-korpuszban felmerülő problémák kifejtése \cite{simon-nemeskey:2012:NEWS2012}-ben
-található.
+számít annak, míg angol megfelelője, a \textit{Roman} a CoNLL annotációs séma
+szerint \texttt{Misc} címkét kapna.
+
+A továbbiakban röviden ismertetjük a fenti lépéseket, a magyar nyelvű korpuszra
+koncentrálva. Részletes leírás, illetve az angol nyelvű korpuszban felmerülő
+problémák kifejtése \cite{simon-nemeskey:2012:NEWS2012}-ben található.
 
 % Argh, de nehéz magyarul írni :)
 
@@ -102,6 +103,13 @@ A DBpedia nyelve
 
 \subsection{Szűrés}
 
+% TODO: első részt máshova
+A korpuszon a minőség javítása érdekében tartalmi és formai szűrést is
+végeztünk. Értelemszerűen eldobtunk minden mondatot, ami azonosítatlan típusú
+tulajdonnevet tartalmazott. Kiszűrtük továbbá a rossz minőségű, töredék
+mondatokat, vagyis azokat, amelyek nem nagybetűvel kezdődnek, és nincs írásjel
+a végükön.
+
 Bár Nothman az első feladatot gépi tanulással oldotta meg, mi a nagyobb
 pontosság érdekében a DBpedia~\cite{Bizer:09} tudásbázis alapján osztályoztuk az
 entitásokat. A tulajdonneveket Wikipédia kereszthivatkozások segítségével azonosítottuk.
@@ -110,7 +118,7 @@ Minden olyan mondatot, ahol ismeretlen név fordult elő, eldobtunk.
 \section{Problémás esetek, hibaelemzés}
 \label{probl}
 
-A magyar Wikipédia korpusz gépi annotálását kézzel ellenőriztük a korpusz egy kis részén. A 19 milliós teljes korpuszt vettük alapul, amelyből már ki vannak szűrve a rossz minőségű mondatok, vagyis azok, amelyek nem nagybetűvel kezdődnek, és nincs írásjel a végükön. Ebből véletlenszerű mondatválogatással csináltunk egy kisebb korpuszt, amely kb.~19000 tokent tartalmaz. Ezt kézzel felannotáltuk, és összehasonlítottuk a kézi és a gépi annotálás eredményét. A következő tipikus hibák rajzolódtak ki. 
+A magyar Wikipédia korpusz gépi annotálását kézzel ellenőriztük a korpusz egy kis részén. A 19 milliós teljes korpuszt vettük alapul. Ebből véletlenszerű mondatválogatással csináltunk egy kisebb korpuszt, amely kb.~19000 tokent tartalmaz. Ezt kézzel felannotáltuk, és összehasonlítottuk a kézi és a gépi annotálás eredményét. A következő tipikus hibák rajzolódtak ki. 
 
 Bizonyos esetekben a név környezetében szereplő értelmező szerepű nyelvi egység is a névvel együtt annotálva lett. Ennek az az oka, hogy maga a Wikipédia címszó is tartalmazza ezt a szót, mely leszűkíti a név referenciáját, pl.~\textit{ókori Róma, magyar Wikipédia}. Emberekre utaló linkek esetében ezek nagyrészt rangjelzők, pl.~\textit{Szent István király, Anna brit királynő}. 
 %Ez azért marad benne, mert a magyar List of titles stopword listánk nincs?
