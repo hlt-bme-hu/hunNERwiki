@@ -13,6 +13,8 @@
 \selectlanguage{magyar}
 
 \usepackage{booktabs}
+\usepackage{hyperref}
+
 
 \begin{document}
 
@@ -38,7 +40,7 @@ MTA Nyelvtudományi Intézet \break
 \maketitle
 
 \begin{abstract}
-A felügyelt gépi tanulási módszerek alkalmazásához nagy méretű annotált korpuszokra van szükség, amelyek előállítása rendkívül emberierőforrás-igényes. Több lehetőség van az annotációs költségek csökkentésére, ezek közül az egyik az automatikus annotálás. Cikkünkben egy nyelvfüggetlen módszert és azzal előállított magyar és angol nyelvű korpuszokat mutatunk be. A korpuszok szövege a Wikipédiából származik, és tulajdonnévi annotálást is tartalmaz. Az automatikus annotáláshoz egy új módszert alkalmaztunk: a DBpedia ontológiai kategóriáit képeztük le a CoNLL névosztályokra. A korpuszok szabadon felhasználhatóak további fejlesztésekhez.
+A felügyelt gépi tanulási módszerek alkalmazásához nagyméretű annotált korpuszokra van szükség, amelyek előállítása rendkívül emberierőforrás-igényes. Több lehetőség van az annotációs költségek csökkentésére, ezek közül az egyik az automatikus annotálás. Cikkünkben egy nyelvfüggetlen módszert és azzal előállított magyar és angol nyelvű korpuszokat mutatunk be. A korpuszok szövege a Wikipédiából származik, és tulajdonnévi annotálást is tartalmaz. Az automatikus annotáláshoz egy új módszert alkalmaztunk: a DBpedia ontológiai kategóriáit képeztük le CoNLL névosztályokra. A korpuszok szabadon felhasználhatóak további fejlesztésekhez.
 \\[2mm]
 {\bf Kulcsszavak:} tulajdonnév-felismerés, korpuszépítés,
 automatikus annotáció, Wikipédia
@@ -50,7 +52,7 @@ Az automatikus tulajdonnév-felismerés (Named Entity Recognition, NER) a termé
 
 A versenyekre épített és aztán közzétett tulajdonnév-annotált korpuszok képezik azokat a sztenderdeket, amelyek összemérhetővé teszik az egyes tulajdonnév-felismerő rendszereket. Ezek a korpuszok meglehetősen korlátozott méretűek és témaspecifikusak. Kellően robusztus tulajdonnév-felismerő rendszerek építéséhez viszont nagyméretű, a téma tekintetében heterogén korpuszokra van szükség. A kézi annotálás rendkívül idő-, erőforrás- és szakértelemigényes feladat, ezért az elmúlt időkben különösen nagy hangsúly került az annotált erőforrások automatikus előállítására. Ennek egy módja, ha már rendelkezésre álló korpuszokat dolgozunk össze; ekkor a különböző annotációs sémák és címkekészletek összeillesztése állít elénk problémákat. Egy másik lehetőség az olyan webes közösségi tartalmak felhasználása, mint például a Wikipédia, a Wiktionary vagy a DBpedia. Megint másik megközelítés az annotáció automatizálása. 
 
-Cikkünkben egy olyan megközelítést mutatunk be, mely ezen lehetőségeket kombinálja: automatikus eszközökkel tulajdonnév-annotált korpuszokat építettünk Wikipédia szócikkekből. Munkánk során új módszert alkalmaztunk: a DBpedia ontológiai kategóriáit képeztük le a CoNLL-névosztályokra. A létrehozott magyar és angol nyelvű korpuszok szabadon felhasználhatóak. 
+Cikkünkben egy olyan megközelítést mutatunk be, mely ezen lehetőségeket kombinálja: automatikus eszközökkel tulajdonnév-annotált korpuszokat építettünk Wikipédia szócikkekből. Munkánk során új módszert alkalmaztunk: a DBpedia ontológiai kategóriáit képeztük le CoNLL-névosztályokra. A létrehozott magyar és angol nyelvű korpuszok szabadon felhasználhatóak. 
 
 A cikk a következőképpen épül fel. A \ref{wiki:ner}.~fejezetben bemutatjuk a Wikipédia eddigi felhasználási módjait a tulajdonnév-felismerés területén. A \ref{corpusbuilding}.~fejezetben leírjuk a korpuszépítési módszert, elsősorban a magyar nyelvű adatokra koncentrálva. Az alkalmazott módszer részletes hibaelemzését a \ref{probl}., a korpuszok leírását a \ref{desc}., míg a kiértékelést és az eredményeket a \ref{results}.~fejezet adja. Cikkünket az elért eredmények rövid összefoglalása zárja (\ref{conc}.~fejezet). 
 
@@ -58,52 +60,51 @@ A cikk a következőképpen épül fel. A \ref{wiki:ner}.~fejezetben bemutatjuk 
 \section{Wikipédia és tulajdonnév-felismerés}
 \label{wiki:ner}
 
-A Wikipédia egy többnyelvű, nyílt tartalmú, az internetes közösség által fejlesztett webes világenciklopédia \footnote{http://wikipedia.org}. Jelenlegi XXX számú szócikkével aranybánya a különböző természetesnyelv-feldolgozó fejlesztések számára; használták már többek között jelentésegyértelműsítére, ontológia- és tezauruszépítésre, valamint kérdésmegválaszoló rendszerekhez (további alkalmazási lehetőségekhez lásd \cite{Medelyan:09}). Mivel a Wikipédia címszavak jelentős része tulajdonnév, adja magát a lehetőség, hogy az automatikus tulajdonnév-felismeréshez is felhasználjuk. 
+A Wikipédia egy többnyelvű, nyílt tartalmú, az internetes közösség által fejlesztett webes világenciklopédia \footnote{http://wikipedia.org}. Több mint 22 millió szócikkével aranybánya a különböző természetesnyelv-feldolgozó fejlesztések számára; használták már többek között jelentésegyértelműsítére, ontológia- és tezauruszépítésre, valamint kérdésmegválaszoló rendszerekhez (további alkalmazási lehetőségekhez lásd \cite{Medelyan:09}). Mivel a Wikipédia címszavak jelentős része tulajdonnév, adja magát a lehetőség, hogy a tulajdonnév-felismeréshez is használjuk. 
 
 A Wikipédia legkézenfekvőbb alkalmazási módja nagyméretű névlisták előállítása, melyek javítják az általános célú névfelismerők hatékonyságát, felügyelt és felügyelet nélküli módszerek esetében is (pl.~\cite{Toral:06} és \cite{Nadeau:06}), továbbá a névegyértelműsítésben is fontos szerepet játszanak (pl.~\cite{Bunescu:06}). A Wikipédiában található tudás jegyek formájában is beépíthető tulajdonnév-felismerő rendszerekbe: például Kazama és Torisawa \cite{KaTo07} kísérlete azt bizonyítja, hogy a Wikipédia kategóriacímkéinek automatikus kinyerése növeli egy felügyelt névfelismerő rendszer pontosságát. 
 
 A Wikipédia alkalmazására a tulajdonnév-felismerés területén egy másik lehetőség magának a szövegbázisnak a felhasználása. Richman és Schone \cite{Richman:08} kevés erőforrással rendelkező nyelvek Wikipédia szócikkeiből építettek korpuszokat, amelyekben a Wikipédia inherens kategóriastruktúráját használták fel a tulajdonnevek annotálásához. Nothman et al. \cite{Nothman:08} a szócikkek definíciójának első mondatából kiindulva címkézte fel a szövegben belinkelt neveket, így építve automatikusan tulajdonnév-annotált korpuszt. 
 
-Az általunk alkalmazott módszer az említettekétől annyiban tér el, hogy mi a DBpedia ontológiai osztályait képeztük le a sztenderd CoNLL névosztályokra, majd ezeket Wikipédia entitásokhoz kötöttük. Az így létrehozott korpuszokat szabadon elérhetővé tettük. Tudomásunk szerint jelenleg csak egy angol nyelvű automatikusan tulajdonnév-annotált korpusz létezik, amely szabadon felhasználható, a Semantically Annotated Snapshot of the English Wikipedia \cite{Atserias:08}. Bár a névfelismerést a jelenlegi legjobb szabadon hozzáférhető rendszerekkel végezték, azt gondoljuk, hogy a Wikipédia többezer szerkesztőjének döntésein alapuló kategorizálás megbízhatóbb eredményt ad. A Wikipédiából, tekintve a szócikkek nagy számát, kevés erőforrással rendelkező nyelvekre is tudunk kellően nagy méretű korpuszokat építeni, amelyek bemenetül szolgálhatnak névfelismerő rendszerek tanításához és teszteléséhez. Az általunk létrehozott korpusz az első magyar nyelvű automatikusan tulajdonnév-annotált korpusz. 
-%XXX ezt kábé mind leírtam a conclusionben is, szóval innen akár ki is lehet venni
+Az általunk alkalmazott módszer az említettektől annyiban tér el, hogy mi a DBpedia ontológiai osztályait képeztük le a sztenderd CoNLL névosztályokra, majd ezeket Wikipédia entitásokhoz kötöttük. Az így létrehozott korpuszokat szabadon elérhetővé tettük. 
+%Tudomásunk szerint jelenleg csak egy angol nyelvű automatikusan tulajdonnév-annotált korpusz létezik, amely szabadon felhasználható, a Semantically Annotated Snapshot of the English Wikipedia \cite{Atserias:08}. Bár a névfelismerést a jelenlegi legjobb szabadon hozzáférhető rendszerekkel végezték, azt gondoljuk, hogy a Wikipédia többezer szerkesztőjének döntésein alapuló kategorizálás megbízhatóbb eredményt ad. 
+A Wikipédiából, tekintve a szócikkek nagy számát, kevés erőforrással rendelkező nyelvekre is tudunk kellően nagy méretű korpuszokat építeni, amelyek bemenetül szolgálhatnak névfelismerő rendszerek tanításához és teszteléséhez. Az általunk létrehozott korpusz az első magyar nyelvű automatikusan tulajdonnév-annotált korpusz. 
 
 \section{Korpuszépítés}
 \label{corpusbuilding}
 
 % TODO: lame wording, angol korpusz?
-A korpuszépítő algoritmus a Wikipédia két feltételezett tulajdonságán alapszik:
-
-\begin{enumerate}
-\item a szócikkek többsége nevesített entitásokról szól;
-\item a folyó szövegben előforduló entitásokat a kereszthivatkozások
-      azonosítják.
-\end{enumerate}
+%\begin{enumerate}
+%\item a szócikkek többsége nevesített entitásokról szól;
+%\item a folyó szövegben előforduló entitásokat a kereszthivatkozások
+%      azonosítják.
+%\end{enumerate}
 
 %TODO: itt kicsit kifejteni
-Algoritmusunk e két feltételezés következményeit használja ki. Hasonlóan Nothman
-et al.~\cite{Nothman:08} által leírthoz, a következő lépésekből áll:
+
+A korpuszépítő algoritmus a Wikipédia két feltételezett tulajdonságán alapszik, miszerint a szócikkek többsége megnevezett entitásokról szól, valamint a folyó szövegben előforduló entitásokat a kereszthivatkozások azonosítják. Algoritmusunk e két feltételezés következményeit használja ki. Hasonlóan a Nothman et al.~\cite{Nothman:08} által leírtakhoz, a következő lépésekből áll:
 
 \begin{enumerate}
-\item a Wikipédia cikkeket entitásosztályokba soroltuk;
-\item a cikkeket mondatokra bontottuk;
-\item felcímkéztük a tulajdonneveket a szövegben;
-\item kiszűrtük a rossz minőségű mondatokat.
+\item a Wikipédia cikkeket entitásosztályokba soroljuk;
+\item a cikkeket mondatokra bontjuk;
+\item felcímkézzük a tulajdonneveket a szövegben;
+\item kiszűrjük a rossz minőségű mondatokat.
 \end{enumerate}
 
 Az algoritmus alapjaiban nyelvfüggetlen: bármelyik nyelvre alkalmazható, amely
 rendelkezik megfelelő méretű Wikipédiával. Egyedül a harmadik lépés az, ahol
-figyelembe kell venni a nyelv, illetve a használt NER konvenció sajátosságait.
-Ennek oka, hogy az egyes nyelvek, illetve NER konvenciók eltérnek abban, hogy
-mit tekintenek névelemnek: pl.~a \textit{római} szó a Szeged korpuszban nem
-számít annak, míg angol megfelelője, a \textit{Roman} a CoNLL annotációs séma
+figyelembe kell venni a nyelv, illetve a használt annotációs séma sajátosságait.
+Ennek oka, hogy az egyes nyelvek, illetve sémák eltérnek abban, hogy
+mit tekintenek annotálandó elemnek: pl.~a \textit{római} szó a magyarban nem
+számít névnek, míg angol megfelelője, a \textit{Roman} a CoNLL annotációs séma
 szerint \texttt{Misc} címkét kapna.
 
 Mivel célunk egy silver standard korpusz előállítása volt, ha választanunk
 kellett egy-egy lépésnél a pontosság (precision) vagy a teljesség (recall)
-között, mindig az utóbbi mellett döntöttünk. A Wikipédia mérete lehetővé teszi,
+között, mindig az előbbi mellett döntöttünk. A Wikipédia mérete lehetővé teszi,
 hogy szigorú szűrések mellett is korábban nem látott méretű korpuszt állítsunk elő.
 
-A továbbiakban röviden ismertetjük a fenti lépéseket, a magyar nyelvű korpuszra
+A továbbiakban röviden ismertetjük a fenti lépéseket, kizárólag a magyar nyelvű korpuszra
 koncentrálva. Részletes leírás, illetve az angol nyelvű korpuszban felmerülő
 problémák kifejtése \cite{simon-nemeskey:2012:NEWS2012}-ben található.
 
@@ -111,96 +112,93 @@ problémák kifejtése \cite{simon-nemeskey:2012:NEWS2012}-ben található.
 \label{corpusbuilding:entities}
 
 Ahhoz, hogy a folyó szövegben lévő kereszthivatkozásokat felhasználhassuk a
-NER céljaira, a hivatkozott Wikipédia cikkeket tulajdonnév-osztályokba kell
-sorolnunk. A Wikipédia saját kategória-rendszere e célra a kategóriák nagy
-száma, illetve a rendszerezettség teljes hiánya miatt nem alkalmas. Egyes
-szerzők, mint Kazama és Torisawa \cite{KaTo07}, vagy Nothman at
+tulajdonnevek azonosítására, a hivatkozott Wikipédia cikkeket névosztályokba kell
+sorolnunk. A Wikipédia saját kategóriarendszere a kategóriák nagy
+száma, illetve a rendszerezettség teljes hiánya miatt nem alkalmas erre a célra. Egyes
+szerzők, mint Kazama és Torisawa \cite{KaTo07} vagy Nothman et
 al.~\cite{Nothman:08} felügyelt tanulással oldották meg ezt a feladatot. Mi
-azonban a klasszifikációs hibák elkerülése miatt a DBpedia~\cite{Bizer:09}
-típushierarchiájának használata mellett döntöttünk.
+azonban a klasszifikációs hibák elkerülése céljából a DBpedia~\cite{Bizer:09}
+típushierarchiájának felhasználása mellett döntöttünk.
 
 A DBpediában\footnote{A korpusz elkészítéséhez az akkor aktuális 3.7-es verziót
-használtuk.} a típusokat egy OWL\footnote{http://www.w3.org/TR/owl-ref/}
-ontológiába rendezték. A tudásbázis a Wikipédia entitások egy részhalmazát
+használtuk.} a típusok egy OWL\footnote{http://www.w3.org/TR/owl-ref/}
+ontológia részei. A tudásbázis a Wikipédia entitások egy részhalmazát
 tartalmazza, és mindegyik entitáshoz hozzárendeli -- többet között -- azon
-ontológia-osztályokat, amikbe az tartozik. Mivel a DBpedia alapvetően az angol
-nyelvre koncentrál, a magyar entitáslista olyan angol oldalak adatait
-tartalmazza, melyeknek létezik megfelelője a magyar Wikipédiában. Az első
-lépésben ezért ennek a 58 337 oldalnak a magyar megfelelőit határoztuk meg.
+ontológiaosztályokat, amelyekbe az tartozik. Mivel a DBpediának nincs magyar változata, 
+a magyar entitáslista csak olyan angol oldalak adatait
+tartalmazza, melyeknek létezik megfelelője a magyar Wikipédiában. 
+Ezáltal a feldolgozás köréből kiesnek kifejezetten magyarspecifikus oldalak, de 
+így is 58.337 oldal anyagát dolgoztuk fel. 
 
-A kategorizálás az ontológia-osztályok alapján történt. Minden osztályt
-leképeztünk a neki megfelelő NER címkére (pl. \texttt{Organisation}:
-\texttt{Org}, de \texttt{Organisation/SportsLeague}: \texttt{Misc}).  %TODO: ez magyarul is?
-Ezután a listán szereplő minden entitáshoz hozzárendeltük az őt tartalmazó
-legszűkebb osztály címkéjét, vagy \texttt{O}-t, ha az osztály nem NE a Szeged
-NER sémában. Így egy 46 461 elemű, felcímkézett tulajdonnév-listát kaptunk,
-melyet gold standardként használtunk a továbbiakban.
+A magyar nevek kategorizálásához a Szeged NER \cite{Szarvas:06} korpuszban alkalmazott névosztályokat vettük alapul, ezekre képeztük le a DBpedia egyes ontológiaosztályait. 
+%leképeztünk a neki megfelelő NER címkére (pl. \texttt{Organisation}:
+%\texttt{Org}, de \texttt{Organisation/SportsLeague}: \texttt{Misc}).  %TODO: ez magyarul is?
+Ezután minden entitáshoz hozzárendeltük az őt tartalmazó
+legszűkebb osztály címkéjét, vagy \texttt{O}-t, ha az osztály nem minősül annotálandónak a Szeged
+NER korpusz sémája szerint, így egy 46.461 elemű, felcímkézett tulajdonnév-listát kaptunk.
 
 \subsection{A cikkek feldolgozása}
 
-A korpusz építéséhez a magyar Wikipédia 2012 március 9-ei állapotát vettük
-alapul. Az XML adatból az mwlib\footnote{http://code.pediapress.com}
-könyvtár segítségével nyertük ki a nyers szöveget. Ezt egy in-house statisztikai %TODO: in-house?, idézet (Csendes)
-eszközzel tokenizáltuk; a szavak lemmáit és szófajait a
-HunMorphot~\cite{Tron:05} és az erre épülő egyértelműsítőt, a HunDisambigot
-használtuk. A szófajokat KR-kódban~\cite{Kornai:04} ábrázoljuk.
+A korpusz építéséhez a magyar Wikipédia 2012. március 9-i állapotát vettük
+alapul. Az XML fájlokból az mwlib\footnote{http://code.pediapress.com}
+könyvtár segítségével nyertük ki a nyers szöveget. 
+A tokenizáláshoz egy házon belül előállított statisztikai eszközt használtunk, amelyet a Szeged korpuszon \cite{csendes} tanítottunk. 
+A lemmatizálást és a morfológiai elemzést a
+HunMorph~\cite{Tron:05} és az erre épülő egyértelműsítő, a HunDisambig
+segítségével végeztük. %A szófajokat KR-kódban~\cite{Kornai:04} ábrázoljuk.
 
 \subsection{Tulajdonnevek címkézése}
 
 A címkézés két feladatot foglal magába: egyrészt azonosítani kell az
-entitásokat a folyó szövegben, másrészt besorolni őket a megfelelő NE
-kategóriába. Módszerünk Nothman et al.~\cite{Nothman:08} munkáján alapszik:
-a szövegben előforduló kereszthivatkozásokat tekintjük entitásoknak. Minden
-entitásnál megnézzük, hogy az oldal, amire mutat, szerepel-e a
-\ref{corpusbuilding:entities} fejezetben előállított listában. Ha igen,
+entitásokat a folyó szövegben, másrészt besorolni őket a megfelelő
+névosztályba. 
+A szövegben előforduló kereszthivatkozásokat potenciális neveknek tekintjük, és minden
+linknél megnézzük, hogy az oldal, amire mutat, szerepel-e a
+korábban előállított listában (lásd a \ref{corpusbuilding:entities}.~fejezetben). Ha igen,
 felcímkézzük a megfelelő címkével; ha nem, típusa \texttt{Unk} lesz. Végül
-minden mondatot, amiben \texttt{Unk} entitások szerepelnek, eldobunk.
+minden mondatot, amelyben \texttt{Unk}-ként címkézett elem szerepel, eldobunk.
 
 % TODO argh
-A fenti tiszta, még nyelvfüggetlen algoritmus többhelyütt is finomításra szorul.
+Kiinduló alapfeltételezésünk, miszerint az egyes Wikipédia cikkek megnevezett entitásokról szólnak, és a szövegben előforduló entitásokat kereszthivatkozások azonosítják, nem minden esetben állja meg a helyét, ezért az algoritmusunk  
+többhelyütt is finomításra szorul.
 
-A Wikipédia nem minden szócikke szól entitásokról: köznevek, dátumok, stb. is
+Először, a Wikipédia nem minden szócikke szól megnevezett entitásokról: köznevek, dátumok és egyéb, nem tulajdonnévi elemek is
 alkalmasint saját oldalt kapnak. Annak érdekében, hogy az algoritmus ne
 kezelje ezeket \texttt{Unk} típusú entitásként, majd dobja el a mondatokat,
 amikben szerepelnek, szigorítottuk az entitásfelismerés szabályait: csak olyan
-kereszthivatkozást tekintünk entitásnak, melynek szavai nagybetűvel kezdődnek.
+kereszthivatkozást tekintünk potenciális névre való utalásnak, melynek szavai nagybetűvel kezdődnek.
 Itt és később is kihasználtuk a magyar nyelv azon tulajdonságát, hogy a
-tulajdonneveket, és csak azokat kezdjük nagybetűvel.
+tulajdonneveket, és csak azokat kezdjük nagybetűvel. 
+Kivételt képeznek ez alól természetesen a mondatkezdő pozícióban szereplő szavak. Szigorúan véve, ez a módszer minden mondatot eldobna, így annyit módosítottunk rajta, hogy a mondatkezdő szót csak akkor tekintjük potenciális annotálandó elemnek, ha a szófaja főnév.  
+(A magyarban a morfológiai címkékre csak korlátozottan támaszkodhattunk ebben a feladatban, hiszen a KR-kódolás nem különbözteti meg a tulajdonneveket és a közneveket.)
 
-% TODO alias?!
-Az előző probléma inverze is gyakori: nem minden tulajdonnéven találunk ugyanis
-kereszthivatkozást. Ennek oka kettős: ha egy Wikipédia szócikkben adott entitás
-többször is előfordul, csak az első alkalommal linkelik a saját oldalához. De
+Másodszor, nem minden tulajdonnéven találunk
+kereszthivatkozást. Ennek oka kettős: ha egy Wikipédia szócikkben adott entitásra
+többször is névvel utalnak, csak az első alkalommal linkelik a saját oldalához. De
 előfordulhat az is, hogy az entitás nem rendelkezik saját szócikkel. Az ilyen
 esetek kezelésére minden szócikknél fenntartunk egy listát, ahol az abban
-felismert entitásokat, illetve aliasaikat gyűjtjük, mint pl. a rájuk mutató
-átirányító és egyértelműsítő lapok címei. Ha ezután egy olyan mondattal
-találkozunk, amiben nagybetűs szócsoport szerepel, ellenőrizzük, hogy a csoport
+felismert entitásokat, illetve egyéb nagybetűs említéseit, mint például a rájuk mutató
+átirányító és egyértelműsítő lapok címeit gyűjtjük. Ha ezután egy olyan mondattal
+találkozunk, amelyben nagybetűs szócsoport szerepel, ellenőrizzük, hogy a csoport
 egyezik-e a listában szereplő egyik entitás nevével. Amennyiben igen,
 felcímkézzük; ha nem, a nagybetűs szavakat ismeretlen entitásnak tekintjük.
 
-Szigorúan véve, a fenti módszer minden mondatot eldobna, hiszen a mondat első
-szavát mindig nagybetűvel írjuk. Így annyit módosítottunk rajta, hogy ha a
-mondatkezdő szó egyedül alkot csoportot, csak akkor tekintjük potenciális
-entitásnak, ha szófaja főnév.
-
 \subsection{Szűrés}
 
-A korpuszon a minőség javítása érdekében tartalmi és formai szűrést is
-végeztünk. Értelemszerűen eldobtunk minden mondatot, ami azonosítatlan típusú
-tulajdonnevet tartalmazott. Kiszűrtük továbbá a rossz minőségű, töredék
-mondatokat, vagyis azokat, amelyek nem nagybetűvel kezdődnek, és nincs írásjel
-a végükön.
+Ahogy már említettük, az azonosítatlan entitást tartalmazó mondatokat kidobtuk a korpuszból, hogy növeljük az annotálás pontosságát. 
+
+A hagyományos névfelismerő rendszerek tiszta, viszonylag pontosan annotált korpuszokból tanulják ki a megfelelő paramétereiket, és a tesztelésükhöz is hasonló adathalmazra van szükség. Ezért a rossz minőségű, töredékes mondatokat, amelyek nem nagybetűvel kezdődnek és nincs mondatzáró írásjel a végükön, szintén kiszűrtük. (Az így maradt 19 milliós adathalmazzal dolgoztunk tovább; a következőkben erre referálunk teljes korpuszként.) De a minőség javítása érdekében további szűrő lépéseket is lehet tenni, így például eldobhatjuk az olyan mondatokat is, amelyek nem tartalmaznak ragozott igét. Ezzel ugyan azok is kiesnek, amelyek szabályos jelen idejű, kijelentő módú, létigét (nem) tartalmazó mondatok, de az automatikus tokenizálás és mondatra bontás hibáiból származó töredékes mondatokat eltávolíthatjuk.  
+
+Ha viszont közösségi tartalmak (User Generated Content) feldolgozására kívánja valaki használni a korpuszokat, amelyek köztudottan sokkal zajosabbak, mint a kézzel annotált adatok, és sok töredékes mondatot tartalmaznak, hasznos lehet minél kevesebb szűrő használata. Ezért a rossznak minősített mondatokat nem dobtuk el végleg, hanem a korpusz mellett ezt az adathalmazt is elérhetővé tettük.
 
 \section{Problémás esetek, hibaelemzés}
 \label{probl}
 
-A magyar Wikipédia korpusz gépi annotálását kézzel ellenőriztük a korpusz egy kis részén. A 19 milliós teljes korpuszt vettük alapul. Ebből véletlenszerű mondatválogatással csináltunk egy kisebb korpuszt, amely kb.~19000 tokent tartalmaz. Ezt kézzel felannotáltuk, és összehasonlítottuk a kézi és a gépi annotálás eredményét. A következő tipikus hibák rajzolódtak ki. 
+A magyar Wikipédia korpusz gépi annotálását kézzel ellenőriztük a korpusz egy kis részén. A 19 milliós teljes korpuszt vettük alapul, amelyből véletlenszerű mondatválogatással csináltunk egy kb.~19000 tokent tartalmazó kisebb korpuszt. Ezt kézzel felannotáltuk, és összehasonlítottuk a kézi és a gépi annotálás eredményét. A következő tipikus hibák rajzolódtak ki. 
 
-Bizonyos esetekben a név környezetében szereplő értelmező szerepű nyelvi egység is a névvel együtt annotálva lett. Ennek az az oka, hogy maga a Wikipédia címszó is tartalmazza ezt a szót, mely leszűkíti a név referenciáját, pl.~\textit{ókori Róma, magyar Wikipédia}. Emberekre utaló linkek esetében ezek nagyrészt rangjelzők, pl.~\textit{Szent István király, Anna brit királynő}. 
-%Ez azért marad benne, mert a magyar List of titles stopword listánk nincs?
+Bizonyos esetekben a név környezetében szereplő értelmező szerepű nyelvi egység is a névvel együtt annotálva lett. Ennek az az oka, hogy maga a Wikipédia címszó is tartalmazza ezt a szót, mely leszűkíti a név referenciáját, pl.~\textit{ókori Róma, magyar Wikipédia}. Emberekre utaló linkek esetében ezek nagyrészt rangjelzők, pl.~\textit{Szent István király, Anna brit királynő}. Ez utóbbiakat egy rangjelző szavakat tartalmazó tiltólistával a későbbiekben ki lehet szűrni. 
 
-Egy másik tipikus hibaforrás az automatikus tokenizálás és mondatra bontás. Sok esetben a rövidítést tartalmazó név (pl.~\textit{Warner Bros.}) utolsó eleme, vagyis a pont mondatvégi írásjelként értelmeződik, így nem annotálódik a névvel együtt. Máskor a mondatrabontás során a szövegközbeni link szétszakad, így a maradék elem nem kapja meg a megfelelő címkét. Ezenkívül rengeteg töredékes mondat maradt a szövegben, amelyeket egy erős szűrővel utólag is ki lehet szűrni, pl.~ha minden olyan mondatszerű egységet kidobunk, amelyben nincs ragozott ige. Ezzel persze azok is kiesnek, amelyek szabályos jelen idejű, kijelentő módú, létigét (nem) tartalmazó mondatok. 
+Egy másik tipikus hibaforrás az automatikus tokenizálás és mondatra bontás. Sok esetben a rövidítést tartalmazó név (pl.~\textit{Warner Bros.}) utolsó eleme, vagyis a pont mondatvégi írásjelként értelmeződik, így nem annotálódik a névvel együtt. Máskor a mondatrabontás során a szövegközbeni link szétszakad, így a maradék elem nem kapja meg a megfelelő címkét. Erre esetleg megoldást jelenthet a tokenizáló teljesítményének javítása, vagy másik tokenizáló alkalmazása.  
 
 Tipikus jelenség a magyarban, amikor egy név összetétel eleme lesz, pl.~\textit{Bizánc-ellenes}. Ilyen esetekben a köznév az összetétel alaptagja, vagyis az határozza meg a referenciát. A referenciaváltozást természetesen a címkézés változásának kell követnie, ami viszont nem, vagy nehezen kezelhető automatikusan, mivel nagyjából bármilyen köznév kapcsolódhat névhez. A helyzetet bonyolítja az is, hogy a mozaikszavakhoz, rövidítésekhez, valamint nem ejtett magánhangzóra végződő idegen nevekhez is kötőjellel kapcsoljuk a toldalékokat, amelynek a felszíni szerkezete nagyon hasonlít az összetételekéhez. Ennek a problémának a megoldása még további vizsgálatokat követel. 
 
@@ -216,31 +214,31 @@ A fájlok ún.~\emph{multitag} formátumban vannak, amelyben a tartalmas sorok t
 \section{Kiértékelés}
 \label{results}
 
-Az automatikusan generált korpuszok nyilvánvaló előnyei mellett azonban megvan az a hátrányuk, hogy nem használhatók gold standard adatként. Kiértékelésünkben megmutatjuk, hogy a létrehozott silver standard adathalmazok viszont kiválóan használhatók a tulajdonnév-felismerés teljesítményének növelésére több módon is. 
+Az automatikusan generált korpuszok nyilvánvaló előnyei mellett azonban megvan az a hátrányuk, hogy nem használhatók gold standard adatként. Kiértékelésünkben megmutatjuk, hogy a létrehozott silver standard adathalmaz viszont kiválóan használható a tulajdonnév-felismerés teljesítményének növelésére több módon is. 
 
-A kiértékeléshez Varga és Simon \cite{Varga} tulajdonnév-felismerő rendszerét használtuk. A csak az egyes korpuszokra jellemző jegyeket (pl.~főnévi csoportok jelölése, Wikipédia linkek) kidobtuk, hogy növeljük a korpuszok összehasonlíthatóságát. Így a következő jegykészlettel dolgoztunk: mondatkezdő és -vég pozíciók, szóalakon alapuló jegyek, morfológiai információ és listajegyek. 
+A kiértékeléshez a Hunner \cite{Varga} tulajdonnév-felismerő rendszert használtuk. A csak az egyes korpuszokra jellemző jegyeket (pl.~főnévi csoportok jelölése, Wikipédia linkek) kidobtuk, hogy növeljük a korpuszok összehasonlíthatóságát. Így a következő jegykészlettel dolgoztunk: mondatkezdő és -vég pozíciók, szóalakon alapuló jegyek, morfológiai információ és listajegyek. 
 
 A kiértékeléshez a sztenderd CoNLL módszert alkalmaztuk, vagyis az annotációt csak akkor vettük helyesnek, ha a kezdő- és végpozíció is stimmelt, és a rendszer által kibocsátott címke megegyezett a gold standard címkével. Ezen alapulva a szokásos pontosságot, fedést és F-mértéket számoltuk. 
 
 \subsection{Az adatok}
 
-A korpuszok a fent leírt szűrő eljárások után maradt mondatokat tartalmazzák, így azokat is, amelyekben nincs egy név sem. Ezeket azért tartottuk meg, hogy amennyire lehetséges, megőrizzük a nevek eredeti, Wikipédia-beli eloszlását. Viszont amikor megvizsgáltuk az egyes korpuszok telítettségét a nevek szempontjából, arra jutottunk, hogy a gold standard adathalmazokkal való összevetésükkor inkább sűrítjük a szövegeket, vagyis kivesszük azokat a mondatokat, amelyekben nincs név. A \ref{tab:size_en}.~és \ref{tab:size_hu}.~táblázatok mutatják az egyes korpuszokra vonatkozó számszerű adatokat, melyekből jól látható, hogy a Wikipédiából generált korpuszok telítettsége meglehetősen alacsony, a nevet nem tartalmazó mondatok kiszűrése után viszont hasonlóak lettek a számok. Mivel a Wikipédia az entitások kincsesbányájaként van számon tartva, ezek az adatok kissé meglepőek lehetnek. A szövegeknek ez a hígsága valószínűleg annak köszönhető, hogy a módszerünk szigorú, vagyis inkább minden olyan mondatot eltávolítottunk, amelyben nem lehetett beazonosítani a nevet, minthogy rosszul annotált nevek maradjanak benne. 
+A korpusz a fent leírt szűrő eljárások után maradt mondatokat tartalmazza, így azokat is, amelyekben nincs egy név sem. Ezeket azért tartottuk meg, hogy amennyire lehetséges, megőrizzük a nevek eredeti, Wikipédia-beli eloszlását. Viszont amikor megvizsgáltuk az egyes korpuszok telítettségét a nevek szempontjából, arra jutottunk, hogy a gold standard adathalmazzal való összevetéskor inkább sűrítjük a szöveget, vagyis kivesszük azokat a mondatokat, amelyekben nincs név. A \ref{tab:size_hu}.~táblázat mutatja a magyar korpuszokra vonatkozó számszerű adatokat, melyekből jól látható, hogy a Wikipédiából generált korpusz telítettsége meglehetősen alacsony, a nevet nem tartalmazó mondatok kiszűrése után viszont hasonlóak lettek a számok. Mivel a Wikipédia az entitások kincsesbányájaként van számon tartva, ez az adat kissé meglepő lehet. A szövegnek ez a hígsága valószínűleg annak köszönhető, hogy a módszerünk szigorú, vagyis inkább minden olyan mondatot eltávolítottunk, amelyben nem lehetett beazonosítani a nevet, minthogy rosszul annotált nevek maradjanak benne. 
 
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{lccc}
-\toprule  
-& \textbf{enwiki} & \textbf{enwiki filter} & \textbf{CoNLL} \\ 
-\midrule
-token & 60,520,819 & 21,718,854 & 301,418 \\
-NE & 3,169,863 & 3,169,863 & 35,089 \\
-telítettség (\%) & 5.23 & 14.59 & 11.64 \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Az angol korpuszok mérete és telítettsége.}
-\label{tab:size_en}
-\end{table}
+%\begin{table}[ht]
+%\begin{center}
+%\begin{tabular}{lccc}
+%\toprule  
+%& \textbf{enwiki} & \textbf{enwiki filter} & \textbf{CoNLL} \\ 
+%\midrule
+%token & 60,520,819 & 21,718,854 & 301,418 \\
+%NE & 3,169,863 & 3,169,863 & 35,089 \\
+%telítettség (\%) & 5.23 & 14.59 & 11.64 \\
+%\hline
+%\end{tabular}
+%\end{center}
+%\caption{Az angol korpuszok mérete és telítettsége.}
+%\label{tab:size_en}
+%\end{table}
  
 \begin{table}[ht]
 \begin{center}
@@ -248,9 +246,9 @@ telítettség (\%) & 5.23 & 14.59 & 11.64 \\
 \toprule
  & \textbf{huwiki} & \textbf{huwiki filter} & \textbf{Szeged NER} \\
 \midrule
-token & 19,108,027 & 3,512,249  & 225,963 \\
-NE & 456,281 & 456,281  & 25,896 \\
-telítettség (\%) & 2.38 & 12.99 & 11.46 \\
+token & 19.108.027 & 3.512.249  & 225.963 \\
+NE & 456.281 & 456.281  & 25.896 \\
+telítettség (\%) & 2,38 & 12,99 & 11,46 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -260,27 +258,29 @@ telítettség (\%) & 2.38 & 12.99 & 11.46 \\
 
 \subsection{Kísérletek és eredmények}
 
-A magyar és az angol korpuszok is hasonlóan lettek kiértékelve: először saját magukon, aztán egy választott gold standard adathalmazon. Mivel az angol korpusz még a nevet nem tartalmazó mondatok eltávolítása után is nagyon nagy, kísérleteinket egy kb.~3,5 millió tokenes részén végeztük (a szűrt magyar korpusz is ekkora), 90-10\%-os arányban vágva tanító és kiértékelő korpuszra.  
+Jelen cikkben csak a magyar korpuszon elért eredményeket közöljük, az angolra vonatkozó részletes adatokért lásd korábbi cikkünket \cite{simon-nemeskey:2012:NEWS2012}. 
+A korpusz kétféleképpen lett kiértékelve: először saját magán, aztán egy választott gold standard adathalmazon. A nevet nem tartalmazó mondatok kiszűrése után maradt 3,5 millió tokenes korpuszt 90-10\%-os arányban tanító és kiértékelő halmazra osztottuk. 
+%Mivel az angol korpusz még a nevet nem tartalmazó mondatok eltávolítása után is nagyon nagy, kísérleteinket egy kb.~3,5 millió tokenes részén végeztük (a szűrt magyar korpusz is ekkora), 90-10\%-os arányban vágva tanító és kiértékelő korpuszra.  
 
-Az angol korpusz kiértékeléséhez a 2003-as CoNLL korpuszt, a magyarhoz pedig a Szeged NER korpuszt választottuk. Többek által (pl. \cite{Nothman:08} és \cite{ciaramita2005}) bizonyított tény, hogy a korpuszok közötti kiértékelés sokkal rosszabb eredményt ad, mint a saját kiértékelő halmazon való mérés. Különböző típusú szövegek esetén a különbség 20-30\% is lehet. A helyzet a mi esetünkben is nagyon hasonló (lásd a \ref{tab:enresults}.~és \ref{tab:huresults}.~táblázatokat az eredményekért): a Wikipédián tanított rendszerek teljesítménye közel sem olyan jó a gold standard korpuszok kiértékelő halmazán mérve, mint a saját kiértékelő halmazukon. 
+Mivel a névkategóriák leképezésénél a Szeged NER korpusz címkekészletét használtuk, ezért adta magát, hogy a magyar korpusz kiértékeléséhez is ugyanezt alkalmazzuk. Többek által (pl. \cite{Nothman:08} és \cite{ciaramita2005}) bizonyított tény, hogy a korpuszok közötti kiértékelés sokkal rosszabb eredményt ad, mint a saját kiértékelő halmazon való mérés. Különböző típusú szövegek esetén a különbség 20-30\% is lehet. A helyzet a mi esetünkben is nagyon hasonló (lásd a \ref{tab:huresults}.~táblázatot az eredményekért): a Wikipédián tanított rendszer teljesítménye közel sem olyan jó a gold standard korpusz kiértékelő halmazán mérve, mint a saját kiértékelő halmazán. 
 
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{lcccc}
-\toprule 
-\textbf{tanítás} & \textbf{teszt} & \textbf{pontosság} & \textbf{fedés} & \textbf{F-mérték} \\ 
-\midrule
-CoNLL & CoNLL & 85.13 & 85.13 & 85.13 \\
-enwiki & enwiki & 72.46 & 73.33 &  72.89 \\
-enwiki & CoNLL & 56.55 & 49.77 & 52.94 \\
-CoNLL\_wikilisták & CoNLL & 86.33 & 86.35 & 86.34 \\
-CoNLL\_wikitag & CoNLL & 85.88 & 85.94 & 85.91 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Eredmények az angol Wikipédia korpuszon.}
-\label{tab:enresults}
-\end{table}
+%\begin{table}[ht]
+%\begin{center}
+%\begin{tabular}{lcccc}
+%\toprule 
+%\textbf{tanítás} & \textbf{teszt} & \textbf{pontosság} & \textbf{fedés} & \textbf{F-mérték} \\ 
+%\midrule
+%CoNLL & CoNLL & 85.13 & 85.13 & 85.13 \\
+%enwiki & enwiki & 72.46 & 73.33 &  72.89 \\
+%enwiki & CoNLL & 56.55 & 49.77 & 52.94 \\
+%CoNLL\_wikilisták & CoNLL & 86.33 & 86.35 & 86.34 \\
+%CoNLL\_wikitag & CoNLL & 85.88 & 85.94 & 85.91 \\
+%\bottomrule
+%\end{tabular}
+%\end{center}
+%\caption{Eredmények az angol Wikipédia korpuszon.}
+%\label{tab:enresults}
+%\end{table}
 
 \begin{table}[ht]
 \begin{center}
@@ -288,11 +288,11 @@ CoNLL\_wikitag & CoNLL & 85.88 & 85.94 & 85.91 \\
 \toprule 
 \bf tanítás & \bf teszt & \bf pontosság & \bf fedés & \bf F-mérték \\ 
 \midrule
-Szeged & Szeged & 94.50 & 94.35 & 94.43 \\
-huwiki & huwiki & 90.64 & 88.91 &  89.76 \\
-huwiki & Szeged & 63.08 & 70.46 & 66.57 \\
-Szeged\_wikilisták & Szeged & 95.48 & 95.48 & 95.48 \\
-Szeged\_wikitag & Szeged & 95.38 & 94.92 & 95.15 \\
+Szeged & Szeged & 94,50 & 94,35 & 94,43 \\
+huwiki & huwiki & 90,64 & 88,91 &  89,76  \\
+huwiki & Szeged & 63,08 & 70,46 & 66,57  \\
+Szeged\_wikilisták & Szeged & 95,48 & 95,48 & 95,48  \\
+Szeged\_wikitag & Szeged & 95,38 & 94,92 & 95,15 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -300,9 +300,11 @@ Szeged\_wikitag & Szeged & 95.38 & 94.92 & 95.15 \\
 \label{tab:huresults}
 \end{table}
 
-A Wikipédia korpuszokat más módon is használhatjuk a tulajdonnév-felismerés teljesítményének növelése érdekében. Egy kézenfekvő megoldás nagyméretű névlisták kinyerése a Wikipédiából, és azok hozzáadása gazetteer listaként a tanításhoz. Ez a módszer mindkét nyelv esetében növelte az F-mértéket. Egy másik kísérletünkben a rendszert a Wikipédia korpuszon tanítottuk, majd az általa kibocsátott címkéket jegyként hozzáadtuk a gold standard korpuszon való tanításhoz és teszteléshez. Ezzel a módszerrel is sikerült javítani a rendszer teljesítményét. 
+A Wikipédia korpuszt további módokon is használhatjuk a tulajdonnév-felismerés teljesítményének növelése érdekében. Egy kézenfekvő megoldás nagyméretű névlisták kinyerése a Wikipédiából, és azok hozzáadása gazetteer listaként a tanításhoz. Ez a módszer több mint 1\%-kal növelte az F-mértéket. Egy másik kísérletünkben a rendszert a Wikipédia korpuszon tanítottuk, majd az általa kibocsátott címkéket jegyként hozzáadtuk a gold standard korpuszon való tanításhoz és teszteléshez. Ezzel a módszerrel is sikerült javítani a rendszer teljesítményét. 
 
-Ha összehasonlítjuk a magyar és az angol eredményeket, azt látjuk, hogy a magyar korpuszokon szignifikánsan jobb eredményeket értünk el. Ennek több oka is lehet. Az egyik, hogy a magyar nyelv esetében a \texttt{Misc} kategóriába sokkal kevesebb dolog tartozik, vagyis kevésbé heterogén, így kevesebb hibát lehet elkövetni az automatikus annotálás során. És ahogy a magyar korpuszon végzett kézi hibaelemzés eredménye is mutatja, tényleg sikerült elkerülni az esetek nagy részében a félrecímkézéseket. A másik ok az lehet, hogy a magyar esetében használt silver és gold standard adathalmazok egyaránt sokkal tisztábbak, a NE-annotálás pontosabb, mint az angol erőforrások esetében. Mivel az automatikusan épített magyar korpuszunk közelíti a gold standard minőséget, mondhatjuk, hogy olyan erőforrást sikerült létrehoznunk, amely használható tulajdonnév-felismerő rendszerek tanító és kiértékelő korpuszaként, akár önállóan, akár kiegészítve a gold standard korpuszokat. 
+%na ezt még majd át kell írni a végleges eredmények ismeretében. A Misc-es fejtegetést lehet, hogy inkább a hibaelemzés részbe kéne átrakni. 
+Ha összehasonlítjuk a magyar és az angol eredményeket, azt látjuk, hogy a magyar korpuszokon szignifikánsan jobb eredményeket értünk el. Ennek több oka is lehet. 
+Az egyik, hogy a magyar nyelv esetében a \texttt{Misc} kategóriába sokkal kevesebb dolog tartozik, vagyis kevésbé heterogén, így kevesebb hibát lehet elkövetni az automatikus annotálás során. És ahogy a magyar korpuszon végzett kézi hibaelemzés eredménye is mutatja, tényleg sikerült elkerülni az esetek nagy részében a félrecímkézéseket. A másik ok az lehet, hogy a magyar esetében használt silver és gold standard adathalmazok egyaránt sokkal tisztábbak, a NE-annotálás pontosabb, mint az angol erőforrások esetében. Mivel az automatikusan épített magyar korpuszunk közelíti a gold standard minőséget, mondhatjuk, hogy olyan erőforrást sikerült létrehoznunk, amely használható tulajdonnév-felismerő rendszerek tanító és kiértékelő korpuszaként, akár önállóan, akár kiegészítve a gold standard korpuszokat. 
 
 \section{Összegzés}
 \label{conc}
