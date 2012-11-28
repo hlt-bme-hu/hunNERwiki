@@ -75,7 +75,7 @@ A korpuszépítő algoritmus a Wikipédia két feltételezett tulajdonságán al
 
 \begin{enumerate}
 \item a szócikkek többsége nevesített entitásokról szól;
-\item a folyó szövegben előforduló tulajdonneveket a kereszthivatkozások
+\item a folyó szövegben előforduló entitásokat a kereszthivatkozások
       azonosítják.
 \end{enumerate}
 
@@ -97,6 +97,11 @@ Ennek oka, hogy az egyes nyelvek, illetve NER konvenciók eltérnek abban, hogy
 mit tekintenek névelemnek: pl.~a \textit{római} szó a Szeged korpuszban nem
 számít annak, míg angol megfelelője, a \textit{Roman} a CoNLL annotációs séma
 szerint \texttt{Misc} címkét kapna.
+
+Mivel célunk egy silver standard korpusz előállítása volt, ha választanunk
+kellett egy-egy lépésnél a pontosság (precision) vagy a teljesség (recall)
+között, mindig az utóbbi mellett döntöttünk. A Wikipédia mérete lehetővé teszi,
+hogy szigorú szűrések mellett is korábban nem látott méretű korpuszt állítsunk elő.
 
 A továbbiakban röviden ismertetjük a fenti lépéseket, a magyar nyelvű korpuszra
 koncentrálva. Részletes leírás, illetve az angol nyelvű korpuszban felmerülő
@@ -178,14 +183,6 @@ Szigorúan véve, a fenti módszer minden mondatot eldobna, hiszen a mondat els�
 szavát mindig nagybetűvel írjuk. Így annyit módosítottunk rajta, hogy ha a
 mondatkezdő szó egyedül alkot csoportot, csak akkor tekintjük potenciális
 entitásnak, ha szófaja főnév.
-
-% TODO: 3-ba
-Mivel célunk egy silver standard korpusz előállítása volt, ha választanunk
-kellett egy-egy lépésnél a pontosság (precision) vagy a teljesség (recall)
-között, mindig az utóbbi mellett döntöttünk. Ezt tükrözik a fenti, alkalmasint
-kicsit szigorú szabályok, illetve a DBpedia választása is. A Wikipédia mérete
-lehetővé teszi, hogy szigorú szűrések mellett is korábban nem látott méretű
-korpuszt állítsunk elő.
 
 \subsection{Szűrés}
 
