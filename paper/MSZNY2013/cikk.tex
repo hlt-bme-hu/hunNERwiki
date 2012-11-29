@@ -204,6 +204,57 @@ Tipikus jelenség a magyarban, amikor egy név összetétel eleme lesz, pl.~\tex
 
 A felsorolt problémás esetek ellenére összességében azt mondhatjuk, hogy a magyar Wikipédia korpusz annotálási pontossága közelíti a gold standard korpuszokét. %na ide jöhetnek majd pontos adatok 
 
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{l@{\hspace{1em}}c@{\hspace{2em}}c@{\hspace{2em}}c}
+\toprule
+        & Precision(\%) &  Recall(\%) & F$_{\beta=1}$(\%) \\
+\midrule
+LOC     &   98.72 &  95.65 &  97.16 \\
+MISC    &   95.24 &  76.92 &  85.11 \\
+ORG     &   89.66 &  89.66 &  89.66 \\
+PER     &   88.30 &  89.25 &  88.77 \\
+\midrule
+Overall &   94.33\% &  91.59\% &  92.94 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{A magyar korpuszok mérete és telítettsége.}  %TODO: nem az
+\label{tab:f_score}
+\end{table}
+
+\begin{table}[ht]
+\begin{center}
+	\begin{tabular}{l@{\hspace{0.5em}}|@{\hspace{0.5em}}cccc}
+\toprule
+Auto$\downarrow$ / Gold$\rightarrow$ & PER & ORG & LOC & MISC \\
+\midrule
+PER & 83 & 1 & & 2 \\
+ORG &  & 26 & 1 & 1 \\
+LOC &  & 1 & 154 & \\
+MISC &  &  & 1 & 20 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{A manuálisan annotált minta igazságmátrixa.} %TODO: total miért nem = az összeggel?
+\label{tab:conf_matrix}
+\end{table}
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{l@{\hspace{0.5em}}cccc}
+\toprule
+	& PER & ORG & LOC & MISC \\
+\midrule
+FP & 83 & 1 & & 2 \\
+FN &  & 26 & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{A manuálisan annotált minta igazságmátrixa.} %TODO: total miért nem = az összeggel?
+\label{tab:fp_fn}
+\end{table}
+
 \section{A korpuszok leírása}
 \label{desc}
 
