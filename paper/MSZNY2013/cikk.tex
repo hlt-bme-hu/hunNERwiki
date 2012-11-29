@@ -145,7 +145,7 @@ könyvtár segítségével nyertük ki a nyers szöveget.
 A tokenizáláshoz egy házon belül előállított statisztikai eszközt használtunk, amelyet a Szeged korpuszon \cite{csendes} tanítottunk. 
 A lemmatizálást és a morfológiai elemzést a
 HunMorph~\cite{Tron:05} és az erre épülő egyértelműsítő, a HunDisambig
-segítségével végeztük. %A szófajokat KR-kódban~\cite{Kornai:04} ábrázoljuk.
+segítségével végeztük. %A szófajokat KR-kódban~\cite{Kornai:04} ábrázoljuk. % TODO ezzel mi a baj?
 
 \subsection{Tulajdonnevek címkézése}
 
@@ -178,7 +178,7 @@ többször is névvel utalnak, csak az első alkalommal linkelik a saját oldal�
 előfordulhat az is, hogy az entitás nem rendelkezik saját szócikkel. Az ilyen
 esetek kezelésére minden szócikknél fenntartunk egy listát, ahol az abban
 felismert entitásokat, illetve egyéb nagybetűs említéseit, mint például a rájuk mutató
-átirányító és egyértelműsítő lapok címeit gyűjtjük. Ha ezután egy olyan mondattal
+átirányító és egyértelműsítő lapok címeit gyűjtjük. Ha ezután egy olyan mondattal  % TODO: + idegen nyelvi megfelelők!
 találkozunk, amelyben nagybetűs szócsoport szerepel, ellenőrizzük, hogy a csoport
 egyezik-e a listában szereplő egyik entitás nevével. Amennyiben igen,
 felcímkézzük; ha nem, a nagybetűs szavakat ismeretlen entitásnak tekintjük.
@@ -194,32 +194,66 @@ Ha viszont közösségi tartalmak (User Generated Content) feldolgozására kív
 \section{Problémás esetek, hibaelemzés}
 \label{probl}
 
-A magyar Wikipédia korpusz gépi annotálását kézzel ellenőriztük a korpusz egy kis részén. A 19 milliós teljes korpuszt vettük alapul, amelyből véletlenszerű mondatválogatással csináltunk egy kb.~19000 tokent tartalmazó kisebb korpuszt. Ezt kézzel felannotáltuk, és összehasonlítottuk a kézi és a gépi annotálás eredményét. A következő tipikus hibák rajzolódtak ki. 
+A magyar Wikipédia korpusz gépi annotálását kézzel ellenőriztük a korpusz egy kis
+részén. A 19 milliós teljes korpuszt vettük alapul, amelyből véletlenszerű
+mondatválogatással csináltunk egy kb.~19.000 tokent tartalmazó kisebb korpuszt.
+Ezt kézzel felannotáltuk, és összehasonlítottuk a kézi és a gépi annotálás
+eredményét. Az eredményeket a \ref{tab:f_score} táblázat mutatja. Az összesített
+F-mérték 92.94 százaléknak adódott, ami % TODO ami mi?
 
-Bizonyos esetekben a név környezetében szereplő értelmező szerepű nyelvi egység is a névvel együtt annotálva lett. Ennek az az oka, hogy maga a Wikipédia címszó is tartalmazza ezt a szót, mely leszűkíti a név referenciáját, pl.~\textit{ókori Róma, magyar Wikipédia}. Emberekre utaló linkek esetében ezek nagyrészt rangjelzők, pl.~\textit{Szent István király, Anna brit királynő}. Ez utóbbiakat egy rangjelző szavakat tartalmazó tiltólistával a későbbiekben ki lehet szűrni. 
+A következő tipikus hibák rajzolódtak ki.
 
-Egy másik tipikus hibaforrás az automatikus tokenizálás és mondatra bontás. Sok esetben a rövidítést tartalmazó név (pl.~\textit{Warner Bros.}) utolsó eleme, vagyis a pont mondatvégi írásjelként értelmeződik, így nem annotálódik a névvel együtt. Máskor a mondatrabontás során a szövegközbeni link szétszakad, így a maradék elem nem kapja meg a megfelelő címkét. Erre esetleg megoldást jelenthet a tokenizáló teljesítményének javítása, vagy másik tokenizáló alkalmazása.  
+Típushiba kevés, ennél gyakoribb az álnegatív/álpozitív, még gyakoribb pedig a határok nem pontos felismerése. %TODO: részletesen, referálva a táblázatokra.
 
-Tipikus jelenség a magyarban, amikor egy név összetétel eleme lesz, pl.~\textit{Bizánc-ellenes}. Ilyen esetekben a köznév az összetétel alaptagja, vagyis az határozza meg a referenciát. A referenciaváltozást természetesen a címkézés változásának kell követnie, ami viszont nem, vagy nehezen kezelhető automatikusan, mivel nagyjából bármilyen köznév kapcsolódhat névhez. A helyzetet bonyolítja az is, hogy a mozaikszavakhoz, rövidítésekhez, valamint nem ejtett magánhangzóra végződő idegen nevekhez is kötőjellel kapcsoljuk a toldalékokat, amelynek a felszíni szerkezete nagyon hasonlít az összetételekéhez. Ennek a problémának a megoldása még további vizsgálatokat követel. 
+Bizonyos esetekben a név környezetében lévő értelmező szerepű nyelvi egység is a
+névvel együtt annotálva lett. Ennek az az oka, hogy maga a Wikipédia címszó is
+tartalmazza ezt a szót, mely leszűkíti a név referenciáját,
+pl.~\textit{ókori Róma}, \textit{magyar Wikipédia}. Emberekre utaló linkek esetében
+ezek nagyrészt rangjelzők, pl.~\textit{Szent István király}, \textit{Anna brit királynő}.
+Ez utóbbiakat egy rangjelző szavakat tartalmazó tiltólistával a későbbiekben ki
+lehet szűrni. 
 
-A felsorolt problémás esetek ellenére összességében azt mondhatjuk, hogy a magyar Wikipédia korpusz annotálási pontossága közelíti a gold standard korpuszokét. %na ide jöhetnek majd pontos adatok 
+A hibák egy részét az alkalmazott nyelvfeldolgozó eszközök tévesztései okozzák.
+Az automatikus tokenizálás és mondatra bontás hibás működésére példa, amikor a
+rövidítést tartalmazó név (pl.~\textit{Warner Bros.}) utolsó eleme, vagyis a pont
+mondatvégi írásjelként értelmeződik, így nem annotálódik a névvel együtt. Máskor
+a mondatrabontás során a szövegközbeni link szétszakad, így a maradék elem nem
+kapja meg a megfelelő címkét. Mivel pedig a mondat első szavát csak akkor tekintjük
+potenciális entitásnak, ha főnév, a szófajmeghatározás hibája folytán előfordul,
+hogy átsiklunk egy mondatkezdő néven. Pl. a \textit{Hél visszaengedte volna.}
+mondatban a \textit{Hél} szót igeként ismerte fel a HunDisambig, így nem
+tekintettük tulajdonnév-jelöltnek. E problémákra esetleg megoldást jelenthet az
+alkalmazott eszközök teljesítményének javítása, vagy más eszközök alkalmazása.
+
+Tipikus jelenség a magyarban, amikor egy név összetétel eleme lesz,
+pl.~\textit{Bizánc-ellenes}. Ilyen esetekben a köznév az összetétel alaptagja,
+vagyis az határozza meg a referenciát. A referenciaváltozást természetesen a
+címkézés változásának kell követnie, ami viszont nem, vagy nehezen kezelhető
+automatikusan, mivel nagyjából bármilyen köznév kapcsolódhat névhez. A helyzetet
+bonyolítja az is, hogy a mozaikszavakhoz, rövidítésekhez, valamint nem ejtett
+magánhangzóra végződő idegen nevekhez is kötőjellel kapcsoljuk a toldalékokat,
+amelynek a felszíni szerkezete nagyon hasonlít az összetételekéhez. Ennek a
+problémának a megoldása még további vizsgálatokat követel. 
+
+A felsorolt problémás esetek ellenére összességében azt mondhatjuk, hogy a magyar
+Wikipédia korpusz annotálási pontossága közelíti a gold standard korpuszokét. %na ide jöhetnek majd pontos adatok 
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{l@{\hspace{1em}}c@{\hspace{2em}}c@{\hspace{2em}}c}
+\begin{tabular}{l@{\hspace{1em}}c@{\hspace{2em}}c@{\hspace{2em}}c@{\hspace{2em}}c}
 \toprule
-        & Precision(\%) &  Recall(\%) & F$_{\beta=1}$(\%) \\
+& Precizitás(\%) &  Felidézés(\%) & F$_{\beta=1}$(\%) & Entitások száma \\
 \midrule
-LOC     &   98.72 &  95.65 &  97.16 \\
-MISC    &   95.24 &  76.92 &  85.11 \\
-ORG     &   89.66 &  89.66 &  89.66 \\
-PER     &   88.30 &  89.25 &  88.77 \\
+LOC     &   98.72 &  95.65 &  97.16 & 161 \\
+MISC    &   95.24 &  76.92 &  85.11 & 26 \\
+ORG     &   89.66 &  89.66 &  89.66 & 29 \\
+PER     &   88.30 &  89.25 &  88.77 & 93 \\
 \midrule
-Overall &   94.33\% &  91.59\% &  92.94 \\
+Összesítve &   94.33\% &  91.59\% &  92.94 & 309 \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{A magyar korpuszok mérete és telítettsége.}  %TODO: nem az
+\caption{Az inter-annotátor egyezés értékelése.}  % TODO: magyarul
 \label{tab:f_score}
 \end{table}
 
@@ -236,7 +270,7 @@ MISC &  &  & 1 & 20 \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{A manuálisan annotált minta igazságmátrixa.} %TODO: total miért nem = az összeggel?
+\caption{A manuálisan annotált minta igazságmátrixa.}
 \label{tab:conf_matrix}
 \end{table}
 
@@ -246,12 +280,14 @@ MISC &  &  & 1 & 20 \\
 \toprule
 	& PER & ORG & LOC & MISC \\
 \midrule
-FP & 83 & 1 & & 2 \\
-FN &  & 26 & 1 & 1 \\
+Álpozitív& 83 & 1 & & 2 \\
+Álnegatív &  & 26 & 1 & 1 \\
+Részlegesen felismert nevek & & & & \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{A manuálisan annotált minta igazságmátrixa.} %TODO: total miért nem = az összeggel?
+\caption{A hibásan tulajdonnévként felismert szavak (álpozitív), illetve a
+         fel nem ismert tulajdonnevek száma}  % TODO: these should be the row headers in the table
 \label{tab:fp_fn}
 \end{table}
 
