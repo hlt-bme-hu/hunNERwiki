@@ -24,8 +24,6 @@
 \setcounter{page}{3}
 
 \title{\ \break Automatikus korpuszépítés tulajdonnév-felismerés céljára}
-%XXX a címet majd meg kéne változtatni, tényleg elég bénán hangzik magyarul
-%Automatikusan tulajdonnév-annotált korpuszok előállítása a Wikipédiából
 \author{Nemeskey Dávid Márk\inst{1}, Simon Eszter\inst{2}}
 \institute{
 \inst{}%
@@ -71,13 +69,6 @@ A Wikipédiából, tekintve a szócikkek nagy számát, kevés erőforrással re
 
 \section{Korpuszépítés}
 \label{corpusbuilding}
-
-% TODO: lame wording, angol korpusz?
-%\begin{enumerate}
-%\item a szócikkek többsége nevesített entitásokról szól;
-%\item a folyó szövegben előforduló entitásokat a kereszthivatkozások
-%      azonosítják.
-%\end{enumerate}
 
 A korpuszépítő algoritmus a Wikipédia két feltételezett tulajdonságán alapszik, miszerint a szócikkek többsége megnevezett entitásokról szól, valamint a folyó szövegben előforduló entitásokat a kereszthivatkozások azonosítják. Algoritmusunk e két feltételezés következményeit használja ki. Hasonlóan a Nothman et al.~\cite{Nothman:08} által leírtakhoz, a korpuszépítés a következő lépésekből áll:
 
@@ -128,8 +119,6 @@ Ezáltal a feldolgozás köréből kiesnek kifejezetten magyarspecifikus oldalak
 így is 58.337 oldal anyagát dolgoztuk fel. 
 
 A magyar nevek kategorizálásához a Szeged NER \cite{Szarvas:06} korpuszban alkalmazott névosztályokat vettük alapul, ezekre képeztük le a DBpedia egyes ontológiaosztályait. 
-%leképeztünk a neki megfelelő NER címkére (pl. \texttt{Organisation}:
-%\texttt{Org}, de \texttt{Organisation/SportsLeague}: \texttt{Misc}).  %TODO: ez magyarul is?
 Ezután minden entitáshoz hozzárendeltük az őt tartalmazó
 legszűkebb osztály címkéjét, vagy \texttt{O}-t, ha az osztály nem minősül
 annotálandónak a Szeged NER korpusz sémája szerint. Így egy 46.461 elemű,
@@ -146,7 +135,7 @@ könyvtár segítségével nyertük ki a nyers szöveget.
 A tokenizáláshoz egy házon belül előállított statisztikai eszközt használtunk, amelyet a Szeged korpuszon \cite{csendes} tanítottunk. 
 A lemmatizálást és a morfológiai elemzést a
 HunMorph~\cite{Tron:05} és az erre épülő egyértelműsítő, a HunDisambig
-segítségével végeztük. %A szófajokat KR-kódban~\cite{Kornai:04} ábrázoljuk. % TODO ezzel mi a baj?
+segítségével végeztük. %A szófajokat KR-kódban~\cite{Kornai:04} ábrázoljuk.
 
 \subsection{Tulajdonnevek címkézése}
 
@@ -249,12 +238,6 @@ Hasonló eset, amikor egy több referenciával rendelkező névnek csak egyik re
 
 A típustévesztések másik részét a Wikipédia rossz kereszthivatkozásai okozzák.
 Például az egyik cikk szerkesztője a \textit{Walt Disney Co.} cégnévnek csak egy részét linkelte be, mégpedig a személyről szóló oldalra. Ezért ebben a cikkben ennek a cégnévnek a különböző változatai (\textit{Disney}, \textit{Walt Disney} stb.) is mind személynévként lettek jelölve. 
-%Erre példa a \textit{Walt Disney Co.} cég, amelynek csak a személyre vonatkozó része 
-%\textit{Micimackó (regényszereplő)} című oldal, ahol szó esik a
-%\textit{Walt Disney Co.} cégről. Azonban a kereszthivatkozás, amiből a típust
-%megállapítjuk, csak a név első két szavát foglalja magába, és a cég alapítójának
-%cikkére mutat\footnote{2012. november 30-ai állapot szerint.}, ezért ezt és a
-%\textit{Disney} minden további említését tévesen \texttt{Per}-nek jelöltük. % TODO még Ikarus?
 
 \begin{table}[ht]
 \begin{center}
@@ -286,9 +269,6 @@ A Wikipédia-címszavakban szereplő értelmező szavak alkalmanként a teljes e
 felismerését is megakadályozzák. Ez akkor fordul elő, ha a hivatkozott oldal
 teljes címe nem tulajdonnév, viszont tartalmaz egy általunk ismert tulajdonnevet:
 pl.~\textit{ókori Róma}, \textit{magyar Wikipédia}. 
-%Az ilyen esetek helyes
-%kezeléséhez módosítanunk kell az algoritmust, hogy a hivatkozásokat ne csak  % TODO kell? fogjuk? nem
-%mint bonthatatlan entitásokat, hanem mint közönséges szöveget is kezelje.
 
 A fel nem ismert \texttt{Misc} típusú tulajdonnevek mindegyike
 írók műveit felsoroló oldalakon fordul elő. Ezen műveknek nincs saját szócikkük,
@@ -323,8 +303,6 @@ problémának a megoldása még további vizsgálatokat követel.
 
 A felsoroltak mellett természetesen implementációs hibákra is fény derült, amelyek azonban összességében 
 csak néhány esetben okoztak rossz címkézést. Ezeket a jövőben javítani fogjuk. 
-%a \ref{tab:fp_fn}.~táblázat 5-6 eleméért felelősek. Ezeket a korpusz  % TODO na ez de hülyén hangzik 
-%második verziójára javítani fogjuk.
 
 %A felsorolt problémás esetek ellenére összességében azt mondhatjuk, hogy a magyar
 %Wikipédia korpusz annotálási pontossága közelíti a gold standard korpuszokét.
