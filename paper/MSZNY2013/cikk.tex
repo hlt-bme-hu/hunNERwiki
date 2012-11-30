@@ -295,6 +295,11 @@ pl.~\textit{ókori Róma}, \textit{magyar Wikipédia}. Az ilyen esetek helyes
 kezeléséhez módosítanunk kell az algoritmust, hogy a hivatkozásokat ne csak  % TODO kell? fogjuk?
 mint bonthatatlan entitásokat, hanem mint közönséges szöveget is kezelje.
 
+További javulást érhetünk el, ha algoritmusunkat felkészítjük a Wikipédia
+listaoldalainak kezelésére. A fel nem ismert MISC típusú tulajdonnevek mindegyike
+írók műveit felsoroló oldalakon fordul elő. Ezen műveknek nincs saját szócikkük,
+ezért címkézésük nehéz; a jövőben az ilyen oldalakat kihagyjuk a korpuszból. % TODO: így ok?
+
 A hibák egy további részét az alkalmazott nyelvfeldolgozó eszközök tévesztései okozzák.
 Az automatikus tokenizálás és mondatra bontás hibás működésére példa, amikor a
 rövidítést tartalmazó név (pl.~\textit{Warner Bros.}) utolsó eleme, vagyis a pont
@@ -316,6 +321,10 @@ bonyolítja az is, hogy a mozaikszavakhoz, rövidítésekhez, valamint nem ejtet
 magánhangzóra végződő idegen nevekhez is kötőjellel kapcsoljuk a toldalékokat,
 amelynek a felszíni szerkezete nagyon hasonlít az összetételekéhez. Ennek a
 problémának a megoldása még további vizsgálatokat követel. 
+
+A fenti, elvi hibák mellett felfedeztünk implementációs hibákat is, amelyek
+a \ref{tab:fp_fn}. táblázat kb. 5-6 eleméért felelősek. Ezeket a korpusz  % TODO na ez de hülyén hangzik
+második verziójára javítani fogjuk.
 
 A felsorolt problémás esetek ellenére összességében azt mondhatjuk, hogy a magyar
 Wikipédia korpusz annotálási pontossága közelíti a gold standard korpuszokét.
