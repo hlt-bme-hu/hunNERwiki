@@ -163,8 +163,9 @@ entitásokról szólnak, és a szövegben előforduló entitásokat kereszthivat
 azonosítják, nem minden esetben állja meg a helyét. Algoritmusunk ezért
 több helyen finomításra szorul.
 
-Először, a Wikipédia nem minden szócikke szól megnevezett entitásokról: köznevek, dátumok és egyéb, nem tulajdonnévi elemek is
-saját oldalt kaptak. Annak érdekében, hogy az algoritmus ne
+Először, a Wikipédia nem minden szócikke szól megnevezett entitásokról:
+egyes köznevek, dátumok és egyéb, nem tulajdonnévi elemek is
+kaptak saját oldalt. Annak érdekében, hogy az algoritmus ne
 kezelje ezeket \texttt{Unk} típusú entitásként, majd dobja el a mondatokat,
 amikben szerepelnek, szigorítottuk az entitásfelismerés szabályait: csak olyan
 kereszthivatkozást tekintünk potenciális névre való utalásnak, melynek szavai nagybetűvel kezdődnek.
