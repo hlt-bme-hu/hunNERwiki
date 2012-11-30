@@ -133,8 +133,8 @@ Ezután minden entitáshoz hozzárendeltük az őt tartalmazó
 legszűkebb osztály címkéjét, vagy \texttt{O}-t, ha az osztály nem minősül
 annotálandónak a Szeged NER korpusz sémája szerint. Így egy 46.461 elemű,
 felcímkézett, angol nyelvű tulajdonnév-listát kaptunk. Utolsó lépésként
-meghatározzuk ezen oldalak magyar és egyéb nyelvű megfelelőit, és ezeket
-is felvesszük a listára. Az idegen nyelvű oldalak meghagyásának oka, hogy
+meghatároztuk ezen oldalak magyar és egyéb nyelvű megfelelőit, és ezeket
+is felvettük a listára. Az idegen nyelvű oldalak meghagyásának oka, hogy
 a magyar Wikipédia időnként ezekre is hivatkozik.
 
 \subsection{A cikkek feldolgozása}
@@ -291,7 +291,12 @@ pl.~\textit{ókori Róma}, \textit{magyar Wikipédia}.
 
 A fel nem ismert \texttt{Misc} típusú tulajdonnevek mindegyike
 írók műveit felsoroló oldalakon fordul elő. Ezen műveknek nincs saját szócikkük,
-ezért címkézésük nehéz. Mivel egy műcímben bármilyen nyelvi elem előfordulhat, az általunk alkalmazott szűrők együttese sem képes kiszűrni ezeket. Megoldást jelenthetne az, ha ezeket a kizárólag műcímeket felsoroló oldalakat külön kezelnénk, és egy komplex rendszert építenénk a feldolgozásukra. Mivel ez egy külön nyelvfeldolgozási feladat, jelen fejlesztésen belül nem vállalkozunk rá. %Ezért a jövőben az ilyen oldalakat kihagyjuk a korpuszból. % TODO: így ok?
+ezért címkézésük nehéz. Mivel egy műcímben bármilyen nyelvi elem előfordulhat,
+az általunk alkalmazott szűrők együttese sem képes kiszűrni ezeket. Megoldást
+jelenthetne az, ha ezeket a kizárólag műcímeket felsoroló oldalakat külön kezelnénk,
+és egy komplex rendszert építenénk a feldolgozásukra. Mivel ez egy külön
+nyelvfeldolgozási feladat, jelen fejlesztésen belül nem vállalkozunk rá;
+a jövőben az ilyen oldalakat kihagyjuk a korpuszból.
 
 A hibák egy további részét az alkalmazott nyelvfeldolgozó eszközök tévesztései okozzák.
 Az automatikus tokenizálás és mondatra bontás hibás működésére példa, amikor a
