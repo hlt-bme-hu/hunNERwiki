@@ -80,8 +80,6 @@ A Wikipédiából, tekintve a szócikkek nagy számát, kevés erőforrással re
 %      azonosítják.
 %\end{enumerate}
 
-%TODO: itt kicsit kifejteni
-
 A korpuszépítő algoritmus a Wikipédia két feltételezett tulajdonságán alapszik, miszerint a szócikkek többsége megnevezett entitásokról szól, valamint a folyó szövegben előforduló entitásokat a kereszthivatkozások azonosítják. Algoritmusunk e két feltételezés következményeit használja ki. Hasonlóan a Nothman et al.~\cite{Nothman:08} által leírtakhoz, a következő lépésekből áll:
 
 \begin{enumerate}
@@ -162,8 +160,9 @@ korábban előállított listában (lásd a \ref{corpusbuilding:entities}.~fejez
 felcímkézzük a megfelelő címkével; ha nem, típusa \texttt{Unk} lesz. Végül
 minden mondatot, amelyben \texttt{Unk}-ként címkézett elem szerepel, eldobunk.
 
-% TODO argh
-Kiinduló alapfeltételezésünk, miszerint az egyes Wikipédia cikkek megnevezett entitásokról szólnak, és a szövegben előforduló entitásokat kereszthivatkozások azonosítják, nem minden esetben állja meg a helyét, ezért az algoritmusunk  
+Kiinduló alapfeltételezésünk, miszerint az egyes Wikipédia cikkek megnevezett
+entitásokról szólnak, és a szövegben előforduló entitásokat kereszthivatkozások
+azonosítják, nem minden esetben állja meg a helyét. Algoritmusunk ezért
 többhelyütt is finomításra szorul.
 
 Először, a Wikipédia nem minden szócikke szól megnevezett entitásokról: köznevek, dátumok és egyéb, nem tulajdonnévi elemek is
@@ -224,9 +223,31 @@ PER     &   88.30 &  89.25 &  88.77 & 93 \\
 \label{tab:f_score}
 \end{table}
 
-A következő tipikus hibák rajzolódtak ki.
+A négy kategória igazságmátrixát a \ref{tab:conf_matrix}., a fel nem ismert
+tulajdonnevek, illetve hibásan tulajdonnévnek címkézett szavak számát pedig
+a \ref{tab:fp_fn}. táblázat mutatja. Az igazságtáblából látható, hogy a
+típustévesztés aránya elhanyagolható; ha az annotátorok közötti egyezést
+mérő Cohen kappát kiszámítjuk, 0.967 adódik ki, mely bőven a 0.8-as, tökéletes annotációs határ feletti. % TODO, ez kell? + hülye szósorrend
+Jóval gyakoribbak az entitásfelismerés első- és másodfajú hibái, illetve az
+entitáshatárok pontatlan felismerése. Az elemzés során a következő tipikus
+hibák rajzolódtak ki.
 
-Típustévesztés kevés, ennél gyakoribb az álnegatív/álpozitív, illetve a határok nem pontos felismerése. %TODO: részletesen, referálva a táblázatokra.
+\begin{table}[ht]
+\begin{center}
+	\begin{tabular}{l@{\hspace{0.5em}}|@{\hspace{0.5em}}cccc}
+\toprule
+Auto$\downarrow$ / Gold$\rightarrow$ & PER & ORG & LOC & MISC \\
+\midrule
+PER & 83 & 1 & & 2 \\
+ORG &  & 26 & 1 & 1 \\
+LOC &  & 1 & 154 & \\
+MISC &  &  & 1 & 20 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{A manuálisan annotált minta igazságmátrixa.}
+\label{tab:conf_matrix}
+\end{table}
 
 A típustévesztés alapvetően két okra vezethetők vissza. Az első esetben a DBpediában
 lévő típusinformáció helytelen. Pl.~ az \textit{MTA} a Szeged NER séma szerint
@@ -243,16 +264,38 @@ megállapítjuk, csak a név első két szavát foglalja magába, és a cég ala
 cikkére mutat\footnote{2012. november 30-ai állapot szerint.}, ezért ezt és a
 \textit{Disney} minden további említését tévesen \texttt{Per}-nek jelöltük. % TODO még Ikarus?
 
-A részlegesen felismert nevek (\ref{tab:fp_fn} táblázat) 
-Bizonyos esetekben a név környezetében lévő értelmező szerepű nyelvi egység is a
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{l@{\hspace{0.5em}}cccc}
+\toprule
+	& PER & ORG & LOC & MISC \\
+\midrule
+Hibásan tulajdonnévként felismert szavak (álpozitív) & 1 &  0  &  1  &  0 \\
+Fel nem ismert tulajdonnevek (álnegatív) & 3 &  0  &  5  &  4 \\
+Részlegesen felismert nevek & 7 & 1 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Az entitásfelismerés első- és másodfajú hibái}
+\label{tab:fp_fn}
+\end{table}
+
+Az entitáshatárok pontatlan felismerésének (\ref{tab:fp_fn}. táblázat, 3. sor) leggyakoribb
+esete az, amikor a név környezetében lévő értelmező szerepű nyelvi egység is a
 névvel együtt annotálva lett. Ennek az az oka, hogy maga a Wikipédia címszó is
-tartalmazza ezt a szót, mely leszűkíti a név referenciáját,
-pl.~\textit{ókori Róma}, \textit{magyar Wikipédia}. Emberekre utaló linkek esetében
-ezek nagyrészt rangjelzők, pl.~\textit{Szent István király}, \textit{Anna brit királynő}.
-Ez utóbbiakat egy rangjelző szavakat tartalmazó tiltólistával a későbbiekben ki
+tartalmazza ezt a szót, mely leszűkíti a név referenciáját. Emberekre utaló linkek esetében
+ezek nagyrészt rangok, pl.~\textit{Szent István király}, \textit{I. Benedek pápa}.
+Ezeket egy rangjelző szavakat tartalmazó tiltólistával a későbbiekben ki
 lehet szűrni. 
 
-A hibák egy részét az alkalmazott nyelvfeldolgozó eszközök tévesztései okozzák.
+A Wikipédia címekben szereplő értelmező szavak alkalmanként a teljes entitás
+felismerését is megakadályozzák. Ez akkor fordul elő, ha a hivatkozott oldal
+teljes címe nem tulajdonnév, viszont tartalmaz egy általunk ismert tulajdonnevet:
+pl.~\textit{ókori Róma}, \textit{magyar Wikipédia}. Az ilyen esetek helyes
+kezeléséhez módosítanunk kell az algoritmust, hogy a hivatkozásokat ne csak  % TODO kell? fogjuk?
+mint bonthatatlan entitásokat, hanem mint közönséges szöveget is kezelje.
+
+A hibák egy további részét az alkalmazott nyelvfeldolgozó eszközök tévesztései okozzák.
 Az automatikus tokenizálás és mondatra bontás hibás működésére példa, amikor a
 rövidítést tartalmazó név (pl.~\textit{Warner Bros.}) utolsó eleme, vagyis a pont
 mondatvégi írásjelként értelmeződik, így nem annotálódik a névvel együtt. Máskor
@@ -275,41 +318,7 @@ amelynek a felszíni szerkezete nagyon hasonlít az összetételekéhez. Ennek a
 problémának a megoldása még további vizsgálatokat követel. 
 
 A felsorolt problémás esetek ellenére összességében azt mondhatjuk, hogy a magyar
-Wikipédia korpusz annotálási pontossága közelíti a gold standard korpuszokét. %na ide jöhetnek majd pontos adatok 
-
-\begin{table}[ht]
-\begin{center}
-	\begin{tabular}{l@{\hspace{0.5em}}|@{\hspace{0.5em}}cccc}
-\toprule
-Auto$\downarrow$ / Gold$\rightarrow$ & PER & ORG & LOC & MISC \\
-\midrule
-PER & 83 & 1 & & 2 \\
-ORG &  & 26 & 1 & 1 \\
-LOC &  & 1 & 154 & \\
-MISC &  &  & 1 & 20 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{A manuálisan annotált minta igazságmátrixa.}
-\label{tab:conf_matrix}
-\end{table}
-
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{l@{\hspace{0.5em}}cccc}
-\toprule
-	& PER & ORG & LOC & MISC \\
-\midrule
-Álpozitív & 1 &  0  &  1  &  0 \\
-Álnegatív & 3 &  0  &  5  &  4 \\
-Részlegesen felismert nevek & 7 & 1 & 0 & 0 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{A hibásan tulajdonnévként felismert szavak (álpozitív), illetve a
-         fel nem ismert tulajdonnevek száma}  % TODO: these should be the row headers in the table
-\label{tab:fp_fn}
-\end{table}
+Wikipédia korpusz annotálási pontossága közelíti a gold standard korpuszokét.
 
 \section{A korpuszok leírása}
 \label{desc}
