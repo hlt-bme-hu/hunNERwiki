@@ -134,8 +134,12 @@ A magyar nevek kategorizálásához a Szeged NER \cite{Szarvas:06} korpuszban al
 %leképeztünk a neki megfelelő NER címkére (pl. \texttt{Organisation}:
 %\texttt{Org}, de \texttt{Organisation/SportsLeague}: \texttt{Misc}).  %TODO: ez magyarul is?
 Ezután minden entitáshoz hozzárendeltük az őt tartalmazó
-legszűkebb osztály címkéjét, vagy \texttt{O}-t, ha az osztály nem minősül annotálandónak a Szeged
-NER korpusz sémája szerint, így egy 46.461 elemű, felcímkézett tulajdonnév-listát kaptunk.
+legszűkebb osztály címkéjét, vagy \texttt{O}-t, ha az osztály nem minősül
+annotálandónak a Szeged NER korpusz sémája szerint. Így egy 46.461 elemű,
+felcímkézett, angol nyelvű tulajdonnév-listát kaptunk. Utolsó lépésként
+meghatározzuk ezen oldalak magyar és egyéb nyelvű megfelelőit, és ezeket
+is felvesszük a listára. Az idegen nyelvű oldalak meghagyásának oka, hogy
+a magyar Wikipédia alkalmasint ezekre is hivatkozik.
 
 \subsection{A cikkek feldolgozása}
 
@@ -178,7 +182,7 @@ többször is névvel utalnak, csak az első alkalommal linkelik a saját oldal�
 előfordulhat az is, hogy az entitás nem rendelkezik saját szócikkel. Az ilyen
 esetek kezelésére minden szócikknél fenntartunk egy listát, ahol az abban
 felismert entitásokat, illetve egyéb nagybetűs említéseit, mint például a rájuk mutató
-átirányító és egyértelműsítő lapok címeit gyűjtjük. Ha ezután egy olyan mondattal  % TODO: + idegen nyelvi megfelelők!
+átirányító és egyértelműsítő lapok címeit gyűjtjük. Ha ezután egy olyan mondattal
 találkozunk, amelyben nagybetűs szócsoport szerepel, ellenőrizzük, hogy a csoport
 egyezik-e a listában szereplő egyik entitás nevével. Amennyiben igen,
 felcímkézzük; ha nem, a nagybetűs szavakat ismeretlen entitásnak tekintjük.
@@ -201,10 +205,45 @@ Ezt kézzel felannotáltuk, és összehasonlítottuk a kézi és a gépi annotá
 eredményét. Az eredményeket a \ref{tab:f_score} táblázat mutatja. Az összesített
 F-mérték 92.94 százaléknak adódott, ami % TODO ami mi?
 
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{l@{\hspace{1em}}c@{\hspace{2em}}c@{\hspace{2em}}c@{\hspace{2em}}c}
+\toprule
+& Precizitás(\%) &  Felidézés(\%) & F$_{\beta=1}$(\%) & Entitások száma \\
+\midrule
+LOC     &   98.72 &  95.65 &  97.16 & 161 \\
+MISC    &   95.24 &  76.92 &  85.11 & 26 \\
+ORG     &   89.66 &  89.66 &  89.66 & 29 \\
+PER     &   88.30 &  89.25 &  88.77 & 93 \\
+\midrule
+Összesítve &   94.33\% &  91.59\% &  92.94 & 309 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Az inter-annotátor egyezés értékelése.}  % TODO: magyarul annotátorok közötti, vagy van inter-?
+\label{tab:f_score}
+\end{table}
+
 A következő tipikus hibák rajzolódtak ki.
 
-Típushiba kevés, ennél gyakoribb az álnegatív/álpozitív, még gyakoribb pedig a határok nem pontos felismerése. %TODO: részletesen, referálva a táblázatokra.
+Típustévesztés kevés, ennél gyakoribb az álnegatív/álpozitív, illetve a határok nem pontos felismerése. %TODO: részletesen, referálva a táblázatokra.
 
+A típustévesztés alapvetően két okra vezethetők vissza. Az első esetben a DBpediában
+lévő típusinformáció helytelen. Pl.~ az \textit{MTA} a Szeged NER séma szerint
+\texttt{Org}, viszont a DBpediabeli osztálya, \texttt{WorldHeritageSite}, az
+épületre utal. Szintén ide tartozó probléma, amikor egy többértelmű névnek
+(pl.~\textit{South Park}, ami utalhat mind a rajzfilmsorozatra, mind az abban % TODO: ezek metonimok?
+szereplő városra) csak az egyik jelentése szerepel a DBpediában, így használattól
+függetlenül mindig ugyanúgy címkézzük.
+
+A típustévesztések másik részét a Wikipédiában lévő rossz kereszthivatkozások okozzák.
+Erre példa a \textit{Micimackó (regényszereplő)} című oldal, ahol szó esik a
+\textit{Walt Disney Co.} cégről. Azonban a kereszthivatkozás, amiből a típust
+megállapítjuk, csak a név első két szavát foglalja magába, és a cég alapítójának
+cikkére mutat\footnote{2012. november 30-ai állapot szerint.}, ezért ezt és a
+\textit{Disney} minden további említését tévesen \texttt{Per}-nek jelöltük. % TODO még Ikarus?
+
+A részlegesen felismert nevek (\ref{tab:fp_fn} táblázat) 
 Bizonyos esetekben a név környezetében lévő értelmező szerepű nyelvi egység is a
 névvel együtt annotálva lett. Ennek az az oka, hogy maga a Wikipédia címszó is
 tartalmazza ezt a szót, mely leszűkíti a név referenciáját,
@@ -223,7 +262,7 @@ potenciális entitásnak, ha főnév, a szófajmeghatározás hibája folytán e
 hogy átsiklunk egy mondatkezdő néven. Pl. a \textit{Hél visszaengedte volna.}
 mondatban a \textit{Hél} szót igeként ismerte fel a HunDisambig, így nem
 tekintettük tulajdonnév-jelöltnek. E problémákra esetleg megoldást jelenthet az
-alkalmazott eszközök teljesítményének javítása, vagy más eszközök alkalmazása.
+alkalmazott eszközök teljesítményének javítása, vagy más eszközök használata.
 
 Tipikus jelenség a magyarban, amikor egy név összetétel eleme lesz,
 pl.~\textit{Bizánc-ellenes}. Ilyen esetekben a köznév az összetétel alaptagja,
@@ -237,25 +276,6 @@ problémának a megoldása még további vizsgálatokat követel.
 
 A felsorolt problémás esetek ellenére összességében azt mondhatjuk, hogy a magyar
 Wikipédia korpusz annotálási pontossága közelíti a gold standard korpuszokét. %na ide jöhetnek majd pontos adatok 
-
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{l@{\hspace{1em}}c@{\hspace{2em}}c@{\hspace{2em}}c@{\hspace{2em}}c}
-\toprule
-& Precizitás(\%) &  Felidézés(\%) & F$_{\beta=1}$(\%) & Entitások száma \\
-\midrule
-LOC     &   98.72 &  95.65 &  97.16 & 161 \\
-MISC    &   95.24 &  76.92 &  85.11 & 26 \\
-ORG     &   89.66 &  89.66 &  89.66 & 29 \\
-PER     &   88.30 &  89.25 &  88.77 & 93 \\
-\midrule
-Összesítve &   94.33\% &  91.59\% &  92.94 & 309 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Az inter-annotátor egyezés értékelése.}  % TODO: magyarul
-\label{tab:f_score}
-\end{table}
 
 \begin{table}[ht]
 \begin{center}
@@ -280,9 +300,9 @@ MISC &  &  & 1 & 20 \\
 \toprule
 	& PER & ORG & LOC & MISC \\
 \midrule
-Álpozitív& 83 & 1 & & 2 \\
-Álnegatív &  & 26 & 1 & 1 \\
-Részlegesen felismert nevek & & & & \\
+Álpozitív & 1 &  0  &  1  &  0 \\
+Álnegatív & 3 &  0  &  5  &  4 \\
+Részlegesen felismert nevek & 7 & 1 & 0 & 0 \\
 \bottomrule
 \end{tabular}
 \end{center}
