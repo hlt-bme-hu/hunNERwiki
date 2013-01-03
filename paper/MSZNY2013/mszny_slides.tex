@@ -176,27 +176,27 @@ This is the first automatically annotated corpus for Hungarian
 
 \section{Korpuszépítés}
 
-\subsection*{Motivation}
-\begin{frame}{Motivation}
+\subsection*{Motiváció}
+\begin{frame}{Motiváció}
   \bigskip
 
   \begin{itemize}
-  \item Our goal is to create a large NE annotated corpus, automatically
-        generated from WP articles.
+  \item Célunk egy NE korpusz készítése automatikusan, a Wikipédia cikkei alapján
+% TODO: WP két tulajdonsága
   \smallskip
-  \vitem Our method is similar to Nothman et al. (2008)
-  \vitem The process consists of four steps:
+  \vitem Módszerünk hasonló Nothman et al. (2008)-hoz
+  \vitem A korpuszépítés a következő lépésekből áll:
     \begin{enumerate}
-    \vitem Classify WP articles into entity classes.
-    \vitem \textit{Parse WP and split articles into sentences.}
-    \vitem Label named entities in the text.
-    \vitem Select the sentences for inclusion in the corpus.
+    \vitem a Wikipédia-cikkeket entitásosztályokba soroljuk;
+    \vitem a cikkeket mondatokra bontjuk;
+    \vitem felcímkézzük a tulajdonneveket a szövegben;
+    \vitem kiszűrjük a rossz minőségű mondatokat.
     \end{enumerate}
   \end{itemize}
 \end{frame}
 
-\subsection{Articles to Entities}
-\begin{frame}{Articles to Entities}
+\subsection{Cikkek, mint entitások}
+\begin{frame}{Cikkek, mint entitások}
   \bigskip
   Our method is based on thinking of WP articles as NEs.
   \smallskip
