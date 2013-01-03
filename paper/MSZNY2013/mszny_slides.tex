@@ -1,0 +1,550 @@
+% $Header: /home/vedranm/bitbucket/beamer/solutions/generic-talks/generic-ornate-15min-45min.en.tex,v 90e850259b8b 2007/01/28 20:48:30 tantau $
+
+\documentclass[utf8x,t]{beamer}
+
+\mode<presentation>
+{
+%  \usetheme[height=7mm]{Rochester}
+  \usetheme{Rochester}
+  \useinnertheme{rounded}
+%  \useoutertheme{infolines}
+  % or ...
+
+  \setbeamercovered{transparent}
+}
+\usefonttheme[onlymath]{serif}
+
+\usepackage[magyar]{babel}
+\usepackage[utf8x]{inputenc}
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+%% to draw trees without jpg figures
+%\usepackage{synttree}
+% For code blocks
+\usepackage{algorithm}  % Conflict w/ synttree
+\usepackage{algorithmic}
+% for sane tabular handling
+\usepackage{array}
+% For strikethrough (normalem keeps it as emph)
+\usepackage[normalem]{ulem}
+
+\usepackage{mathrsfs}
+\usepackage{bm}  % For bold math
+
+\newcommand{\vitem}{\item \vspace{4pt}}
+\newcommand{\nyil}{$\rightarrow$\ }
+\newcommand{\nagytilde}{$\sim$}
+\newtheorem{Examplee}{Example}[section]
+
+\newtheorem{nix}{}[section]
+
+\title % (optional, use only with long paper titles)
+{Automatikus korpuszépítés tulajdonnév-felismerés céljára}
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author % (optional, use only with lots of authors)
+{Nemeskey Dávid Márk\inst{1}, Simon Eszter\inst{2}}
+
+\institute{\inst{1} MTA SZTAKI \\
+\inst{2} MTA Nyelvtudományi Intézet} % (optional, but mostly needed)
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date % (optional)
+{2013.01.07. \\ MSZNY 2013}
+
+% \subject{Talks}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+\AtBeginSection[]
+{
+   \begin{frame}
+       \frametitle{Az előadás vázlata}
+       \tableofcontents[currentsection]
+   \end{frame}
+}
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+% TODO: kell outline?
+\begin{frame}{}
+  \titlepage
+\end{frame}
+
+\section{Bevezetés}
+
+\begin{frame}{Datasets}
+
+\bigskip
+
+The standard datasets are
+\smallskip
+\begin{itemize}
+\item highly domain-specific
+\item restricted in size
+\end{itemize}
+
+\bigskip
+
+To get a bigger training corpus:
+\smallskip
+\begin{itemize}
+\item merging datasets \nyil problems of combining different tagsets
+\item manual annotation \nyil not cost-effective
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Reducing the Annotation Cost}
+
+\bigskip
+
+Reducing the annotation cost:
+\smallskip
+\begin{itemize}
+\item to generate the resource automatically 
+\item to use collaboratively constructed resources (e.g.~Wikipedia, DBpedia)
+\end{itemize}
+
+\bigskip
+
+\begin{nix}
+Combining these approaches: \\ automatically generating NE tagged corpora from Wikipedia
+\end{nix}
+
+\end{frame}
+
+\section{Wikipédia és tulajdonnév-felismerés}
+
+\begin{frame}{Wikipedia and NER}
+
+\begin{nix}
+Wikipedia is one of the largest available collections of entities
+\end{nix}
+
+\smallskip
+
+Improving the accuracy of NER with WP:
+\smallskip
+\begin{itemize}
+\item extracting gazetteers containing person names, locations and organizations 
+\item extracting the knowledge embodied in WP and incorporating it in NER learning as features
+\item automatic creation of training data from WP
+\begin{itemize}
+\item by using the category structure of WP
+\item by using the category head nouns and the opening sentences of articles
+\end{itemize} 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Our Approach}
+
+\begin{nix}
+Mapping the DBpedia ontology classes to standard NE tags, and assign them to WP entities
+\end{nix}
+
+\bigskip
+
+Our method is largely language-independent \nyil sufficiently large corpora for less resourced languages can be built 
+
+\bigskip
+
+\begin{nix}
+This is the first automatically annotated corpus for Hungarian 
+\end{nix}
+
+\end{frame}
+
+\section{Korpuszépítés}
+
+\subsection*{Motivation}
+\begin{frame}{Motivation}
+  \bigskip
+
+  \begin{itemize}
+  \item Our goal is to create a large NE annotated corpus, automatically
+        generated from WP articles.
+  \smallskip
+  \vitem Our method is similar to Nothman et al. (2008)
+  \vitem The process consists of four steps:
+    \begin{enumerate}
+    \vitem Classify WP articles into entity classes.
+    \vitem \textit{Parse WP and split articles into sentences.}
+    \vitem Label named entities in the text.
+    \vitem Select the sentences for inclusion in the corpus.
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\subsection{Articles to Entities}
+\begin{frame}{Articles to Entities}
+  \bigskip
+  Our method is based on thinking of WP articles as NEs.
+  \smallskip
+  \begin{itemize}
+  \vitem Usual approach: semi-supervised learning (infoboxes, first sentence)
+  \vitem Our approach: create entity list from DBpedia
+    \begin{itemize}
+    \vitem OWL ontology with 320 classes
+    \vitem We take the most specific class
+    \vitem Manual mapping to CoNLL categories that exploits inheritence
+    \end{itemize}
+  \item Decreased coverage, increased precision
+  \end{itemize}
+\end{frame}
+
+\subsection{Named Entity Tagging}
+\begin{frame}{Named Entity Tagging}
+  \bigskip
+  The entity list from DBpedia is used for NE tagging.
+  \smallskip
+  \begin{itemize}
+  \vitem Entity identification:
+    \begin{itemize}
+    \vitem Look up linked pages in the entity list
+    \vitem References to the current page, if in the list
+    \end{itemize}
+  \vitem NE tagging: from the DBpedia--CoNLL category mapping
+  \vitem Exceptions:
+    \begin{itemize}
+    \vitem Not entities: common nouns, date expressions, etc.
+    \vitem Unmarked entities: link to already identified entities
+    \vitem Special cases: derived words, first word in a sentence, etc.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{Sentence Filtering}
+\begin{frame}{Sentence Filtering}
+  \bigskip
+  We only include fully tagged sentences in the corpus.
+  \smallskip
+  \begin{itemize}
+  \vitem Sentences that contain unknown links / uppercase words
+  \vitem To filter incomplete sentences:
+    \begin{itemize}
+    \vitem Sentences without an EOS punctuation mark
+    \vitem Sentences without a predicate (verb)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Problémás esetek, hibaelemzés}
+
+%\begin{frame}{The Hungarian Corpus}
+%  The algorithm is, in theory, language-agnostic. We tested this property by
+%  applying it to a medium-sized language, Hungarian. \\
+%  Difference from bigger, well-resourced languages:
+%  \begin{itemize}
+%  \vitem E % TODO: ide mit?
+%  \end{itemize}
+%\end{frame}
+
+%TODO: the "Hungarian Corpus" phrase must appear in the frame title 
+\begin{frame}{Differences from English}
+  \bigskip
+  \begin{itemize}
+  \vitem Language processing tools
+    \begin{itemize}
+    \vitem Inflectional morphology: different set of tools were needed 
+    \vitem We developed a flexible framework that enables the plugging of any NLP tool
+    % TODO: what kind of linguistic tools are needed: table?
+    \end{itemize}
+  \vitem Wikipedia size and coverage
+    \begin{itemize}
+    \vitem Hungarian is medium-size language: \nagytilde 200k articles vs.~\nagytilde 4M English pages
+    \vitem Cross-references may point to English pages
+    \vitem Templates are in Hungarian: per-language template configuration
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Differences from English -- cont.}
+  \bigskip
+  \begin{itemize}
+  \vitem DBpedia coverage
+    \smallskip
+    \begin{itemize}
+    \vitem Internationalized chapters for big languages only
+    \vitem "Hungarian" DBpedia list contains English articles % Nem egyértelmű
+      \begin{itemize}
+      \vitem Hungarian equivalents must be added to the list % Added: lásd előző oldal 2/2
+      \vitem Hungarian entities without an English page are missing:
+             the NER language model might not be accurate
+      \vitem Future work: extend the list with the missing Hungarian entities
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Differences from English -- cont.}
+  \bigskip
+  \begin{itemize}
+  \vitem NE conventions
+    \smallskip
+    \begin{itemize}
+    \vitem Szeged NER guideline: similar to CoNLL
+    \vitem Common nouns in Hungarian: names of languages, religions, months, etc. \nyil more consistent MISC category
+    \vitem NEs can be subject of compounding \nyil the joint common noun can modify the original sense and category of the NE:
+    \end{itemize}
+  \end{itemize}
+  \bigskip
+  \begin{Examplee}
+  \small{WorldCom {\normalfont(\texttt{ORG})} \nyil WorldCom-botrány ['WorldCom scandal'] {\normalfont(\texttt{O})}}
+  \end{Examplee}
+\end{frame}
+
+\section{A korpuszok leírása}
+
+\begin{frame}{Data Format}
+
+\begin{tabular}{llllll}
+\textbf{token} & \textbf{text/link} & \textbf{WP link} & \textbf{POS} & \textbf{lemma} & \textbf{NE} \\
+This & text & 0 &    DT &   This & O \\
+is &   text & 0 &    VBZ &  be &   O \\
+a &    text & 0 &    DT &   a  &    O\\
+list & text & 0 &    NN &   list  & O\\
+of &   text & 0 &    IN &   of &     O\\
+films  & B-link & films &  NNS &  film & O\\
+by &   text & 0 &    IN &   by &     O\\
+year & text & 0 &    NN &   year & O\\
+produced & text & 0 &    VBN &  produce & O\\
+in &   text & 0 &    IN &   in &     O\\
+the &  text & 0 &    DT &   the &   O\\
+country &text & 0 &    NN &   country &O\\
+of &   text & 0 &    IN &   of &     O\\
+South &  B-link & South Korea &  NNP &  South  &B-LOC\\
+Korea &  I-link & South Korea &  NNP &  Korea   & I-LOC\\
+\end{tabular}
+
+\end{frame}
+
+\begin{frame}{Data Availability}
+\bigskip
+The corpora are
+\begin{itemize}
+\vitem available under CC-BY-SA 3.0 Unported License
+\vitem freely downloadable from \url{http://hlt.sztaki.hu/resources/} 
+\vitem also distributed through META-SHARE (from August)
+  \begin{itemize}
+  \vitem an open, distributed facility for exchanging and sharing resources
+  \vitem one of the lines of action of META-NET, a Network of Excellence funded
+        by the European Commission
+  \vitem \url{http://www.meta-net.eu/meta-share}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\section{Kiértékelés}
+
+\begin{frame}{Silver Standard Corpora}
+
+\bigskip
+
+Silver standard corpora can be useful for improving NER in several ways:
+
+\smallskip
+
+\begin{itemize}
+\vitem for less resourced languages they can serve as training corpora in lieu of gold standard datasets
+\vitem they can serve as training sets for domains differing from newswire
+\vitem they can be sources of huge entity lists
+\vitem they can be sources of feature extraction
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Evaluation}
+
+\bigskip
+
+A maxent NE tagger was used with the feature set consisting of
+
+\smallskip
+
+\begin{itemize}
+\vitem gazetteer features
+\vitem sentence start and end position
+\vitem Boolean-valued orthographic properties of the word form
+\vitem string-valued properties of the word form
+\vitem morphological information
+\end{itemize}
+
+\bigskip
+
+The CoNLL standard method was used for evaluation.
+
+\end{frame}
+
+\begin{frame}{Corpus Size and NE Density}
+
+English: 
+
+\begin{center}
+\begin{tabular}{llll}
+\hline  & \bf enwiki & \bf enwiki filtered & \bf CoNLL \\ \hline
+token & 60,520,819 & 21,718,854 & 302,811 \\
+NE & 3,169,863 & 3,169,863 & 50,758 \\
+NE density & 5.23\% & 14.59\% & 16.76\% \\ \hline
+\end{tabular}
+\end{center}
+
+%\smallskip
+
+Hungarian:
+
+\begin{center}
+\begin{tabular}{llll}
+\hline  & \bf huwiki & \bf huwiki filtered  & \bf Szeged NER \\ \hline
+token & 19,108,027 & 3,512,249  & 225,963 \\
+NE & 456,281 & 456,281  & 25,896 \\
+NE density & 2.38\% & 12.99\%  & 11.46\% \\ \hline 
+\end{tabular}
+\end{center}
+
+Quite low NE density \nyil sentences without NEs were filtered out from the evaluation datasets
+
+\end{frame}
+
+\begin{frame}{Experiments}
+
+\begin{nix}
+Our experiments were performed with a sample of 3.5 million tokens
+\end{nix}
+
+\bigskip
+
+\begin{itemize}
+\item \textit{CoNLL} train -- \textit{CoNLL} test
+\item \textit{enwiki} train -- \textit{enwiki} test
+\item \textit{enwiki} train -- \textit{CoNLL} test
+\item \textit{CoNLL} train with \textit{wikilists} (gazetteer lists extracted from WP) -- \textit{CoNLL} test
+\item \textit{CoNLL} train with \textit{wikitags} (labeling the CoNLL datasets by the model trained on WP, and giving these labels as extra features) -- \textit{CoNLL} test
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{English Results}
+
+\begin{center}
+\begin{tabular}{lllll}
+\hline \bf Train & \bf Test & \bf P (\%) & \bf R (\%) & \bf F (\%) \\ \hline
+CoNLL & CoNLL & 85.13 & 85.13 & 85.13 \\
+enwiki & enwiki & 72.46 & 73.33 &  72.89 \\
+enwiki & CoNLL & 56.55 & 49.77 & 52.94 \\
+CoNLL with wikilists & CoNLL & 86.33 & 86.35 & 86.34 \\
+CoNLL with wikitags & CoNLL & 85.88 & 85.94 & 85.91 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item training and testing across different corpora decreases F-measure
+\item the NE tagger trained on WP does not achieve as high performance tested against CoNLL test set as one trained on its own train set
+\item gazetteer lists extracted from WP and training with extra features given by the model trained on WP improve F-measure
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Hungarian Results}
+
+\begin{center}
+\begin{tabular}{lllll}
+\hline \bf Train & \bf Test & \bf P (\%) & \bf R (\%) & \bf F (\%) \\ \hline
+Szeged  & Szeged  & 94.50 & 94.35 & 94.43 \\
+huwiki & huwiki & 90.64 & 88.91 &  \textbf{89.76} \\
+huwiki & Szeged  & 63.08 & 70.46 & 66.57 \\
+Szeged  with wikilists & Szeged  & 95.48 & 95.48 & 95.48 \\
+Szeged  with wikitags & Szeged  & 95.38 & 94.92 & 95.15 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\vitem F-measures for Hungarian are higher 
+\begin{itemize}
+\vitem the MISC category is more consistent
+\vitem the Szeged NER corpus is highly accurately tagged 
+\end{itemize}
+\vitem the Hungarian corpus can serve as a training corpus to build NE taggers for non-newswire domains
+\end{itemize}
+
+\end{frame}
+
+%\begin{frame}{Results -- analysis}
+
+%\begin{itemize}
+%\vitem training and testing across different corpora decreases F-measure
+%\vitem the NE tagger trained on WP does not achieve as high performance tested against CoNLL test set as one trained on its own train set
+%\vitem gazetteer lists extracted from WP and training with extra features given by the model trained on WP improve F-measure
+%\vitem F-measures for Hungarian are higher 
+%\begin{itemize}
+%\vitem the MISC category is more consistent
+%\vitem the Szeged NER corpus is highly accurately tagged 
+%\end{itemize}
+%\end{itemize}
+%  \vfill
+
+%\end{frame}
+
+\section{Összegzés}
+\begin{frame}{Conclusions}
+  \begin{itemize}
+  \vitem We presented freely available NE tagged corpora for English and Hungarian, fully automatically generated from WP
+  \vitem We applied a new approach: mapping DBpedia ontology classes to standard CoNLL NE tags, and assigning them to WP entities
+  \vitem The huge amount of WP articles opens the possibility of building large enough corpora for less resourced languages such as Hungarian
+  \vitem Silver standard corpora can improve NER accuracy in more ways
+  \vitem The Hungarian corpus can serve as a training corpus to build NE taggers for non-newswire domains
+  \end{itemize}
+  \vfill
+\end{frame}
+
+\begin{frame}
+
+\bigskip
+
+\bigskip
+
+{\huge Köszönjük a figyelmet!}
+
+\bigskip
+\bigskip
+\bigskip
+
+e-mail: \\ {\tt nemeskey.david@sztaki.mta.hu \\ simon.eszter@nytud.mta.hu} \\
+
+\bigskip
+\bigskip
+
+URL: \\ {\tt http://hlt.sztaki.hu/resources/}
+
+
+\end{frame}
+
+\end{document}
+
+
