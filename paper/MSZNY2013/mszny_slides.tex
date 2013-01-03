@@ -95,66 +95,62 @@
 
 \section{Bevezetés}
 
-\begin{frame}{Datasets}
+\begin{frame}{A feladat és a probléma}
 
 \bigskip
 
-The standard datasets are
-\smallskip
-\begin{itemize}
-\item highly domain-specific
-\item restricted in size
-\end{itemize}
+A feladat: a szövegben felismerni és előre definiált osztályok valamelyikébe besorolni a neveket 
 
 \bigskip
 
-To get a bigger training corpus:
-\smallskip
+A probléma:
 \begin{itemize}
-\item merging datasets \nyil problems of combining different tagsets
-\item manual annotation \nyil not cost-effective
+\item a sztenderd adathalmazok korlátozott méretűek és témaspecifikusak 
+\item robusztus rendszerek építéséhez nagyméretű és heterogén tulajdonnév-annotált korpuszokra van szükség
+\item a kézi annotálás rendkívül költséges és erőforrás-igényes
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Reducing the Annotation Cost}
+\begin{frame}{A kihívás}
 
-\bigskip
+az annotációs költség csökkentése \nyil automatikusan annotált korpuszok előállítása
 
-Reducing the annotation cost:
-\smallskip
 \begin{itemize}
-\item to generate the resource automatically 
-\item to use collaboratively constructed resources (e.g.~Wikipedia, DBpedia)
+\item meglévő korpuszok egyesítése \nyil az annotációs sémák és címkekészletek különbözősége 
+\item rendelkezésre álló korpuszon tanított tagger futtatása új szövegen \nyil a domének közötti különbség teljesítménycsökkenést okoz
+\item közösségi tartalmak felhasználása \nyil leképezés a sztenderd címkekészletekre
 \end{itemize}
 
-\bigskip
+\smallskip
 
 \begin{nix}
-Combining these approaches: \\ automatically generating NE tagged corpora from Wikipedia
+A fenti megközelítések kombinációja: \\ automatikus eszközökkel tulajdonnév-annotált korpuszok építése a Wikipédiából
 \end{nix}
 
 \end{frame}
 
 \section{Wikipédia és tulajdonnév-felismerés}
 
-\begin{frame}{Wikipedia and NER}
+\begin{frame}{Wikipédia és NER}
+
+\bigskip
 
 \begin{nix}
-Wikipedia is one of the largest available collections of entities
+mivel a Wikipédia címszavainak nagy része tulajdonnév, kiválóan használható tulajdonnév-felismeréshez
 \end{nix}
 
-\smallskip
+\bigskip
 
-Improving the accuracy of NER with WP:
+Alkalmazási módjai:
 \smallskip
 \begin{itemize}
-\item extracting gazetteers containing person names, locations and organizations 
-\item extracting the knowledge embodied in WP and incorporating it in NER learning as features
-\item automatic creation of training data from WP
+\item nagyméretű névlisták előállítása 
+\item a Wikipédia kategóriacímkéinek kinyerése és beépítése NER rendszerekbe
+\item tanító korpusz előállítása a Wikipédia szövegbázisából
 \begin{itemize}
-\item by using the category structure of WP
-\item by using the category head nouns and the opening sentences of articles
+\item az inherens kategóriastruktúra felhasználásával
+\item a szócikkek első mondatának felhasználásával
 \end{itemize} 
 \end{itemize}
 
