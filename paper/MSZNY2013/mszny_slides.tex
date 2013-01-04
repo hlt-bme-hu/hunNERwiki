@@ -216,32 +216,32 @@ This is the first automatically annotated corpus for Hungarian
 \begin{frame}{Tulajdonnevek címkézése}
   \bigskip
   \begin{itemize}
-  \vitem Entity identification:
+  \vitem Tulajdonnevek felismerése:
     \begin{itemize}
     \vitem Look up linked pages in the entity list
     \vitem References to the current page, if in the list
     \end{itemize}
   \vitem NE tagging: from the DBpedia--CoNLL category mapping
-  \vitem Exceptions:
+  \vitem Kivételek:
     \begin{itemize}
-    \vitem Not entities: common nouns, date expressions, etc.
-    \vitem Unmarked entities: link to already identified entities
-    \vitem Special cases: derived words, first word in a sentence, etc.
+    \vitem Cikkek, amik nem entitások: nagybetűvel kell kezdődjön a szócikk
+    \vitem Jelöletlen entitások: megpróbáljuk őket korábbi tulajdonnevekhez kötni
+    \vitem Speciális esetek: tulajdonnév-köznév összetételek, mondatkezdő főnevek, stb.
     \end{itemize}
   \end{itemize}
 \end{frame}
 
-\subsection{Sentence Filtering}
-\begin{frame}{Sentence Filtering}
+\subsection{Mondatok szűrése}
+\begin{frame}{Mondatok szűrése}
   \bigskip
-  We only include fully tagged sentences in the corpus.
+  Csak a teljesen felcímkézett mondatokat tartjuk meg. Eldobjuk:
   \smallskip
   \begin{itemize}
-  \vitem Sentences that contain unknown links / uppercase words
-  \vitem To filter incomplete sentences:
+  \vitem azokat a mondatokat, amiben címkézetlen hivatkozások vagy nagybetűs szavak vannak
+  \vitem a mondattöredékeket:
     \begin{itemize}
-    \vitem Sentences without an EOS punctuation mark
-    \vitem Sentences without a predicate (verb)
+    \vitem amikben nincs mondatvégi írásjel
+    \vitem állítmány nélküli mondatok %TODO: tényleg?
     \end{itemize}
   \end{itemize}
 \end{frame}
