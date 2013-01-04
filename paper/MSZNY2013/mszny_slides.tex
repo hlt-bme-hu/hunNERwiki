@@ -72,13 +72,13 @@
 % \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
 % \logo{\pgfuseimage{university-logo}}
 
-\AtBeginSection[]
-{
-   \begin{frame}
-       \frametitle{Az előadás vázlata}
-       \tableofcontents[currentsection]
-   \end{frame}
-}
+%\AtBeginSection[]
+%{
+%   \begin{frame}
+%       \frametitle{Az előadás vázlata}
+%       \tableofcontents[currentsection]
+%   \end{frame}
+%}
 
 
 % If you wish to uncover everything in a step-wise fashion, uncomment
@@ -176,16 +176,17 @@ This is the first automatically annotated corpus for Hungarian
 
 \section{Korpuszépítés}
 
-\subsection*{Motiváció}
-\begin{frame}{Motiváció}
-  \bigskip
+\subsection*{A módszer}
 
+% TODO: bigskip?
+\begin{frame}{Korpuszépítés}
   \begin{itemize}
-  \item Célunk egy NE korpusz készítése automatikusan, a Wikipédia cikkei alapján
-% TODO: WP két tulajdonsága
-  \smallskip
-  \vitem Módszerünk hasonló Nothman et al. (2008)-hoz
-  \vitem A korpuszépítés a következő lépésekből áll:
+  \vitem A Wikipédia két feltételezett tulajdonsága:
+    \begin{enumerate}
+    \vitem a szócikkek nagy része entitásokról szól
+    \vitem a kereszthivatkozások azonosítják a tulajdonneveket a szövegben
+    \end{enumerate}
+  \vitem Módszerünk hasonló Nothman et al. (2008)-hoz:
     \begin{enumerate}
     \vitem a Wikipédia-cikkeket entitásosztályokba soroljuk;
     \vitem a cikkeket mondatokra bontjuk;
@@ -198,25 +199,22 @@ This is the first automatically annotated corpus for Hungarian
 \subsection{Cikkek, mint entitások}
 \begin{frame}{Cikkek, mint entitások}
   \bigskip
-  Our method is based on thinking of WP articles as NEs.
+  Cikkek entitásosztályokba sorolása: % TODO what?
   \smallskip
   \begin{itemize}
-  \vitem Usual approach: semi-supervised learning (infoboxes, first sentence)
-  \vitem Our approach: create entity list from DBpedia
+  \vitem Szokásos megoldás: felügyelt tanulás (infoboxok, első mondat)
+  \vitem A mi megközelítésünk: entitás lista a DBpedia alapján
     \begin{itemize}
-    \vitem OWL ontology with 320 classes
-    \vitem We take the most specific class
-    \vitem Manual mapping to CoNLL categories that exploits inheritence
+    \vitem OWL ontológia kb. 320 osztállyal: kézileg leképeztük CoNLL (Szeged) kategóriákra
+    \vitem Minden entitást a legspecifikusabb osztály szerinti kategóriába raktunk
     \end{itemize}
-  \item Decreased coverage, increased precision
+  \item Csökkent fedés, jobb pontosság
   \end{itemize}
 \end{frame}
 
-\subsection{Named Entity Tagging}
-\begin{frame}{Named Entity Tagging}
+\subsection{Tulajdonnevek címkézése}
+\begin{frame}{Tulajdonnevek címkézése}
   \bigskip
-  The entity list from DBpedia is used for NE tagging.
-  \smallskip
   \begin{itemize}
   \vitem Entity identification:
     \begin{itemize}
