@@ -247,58 +247,30 @@ Nyelvfüggetlen módszer \nyil minden Wikipédia-nyelvre építhető automatikus
   \end{itemize}
 \end{frame}
 
+
+\begin{frame}{Nyelvfüggető elemek}
+  \bigskip
+  \begin{itemize}
+  \vitem Nyelvi eszközök
+    \begin{itemize}
+    \vitem kidolgoztunk egy keretrendszert, amibe bármilyen eszközt be lehet kötni
+    \vitem tokenizáló, lemmatizáló, szófajmeghatározó
+    \end{itemize}
+  \vitem Wikipédia
+    \begin{itemize}
+    \vitem Sablonok nyelvfüggőek
+    \vitem a magyar egy közepes méretű nyelv: \nagytilde 200k cikk a kb.~\nagytilde 4M angollal szemben
+    \end{itemize}
+  \vitem DBpedia
+    \begin{itemize}
+    \vitem nagyobb nyelvekre honosított fejezetek --- magyarra nincs
+    \vitem csak az angol Wikipédiában is szereplő magyar tulajdonneveket tartalmazza
+    \vitem távlati terv a lista kiegészítése gépi tanulással  % TODO "Future work"
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
 \section{Problémás esetek, hibaelemzés}
-
-%\begin{frame}{The Hungarian Corpus}
-%  The algorithm is, in theory, language-agnostic. We tested this property by
-%  applying it to a medium-sized language, Hungarian. \\
-%  Difference from bigger, well-resourced languages:
-%  \begin{itemize}
-%  \vitem E % TODO: ide mit?
-%  \end{itemize}
-%\end{frame}
-
-%TODO: the "Hungarian Corpus" phrase must appear in the frame title 
-\begin{frame}{Nyelvfüggetlenség}
-\end{frame}
-
-% Dávid
-\begin{frame}{Differences from English}
-  \bigskip
-  \begin{itemize}
-  \vitem Language processing tools
-    \begin{itemize}
-    \vitem Inflectional morphology: different set of tools were needed 
-    \vitem We developed a flexible framework that enables the plugging of any NLP tool
-    % TODO: what kind of linguistic tools are needed: table?
-    \end{itemize}
-  \vitem Wikipedia size and coverage
-    \begin{itemize}
-    \vitem Hungarian is medium-size language: \nagytilde 200k articles vs.~\nagytilde 4M English pages
-    \vitem Cross-references may point to English pages
-    \vitem Templates are in Hungarian: per-language template configuration
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-% Dávid
-\begin{frame}{Differences from English -- cont.}
-  \bigskip
-  \begin{itemize}
-  \vitem DBpedia coverage
-    \smallskip
-    \begin{itemize}
-    \vitem Internationalized chapters for big languages only
-    \vitem "Hungarian" DBpedia list contains English articles % Nem egyértelmű
-      \begin{itemize}
-      \vitem Hungarian equivalents must be added to the list % Added: lásd előző oldal 2/2
-      \vitem Hungarian entities without an English page are missing:
-             the NER language model might not be accurate
-      \vitem Future work: extend the list with the missing Hungarian entities
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
-\end{frame}
 
 % Eszter
 % TODO a következő fejezetbe
