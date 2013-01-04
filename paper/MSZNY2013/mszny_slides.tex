@@ -156,21 +156,22 @@ Alkalmazási módjai:
 
 \end{frame}
 
-\begin{frame}{Our Approach}
+\begin{frame}{Az általunk alkalmazott módszer}
 
 \begin{nix}
-Mapping the DBpedia ontology classes to standard NE tags, and assign them to WP entities
+A DBpedia ontológiai osztályait képeztük le a CoNLL-névosztályokra, majd ezeket Wikipédia-entitásokhoz kötöttük
 \end{nix}
 
 \bigskip
 
-Our method is largely language-independent \nyil sufficiently large corpora for less resourced languages can be built 
+Nyelvfüggetlen módszer \nyil minden Wikipédia-nyelvre építhető automatikusan névannotált korpusz
 
 \bigskip
 
-\begin{nix}
-This is the first automatically annotated corpus for Hungarian 
-\end{nix}
+\begin{description}
+\item[Magyar:] ez az első automatikusan névannotált korpusz
+\item[Angol:] a \textit{Semantically Annotated Snapshot of English Wikipedia} mellett ez az egyetlen
+\end{description}
 
 \end{frame}
 
@@ -186,7 +187,7 @@ This is the first automatically annotated corpus for Hungarian
     \vitem a szócikkek nagy része entitásokról szól
     \vitem a kereszthivatkozások azonosítják a tulajdonneveket a szövegben
     \end{enumerate}
-  \vitem Módszerünk hasonló Nothman et al. (2008)-hoz:
+  \vitem Módszerünk hasonló Nothman et al.~(2008)-hoz:
     \begin{enumerate}
     \vitem a Wikipédia-cikkeket entitásosztályokba soroljuk;
     \vitem a cikkeket mondatokra bontjuk;
@@ -196,8 +197,8 @@ This is the first automatically annotated corpus for Hungarian
   \end{itemize}
 \end{frame}
 
-\subsection{Cikkek, mint entitások}
-\begin{frame}{Cikkek, mint entitások}
+\subsection{Cikkek mint entitások}
+\begin{frame}{Cikkek mint entitások}
   \bigskip
   Cikkek entitásosztályokba sorolása: % TODO what?
   \smallskip
@@ -240,8 +241,8 @@ This is the first automatically annotated corpus for Hungarian
   \vitem azokat a mondatokat, amiben címkézetlen hivatkozások vagy nagybetűs szavak vannak
   \vitem a mondattöredékeket:
     \begin{itemize}
-    \vitem amikben nincs mondatvégi írásjel
-    \vitem állítmány nélküli mondatok %TODO: tényleg?
+    \vitem amikben nincs mondatvégi írásjel %és amik nem nagybetűvel kezdődnek
+    \vitem állítmány nélküli mondatok %TODO: tényleg? SE: ezeket végül nem dobtuk el, csak leírtuk, hogy el lehet
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -316,26 +317,41 @@ This is the first automatically annotated corpus for Hungarian
 
 \section{A korpuszok leírása}
 
-\begin{frame}{Data Format}
+\begin{frame}{Multitag formátum}
 
-\begin{tabular}{llllll}
+\begin{tabular}{lllllll}
 \textbf{token} & \textbf{text/link} & \textbf{WP link} & \textbf{POS} & \textbf{lemma} & \textbf{NE} \\
-This & text & 0 &    DT &   This & O \\
-is &   text & 0 &    VBZ &  be &   O \\
-a &    text & 0 &    DT &   a  &    O\\
-list & text & 0 &    NN &   list  & O\\
-of &   text & 0 &    IN &   of &     O\\
-films  & B-link & films &  NNS &  film & O\\
-by &   text & 0 &    IN &   by &     O\\
-year & text & 0 &    NN &   year & O\\
-produced & text & 0 &    VBN &  produce & O\\
-in &   text & 0 &    IN &   in &     O\\
-the &  text & 0 &    DT &   the &   O\\
-country &text & 0 &    NN &   country &O\\
-of &   text & 0 &    IN &   of &     O\\
-South &  B-link & South Korea &  NNP &  South  &B-LOC\\
-Korea &  I-link & South Korea &  NNP &  Korea   & I-LOC\\
+Neumann & B-link & Neumann János & NOUN & neumann & B-PER & B-PER \\
+János & I-link & Neumann János & NOUN & jános & I-PER & I-PER \\
+( & text & 0 & PUNCT & ( & O & O \\
+1903–1957 & text & 0 & NUM & 1903–1957 & O & O \\
+) & text & 0 & PUNCT & ) & O & O \\
+matematikai & text & 0 & ADJ & matematikai & O & O \\
+szemszögből & text & 0 & NOUN<CAS<ELA>> & szemszög & O & O \\
+közelíti & text & 0 & VERB<DEF> & közelít & O & O \\
+meg & text & 0 & PREV & meg & O & O \\
+a & text & 0 & ART & a & O & O \\
+kérdést & text & 0 & NOUN<CAS<ACC>> & kérdés & O & O \\
 \end{tabular}
+
+%\begin{tabular}{llllll}
+%\textbf{token} & \textbf{text/link} & \textbf{WP link} & \textbf{POS} & \textbf{lemma} & \textbf{NE} \\
+%This & text & 0 &    DT &   This & O \\
+%is &   text & 0 &    VBZ &  be &   O \\
+%a &    text & 0 &    DT &   a  &    O\\
+%list & text & 0 &    NN &   list  & O\\
+%of &   text & 0 &    IN &   of &     O\\
+%films  & B-link & films &  NNS &  film & O\\
+%by &   text & 0 &    IN &   by &     O\\
+%year & text & 0 &    NN &   year & O\\
+%produced & text & 0 &    VBN &  produce & O\\
+%in &   text & 0 &    IN &   in &     O\\
+%the &  text & 0 &    DT &   the &   O\\
+%country &text & 0 &    NN &   country &O\\
+%of &   text & 0 &    IN &   of &     O\\
+%South &  B-link & South Korea &  NNP &  South  &B-LOC\\
+%Korea &  I-link & South Korea &  NNP &  Korea   & I-LOC\\
+%\end{tabular}
 
 \end{frame}
 
