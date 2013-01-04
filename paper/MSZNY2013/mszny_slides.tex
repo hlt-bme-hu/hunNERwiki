@@ -249,13 +249,13 @@ Nyelvfüggetlen módszer \nyil minden Wikipédia-nyelvre építhető automatikus
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Nyelvfüggető elemek}
+\begin{frame}{Nyelvfüggő elemek}
   \bigskip
   \begin{itemize}
   \vitem Nyelvi eszközök
     \begin{itemize}
     \vitem kidolgoztunk egy keretrendszert, amibe bármilyen eszközt be lehet kötni
-    \vitem tokenizáló, lemmatizáló, szófajmeghatározó
+    \vitem tokenizáló, lemmatizáló, morfológiai egyértelműsítő
     \end{itemize}
   \vitem Wikipédia
     \begin{itemize}
@@ -266,7 +266,7 @@ Nyelvfüggetlen módszer \nyil minden Wikipédia-nyelvre építhető automatikus
     \begin{itemize}
     \vitem nagyobb nyelvekre honosított fejezetek --- magyarra nincs
     \vitem csak az angol Wikipédiában is szereplő magyar tulajdonneveket tartalmazza
-    \vitem távlati terv a lista kiegészítése gépi tanulással  % TODO "Future work"
+%    \vitem távlati terv a lista kiegészítése gépi tanulással  % TODO "Future work"
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -281,6 +281,7 @@ A teljes korpusz 0,001\%-át kézzel annotáltuk, majd összehasonlítottuk a g�
 
 \bigskip
 
+\begin{center}
 \begin{tabular}{lcccc}
 \toprule
 & P (\%) &  R (\%) & F$_{\beta=1}$ (\%) & NE (\#) \\
@@ -293,6 +294,7 @@ PER     &   88.30 &  89.25 &  88.77 & 93 \\
 Összesítve &   94.33 &  91.59 &  92.94 & 309 \\
 \bottomrule
 \end{tabular} 
+\end{center}
 
 \end{frame}
 
@@ -300,6 +302,7 @@ PER     &   88.30 &  89.25 &  88.77 & 93 \\
 
 \bigskip
 
+\begin{center}
 \begin{tabular}{l@{\hspace{0.5em}}|@{\hspace{0.5em}}cccc}
 \toprule
 Auto$\downarrow$ / Gold$\rightarrow$ & PER & ORG & LOC & MISC \\
@@ -310,6 +313,7 @@ LOC &  & 1 & 154 & \\
 MISC &  &  & 1 & 20 \\
 \bottomrule
 \end{tabular}
+\end{center}
 
 \bigskip
 
