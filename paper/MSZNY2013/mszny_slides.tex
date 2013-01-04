@@ -315,62 +315,6 @@ Nyelvfüggetlen módszer \nyil minden Wikipédia-nyelvre építhető automatikus
   \end{Examplee}
 \end{frame}
 
-\section{A korpuszok leírása}
-
-\begin{frame}{Multitag formátum}
-
-\begin{tabular}{lllllll}
-\textbf{token} & \textbf{text/link} & \textbf{WP link} & \textbf{POS} & \textbf{lemma} & \textbf{NE} \\
-Neumann & B-link & Neumann János & NOUN & neumann & B-PER & B-PER \\
-János & I-link & Neumann János & NOUN & jános & I-PER & I-PER \\
-( & text & 0 & PUNCT & ( & O & O \\
-1903–1957 & text & 0 & NUM & 1903–1957 & O & O \\
-) & text & 0 & PUNCT & ) & O & O \\
-matematikai & text & 0 & ADJ & matematikai & O & O \\
-szemszögből & text & 0 & NOUN<CAS<ELA>> & szemszög & O & O \\
-közelíti & text & 0 & VERB<DEF> & közelít & O & O \\
-meg & text & 0 & PREV & meg & O & O \\
-a & text & 0 & ART & a & O & O \\
-kérdést & text & 0 & NOUN<CAS<ACC>> & kérdés & O & O \\
-\end{tabular}
-
-%\begin{tabular}{llllll}
-%\textbf{token} & \textbf{text/link} & \textbf{WP link} & \textbf{POS} & \textbf{lemma} & \textbf{NE} \\
-%This & text & 0 &    DT &   This & O \\
-%is &   text & 0 &    VBZ &  be &   O \\
-%a &    text & 0 &    DT &   a  &    O\\
-%list & text & 0 &    NN &   list  & O\\
-%of &   text & 0 &    IN &   of &     O\\
-%films  & B-link & films &  NNS &  film & O\\
-%by &   text & 0 &    IN &   by &     O\\
-%year & text & 0 &    NN &   year & O\\
-%produced & text & 0 &    VBN &  produce & O\\
-%in &   text & 0 &    IN &   in &     O\\
-%the &  text & 0 &    DT &   the &   O\\
-%country &text & 0 &    NN &   country &O\\
-%of &   text & 0 &    IN &   of &     O\\
-%South &  B-link & South Korea &  NNP &  South  &B-LOC\\
-%Korea &  I-link & South Korea &  NNP &  Korea   & I-LOC\\
-%\end{tabular}
-
-\end{frame}
-
-\begin{frame}{A korpusz elérhetősége}
-\bigskip
-A korpuszok
-\begin{itemize}
-\vitem a CC-BY-SA 3.0 Unported licensz alatt kerültek publikálásra
-\vitem szabadon letölthetőek a \url{http://hlt.sztaki.hu/resources/} honlapról
-\vitem szintén elérhetőek a META-SHARE-en keresztül. Utóbbi
-  \begin{itemize}
-  \vitem egy nyílt rendszer, mely lehetővé teszi a nyelvi erőforrások megosztását
-  \vitem létrehozója a META-NET, az Európai Bizottság által alapított nyelvtechnológiai hálózat
-  \vitem \url{http://www.meta-net.eu/meta-share}
-  \end{itemize}
-\end{itemize}
-
-\end{frame}
-
 \section{Kiértékelés}
 
 \begin{frame}{Silver Standard Corpora}
@@ -522,6 +466,63 @@ Szeged  with wikitags & Szeged  & 95.38 & 94.92 & 95.15 \\
 %  \vfill
 
 %\end{frame}
+
+\section{A korpuszok leírása}
+
+\begin{frame}{Multitag formátum}
+
+% TODO: nem fér ki minden oszlop
+\begin{tabular}{lllllll}
+\textbf{token} & \textbf{text/link} & \textbf{WP link} & \textbf{POS} & \textbf{lemma} & \textbf{NE} \\
+Neumann & B-link & Neumann János & NOUN & neumann & B-PER & B-PER \\
+János & I-link & Neumann János & NOUN & jános & I-PER & I-PER \\
+( & text & 0 & PUNCT & ( & O & O \\
+1903–1957 & text & 0 & NUM & 1903–1957 & O & O \\
+) & text & 0 & PUNCT & ) & O & O \\
+matematikai & text & 0 & ADJ & matematikai & O & O \\
+szemszögből & text & 0 & NOUN<CAS<ELA{>}> & szemszög & O & O \\
+közelíti & text & 0 & VERB<DEF> & közelít & O & O \\
+meg & text & 0 & PREV & meg & O & O \\
+a & text & 0 & ART & a & O & O \\
+kérdést & text & 0 & NOUN<CAS<ACC{>}> & kérdés & O & O \\
+\end{tabular}
+
+%\begin{tabular}{llllll}
+%\textbf{token} & \textbf{text/link} & \textbf{WP link} & \textbf{POS} & \textbf{lemma} & \textbf{NE} \\
+%This & text & 0 &    DT &   This & O \\
+%is &   text & 0 &    VBZ &  be &   O \\
+%a &    text & 0 &    DT &   a  &    O\\
+%list & text & 0 &    NN &   list  & O\\
+%of &   text & 0 &    IN &   of &     O\\
+%films  & B-link & films &  NNS &  film & O\\
+%by &   text & 0 &    IN &   by &     O\\
+%year & text & 0 &    NN &   year & O\\
+%produced & text & 0 &    VBN &  produce & O\\
+%in &   text & 0 &    IN &   in &     O\\
+%the &  text & 0 &    DT &   the &   O\\
+%country &text & 0 &    NN &   country &O\\
+%of &   text & 0 &    IN &   of &     O\\
+%South &  B-link & South Korea &  NNP &  South  &B-LOC\\
+%Korea &  I-link & South Korea &  NNP &  Korea   & I-LOC\\
+%\end{tabular}
+
+\end{frame}
+
+\begin{frame}{A korpusz elérhetősége}
+\bigskip
+A korpuszok
+\begin{itemize}
+\vitem a CC-BY-SA 3.0 Unported licensz alatt kerültek publikálásra
+\vitem szabadon letölthetőek a \url{http://hlt.sztaki.hu/resources/} honlapról
+\vitem szintén elérhetőek a META-SHARE-en keresztül. Utóbbi
+  \begin{itemize}
+  \vitem egy nyílt rendszer, mely lehetővé teszi a nyelvi erőforrások megosztását
+  \vitem létrehozója a META-NET, az Európai Bizottság által alapított nyelvtechnológiai hálózat
+  \vitem \url{http://www.meta-net.eu/meta-share}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
 
 \section{Összegzés}
 \begin{frame}{Conclusions}
