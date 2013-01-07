@@ -114,13 +114,12 @@ A probléma:
 \end{frame}
 
 \begin{frame}{A kihívás}
-
-Az annotációs költség csökkentése \nyil automatikusan annotált korpuszok előállítása
+\bigskip
+Az annotációs költség csökkentése:
 
 \begin{itemize}
-\item meglévő korpuszok egyesítése \nyil az annotációs sémák és címkekészletek különbözősége 
-\item rendelkezésre álló korpuszon tanított tagger futtatása új szövegen \nyil a domének közötti különbség teljesítménycsökkenést okoz
-\item közösségi tartalmak felhasználása \nyil leképezés a sztenderd címkekészletekre
+\item crowdsourcing
+\item automatikusan annotált korpuszok előállítása
 \end{itemize}
 
 \smallskip
@@ -213,7 +212,6 @@ Nyelvfüggetlen módszer \nyil minden Wikipédia-nyelvre építhető automatikus
     \begin{itemize}
     \vitem szemantikus tudásbázis Wikipédia entitásokról
     \vitem OWL ontológia kb. 320 osztállyal: kézileg leképeztük CoNLL (Szeged) kategóriákra
-    \vitem minden entitást a legspecifikusabb osztály szerinti kategóriába raktunk
     \vitem csökkent fedés, jobb pontosság
     \end{itemize}
   \end{itemize}
@@ -226,7 +224,6 @@ Nyelvfüggetlen módszer \nyil minden Wikipédia-nyelvre építhető automatikus
   \vitem Tulajdonnevek felismerése szövegben:
     \begin{itemize}
     \vitem Kereszthivatkozások, ha a hivatkozott cikk szerepel az entitáslistában
-    \vitem Az aktuális cikk címe, ha szerepel a listában
     \end{itemize}
   \vitem Címkézés: a DBpedia--Szeged leképezés alapján
   \end{itemize}
@@ -317,7 +314,7 @@ PER     &   88.30 &  89.25 &  88.77 & 93 \\
 
 \end{frame}
 
-\begin{frame}{Típustévesztések igazságmátrix}
+\begin{frame}{Típustévesztések igazságmátrixa}
 
 \bigskip
 
@@ -517,11 +514,12 @@ A korpuszok
 
 \section{Összegzés}
 \begin{frame}{Összegzés}
+  \bigskip
   \begin{itemize}
   \vitem módszerünk nagyban csökkenti az annotációs költségeket 
   \vitem bármely Wikipédia-nyelvre alkalmazható \nyil kevés erőforrással rendelkező nyelvekre is előállítható tulajdonnév-annotált korpusz
-  \vitem a létrehozott korpuszok több módon is felhasználhatóak a NER rendszerek hatékonyságának növelésére
   \vitem mivel korpuszunk közelíti a gold standard minőséget, akár önálló tanítóhalmazként is használható a sajtó stílustól eltérő szövegekhez
+  \vitem a létrehozott korpuszok több módon is felhasználhatóak a NER rendszerek hatékonyságának növelésére
   \vitem az általunk előállított korpuszok szabadon hozzáférhető
 %  \vitem a módszerben benne rejlik a lehetőség finomabb tulajdonnév-hierarchiák támogatására is
   \end{itemize}
