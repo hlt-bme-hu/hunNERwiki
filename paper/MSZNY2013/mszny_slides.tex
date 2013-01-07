@@ -266,27 +266,6 @@ Nyelvfüggetlen módszer \nyil minden Wikipédia-nyelvre építhető automatikus
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Nyelvfüggő elemek}
-  \begin{itemize}
-  \vitem Nyelvi eszközök
-    \begin{itemize}
-    \vitem tokenizáló, lemmatizáló, morfológiai egyértelműsítő
-    \vitem kidolgoztunk egy keretrendszert, amibe bármilyen eszközt be lehet kötni
-    \end{itemize}
-  \vitem Wikipédia
-    \begin{itemize}
-    \vitem Sablonok nyelvfüggőek
-    \vitem a magyar egy közepes méretű nyelv: \nagytilde 200k cikk a kb.~\nagytilde 4M angollal szemben
-    \end{itemize}
-  \vitem DBpedia
-    \begin{itemize}
-    \vitem nagyobb nyelvekre honosított fejezetek --- magyarra nincs
-    \vitem csak az angol Wikipédiában is szereplő magyar tulajdonneveket tartalmazza
-%    \vitem távlati terv a lista kiegészítése gépi tanulással
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
 \section{Problémás esetek, hibaelemzés}
 
 \begin{frame}{Kézi ellenőrzés}
@@ -545,8 +524,9 @@ e-mail: \\ {\tt nemeskey.david@sztaki.mta.hu \\ simon.eszter@nytud.mta.hu} \\
 
 URL: \\ {\tt http://hlt.sztaki.hu/resources/}
 
-
 \end{frame}
+
+\section{Függelék}
 
 \begin{frame}{Multitag formátum}
 
@@ -569,6 +549,27 @@ kérdést & text & 0 & NOUN<CAS<ACC{>}> & kérdés & O \\
 \end{tabular}
 }
 
+\end{frame}
+
+\begin{frame}{Nyelvfüggő elemek}
+  \begin{itemize}
+  \vitem Nyelvi eszközök
+    \begin{itemize}
+    \vitem tokenizáló, lemmatizáló, morfológiai egyértelműsítő
+    \vitem kidolgoztunk egy keretrendszert, amibe bármilyen eszközt be lehet kötni
+    \end{itemize}
+  \vitem Wikipédia
+    \begin{itemize}
+    \vitem Sablonok nyelvfüggőek
+    \vitem a magyar egy közepes méretű nyelv: \nagytilde 200k cikk a kb.~\nagytilde 4M angollal szemben
+    \end{itemize}
+  \vitem DBpedia
+    \begin{itemize}
+    \vitem nagyobb nyelvekre honosított fejezetek --- magyarra nincs
+    \vitem csak az angol Wikipédiában is szereplő magyar tulajdonneveket tartalmazza
+%    \vitem távlati terv a lista kiegészítése gépi tanulással
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \end{document}
