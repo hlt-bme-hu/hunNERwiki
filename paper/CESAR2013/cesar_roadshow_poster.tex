@@ -1,0 +1,343 @@
+% Template file for an a0 portrait poster.
+% Written by Graeme, 2001-03 based on his SOC poster.
+%
+% See discussion and documentation at
+% <http://www.astro.gla.ac.uk/users/norman/docs/posters/> 
+%
+
+% We switch to portrait mode. This works as advertised.
+%\documentclass[a0,portrait]{a0poster}
+\documentclass[a0, portrait]{a0poster}
+%\usepackage[magyar]{babel}
+\usepackage[latin2]{inputenc}
+%\usepackage[T1]{fontenc}
+
+\usepackage{fancyvrb}
+
+\usepackage{latexsym,amsmath}
+
+% You might find the 'draft' option to a0 poster useful if you have
+% lots of graphics, because they can take some time to process and
+% display. (\documentclass[a0,draft]{a0poster})
+
+% Switch off page numbers on a poster, obviously, and section numbers too.
+\pagestyle{empty}
+\setcounter{secnumdepth}{0}
+
+% The textpos package is necessary to position textblocks at arbitary 
+% places on the page.
+\usepackage[absolute]{textpos}
+
+% Graphics to include graphics. Times is nice on posters, but you
+% might want to switch it off and go for CMR fonts.
+\usepackage{graphics,wrapfig}
+
+% These colours are tried and tested for titles and headers. Don't
+% over use color!
+\usepackage{color}
+\usepackage{colortbl,array,pifont}
+\definecolor{DarkBlue}{rgb}{0.1,0.1,0.5}
+\definecolor{Red}{rgb}{0.9,0.0,0.1}
+\definecolor{pdark}{RGB}{49,89,107}
+\definecolor{pmiddle}{RGB}{22,111,143}
+\definecolor{plight}{RGB}{70,180,216}
+\definecolor{pgray}{RGB}{66,66,71}
+\definecolor{kiemcolor}{RGB}{227,103,17}
+\definecolor{lemmacolor}{RGB}{0,128,0}
+\definecolor{wfcolor}{RGB}{32,32,255}
+
+
+\def\jelszin{pdark}
+\def\aljelszin{pmiddle}
+% see documentation for a0poster class for the size options here
+\let\Textsize\normalsize
+\def\Head#1{\noindent\hbox to \hsize{\hfil{\LARGE\color{DarkBlue} #1}}\bigskip}
+\def\LHead#1{\medskip\noindent{\LARGE\color{plight} #1}\medskip}
+\def\Subhead#1{\noindent{\large\color{DarkBlue} #1}}
+\def\Title#1{\noindent{\VeryHuge\color{pdark} #1}}
+\def\hd{,\kern-2pt ,}
+\arrayrulecolor{plight}
+
+\newcommand{\kiem}[1]{\textcolor{kiemcolor}{#1}}
+\newcommand{\lemma}[1]{\textcolor{lemmacolor}{#1}}
+\newcommand{\wf}[1]{\textcolor{wfcolor}{#1}}
+\newenvironment{colitemize}[2]
+{\begin{list}{\textcolor{#2}{\ding{#1}}}{}}
+{\end{list}}
+
+% Set up the grid
+%
+% Note that [40mm,40mm] is the margin round the edge of the page --
+% it is _not_ the grid size. That is always defined as 
+% PAGE_WIDTH/HGRID and PAGE_HEIGHT/VGRID. In this case we use
+% 15 x 25. This gives us a wide central column for text (7 grid
+% spacings) and two narrow columns (3 each) at each side for 
+% pictures, separated by 1 grid spacing.
+%
+% Note however that texblocks can be positioned fractionally as well,
+% so really any convenient grid size can be used.
+%
+\TPGrid[40mm,40mm]{15}{25}  % 3 - 1 - 7 - 1 - 3 Columns
+						% 4  - 1 - 5 - 1 - 4
+% Mess with these as you like
+\parindent=0pt
+%\parindent=1cm
+\parskip=0.5\baselineskip
+
+% abbreviations
+\newcommand{\ddd}{\,\mathrm{d}}
+
+\begin{document}
+
+% Understanding textblocks is the key to being able to do a poster in
+% LaTeX. In
+%
+%    \begin{textblock}{wid}(x,y)
+%    ...
+%    \end{textblock}
+%
+% the first argument gives the block width in units of the grid
+% cells specified above in \TPGrid; the second gives the (x,y)
+% position on the grid, with the y axis pointing down.
+
+% You will have to do a lot of previewing to get everything in the 
+% right place.
+
+% This gives good title positioning for a portrait poster.
+% Watch out for hyphenation in titles - LaTeX will do it
+% but it looks awful.
+\begin{textblock}{15}(0,-1.5)
+\begin{center}
+\scalebox{0.8}{\includegraphics{posterfejlec_0.pdf}}
+\end{center}
+\end{textblock}
+
+\begin{textblock}{15}(0,1.4)
+% \begin{center}
+% \parbox{0.15\textwidth}{
+%   \begin{center}
+%     \scalebox{0.7}{\includegraphics{logo_vertical.png}}
+%   \end{center}
+%   }
+%  \parbox{0.55\textwidth}{
+    \begin{center}\baselineskip=3\baselineskip 
+\scalebox{1}{\Title{Magyar Nemzeti Szövegtár}}
+\\
+\scalebox{0.5}{\includegraphics{logo_full.png}}\\
+%\LHead{\texttt{http://corpus.nytud.hu/mnsz}}
+%\end{center}
+%}
+% \parbox{0.2\textwidth}{
+%    \begin{center}
+%      \scalebox{0.35}{\includegraphics{HLT_platformlogo.png}}
+%    \end{center}
+%  }
+\end{center}
+\end{textblock}
+
+\begin{textblock}{15}(0,2.8)
+\begin{center}
+\LHead{\texttt{http://corpus.nytud.hu/mnsz}}
+\end{center}
+\end{textblock}
+
+% \begin{textblock}{3}(5.7,2.8)
+%   \begin{center}
+%    \texttt{\large\textcolor{\aljelszin}{mnsz@nytud.hu}}
+%   \end{center}
+%  \end{textblock}
+
+% An example text block, to get you started!
+\begin{textblock}{4}(0.5,4)
+  \LHead{Szövegtár, számítógépes korpusz}
+
+\begin{colitemize}{227}{\aljelszin}
+\item Írott, vagy lejegyzett beszélt nyelvi adatok elektronikus formában tárolt
+  gyûjteménye.
+\item Nem archívum, nem feltétlenül egész szövegeket tartalmaz.
+\item Tartalmaz viszont bibliográfiai adatokat, a nyelvi elemeket jellemzõ elemzést, jelöli a szerkezeti egységeket (bekezdés, mondat).
+\item Számítógéppel hatékonyan kezelhetõ szabványos formá\-tum\-ban, adatbázisként használható.
+\item Elméleti kutatások és számítógépes nyelvészeti eljárások, alkalmazások
+  nélkülözhetetlen nyersanyaga.
+\item Értékes információt hordoz az adott nyelvhez kötõdõ kultúra kutatóinak,
+társadalomtudósainak számára is.
+\end{colitemize}
+
+\vspace*{0.5cm}
+
+
+  \LHead{Hogyan készült?}
+
+\begin{colitemize}{227}{\aljelszin}
+\item Elektronikus források: sajtószövegek, Digitális Irodalmi Akdémia, Magyar Elektronikus Könyvtár, törvények, parlamenti napló, internetes fórumok.
+\item Elõfeldolgozás: bekezdések, mondatok azonosítása, egy\-sé\-ges szabványos formátum kialakítása.
+\item Nyelvtani elemzés: elemekre bontás, morfológiai elemzés.
+\item Egyértelmûsítés: többértelmûségek feloldása\\ 
+(pl. \emph{járatok.Ige/Fn})
+\item Összefûzés, indexálás: lekérdezhetõ adatbázis kialakítása.
+\item Lekérdezõ szoftver: felhasználói felület kifejlesztése.
+\end{colitemize}
+
+\vspace*{0.5cm}
+
+ \LHead{Felhasználók}
+
+Több mint 5000 regisztrált felhasználó:
+
+\begin{colitemize}{227}{\aljelszin}
+\item Nyelvészek, szótárszerkesztõk
+\item Számítógépes nyelvészek
+\item Társadalomtudósok
+\item Nyelv iránt érdeklõdõk
+\end{colitemize}
+
+\vspace*{0.5cm}
+
+
+  \LHead{Intelligens keresés}
+  
+\begin{colitemize}{227}{\aljelszin}
+
+\item Szótõ és szóalak keresése
+\item Keresés szófaj és alaktani jellemzõk alapján
+\item Két szó együttes elõfordulása
+\begin{colitemize}{228}{\jelszin}
+\item állandósult szókapcsolatok
+\item igei vonzatok
+\end{colitemize}
+\item Megjelenítési beállítások
+\begin{colitemize}{228}{\jelszin}
+\item kontextus
+\item alkorpuszra korlátozás
+\end{colitemize}
+\item Megoszlásvizsgálat
+\end{colitemize}
+  
+\end{textblock}
+
+\begin{textblock}{4}(5.5,4)
+  \LHead{A Magyar Nemzeti Szövegtár}
+\begin{colitemize}{227}{\aljelszin}
+
+\item A mai magyar írott köznyelv általános célú reprezentatív korpusza.
+\item Számszerûsíthetõ képet ad a magyar nyelvhasználatról.
+\item \kiem{Intelligens korpusz}:
+\begin{colitemize}{228}{\jelszin}
+\item minden szó mellett feltünteti a szótövet, a szófajt és a szó
+  morfológiai elemzését,
+\item a lekérdezés nyelvtani jellemzõ szerint is lehetséges.
+\end{colitemize}
+\item Hálózati lekérdezõ felületen bárki számára szabadon hoz\-zá\-fér\-hetõ.
+\end{colitemize}
+
+\end{textblock}
+\vspace*{1cm}
+
+\begin{textblock}{6.5}(6.5,8.38)
+
+
+\renewcommand{\arraystretch}{1.3}
+\setlength{\extrarowheight}{0.3cm}
+
+  \begin{tabular}{|l|r|r|r|r|r|r|}
+\hline
+ & \multicolumn{1}{|c|}{magyarországi} & \multicolumn{1}{|c|}{szlovákiai} & \multicolumn{1}{|c|}{kárpátaljai} & \multicolumn{1}{|c|}{erdélyi} & \multicolumn{1}{|c|}{vajdasági} & \multicolumn{1}{|c|}{Összesen (m.~szó)}\\\hline\hline
+\multicolumn{1}{|c|}{sajtó} & 71,0  &	5,7  &	0,7 & 	5,5 & 	1,5 & 	84,5\\\hline
+ \multicolumn{1}{|c|}{szépirodalom} &  	35,5 & 	1,4 & 	0,4 & 	0,8 & 	0,2 & 	38,2 \\\hline
+ \multicolumn{1}{|c|}{tudományos} &  	20,5 & 	2,3 & 	0,7 & 	1,6 & 	0,3 & 	25,5 \\\hline 
+ \multicolumn{1}{|c|}{hivatalos} & 	19,9 & 	0,2 & 	0,3 & 	0,6 & 	0,1 & 	20,9 \\\hline 
+ \multicolumn{1}{|c|}{személyes} & 	17,8 & 	---  	&0,4 &  	0,4&  	0,1 & 	18,6\\\hline\hline
+ \multicolumn{1}{|c|}{összesen} & 	164,7  &	9,5 & 	2,5 & 	8,9 & 	2,0 & 	187,6 \\\hline 
+  \end{tabular}
+  \begin{center}
+    1.~táblázat. Nyelvváltozatok és st1lusrétegek számszerûen. 
+  \end{center}
+\end{textblock}
+
+\begin{textblock}{5}(8.3,12)
+
+\LHead{Az MNSZ belülrõl}
+\end{textblock}
+\begin{textblock}{5}(6.5,12.7)
+\begin{Verbatim}[commandchars=\\\{\}] 
+                <h.title>Sinistra körzet</h.title>
+                <h.author>Bodor Ádám</h.author>
+...
+<s>
+<w lemma="\lemma{most}" msd="\lemma{Adv}" ctag="R">\wf{Most}</w>
+<w lemma="\lemma{azonban}" msd="\lemma{Con}" ctag="C">\wf{azonban}</w>
+<w lemma="\lemma{járatlan}" msd="\lemma{A.NOM}" ctag="AS_A">\wf{járatlan}</w>
+<w lemma="\lemma{ösvény}" msd="\lemma{N.PL.SUP}" ctag="NP3NP">\wf{ösvényeken}</w>
+<c lemma="\lemma{,}" msd="\lemma{WPUNCT}" ctag="WPUNCT">\wf{,}</c>
+<w lemma="\lemma{a}" msd="\lemma{Det}" ctag="D">\wf{a}</w>
+<w lemma="\lemma{hegyi}" msd="\lemma{A.NOM}" ctag="AS_A">\wf{hegyi}</w>
+<w lemma="\lemma{vadász}" msd="\lemma{N.PL.NOM}" ctag="NP3NN">\wf{vadászok}</w>
+<w lemma="\lemma{útjelzés}" msd="\lemma{N.PSe3i.ACC}" ctag="NP3NAS3">\wf{útjelzéseit}</w>
+<w lemma="\lemma{követ}" msd="\lemma{V.HIN}" ctag="R__V">\wf{követve}</w>
+<w lemma="\lemma{egyenesen}" msd="\lemma{Adv}" ctag="R">\wf{egyenesen}</w>
+<w lemma="\lemma{titkos}" msd="\lemma{A.NOM}" ctag="AS_A">\wf{titkos}</w>
+<w lemma="\lemma{kilátóhely}" msd="\lemma{N.PSe3.NOM}" ctag="NS3NNS3">\wf{kilátóhelye}</w>
+<w lemma="\lemma{felé}" msd="\lemma{NU}" ctag="RP">\wf{felé}</w>
+<w lemma="\lemma{tart}" msd="\lemma{V.Me3}" ctag="VS3PI">\wf{tartott}</w>
+<c lemma="\lemma{.}" msd="\lemma{SPUNCT}" ctag="SPUNCT">\wf{.}</c>
+</s>
+\end{Verbatim}
+  
+\end{textblock}
+
+\begin{textblock}{4}(10.5,4)
+
+
+  \LHead{Az MNSZ összetétele}
+
+Mitõl \emph{nemzeti}?
+
+Mérete szerint:
+\begin{colitemize}{227}{\aljelszin}
+
+\item hasonló vállalkozásokkal összemérhetõ (pl. British\\ National Corpus)
+\end{colitemize}
+Tartalma szerint:
+\begin{colitemize}{227}{\aljelszin}
+\item nem csak az \hd írástudó elit" nyelvezete
+\item nem csak budapesti nyelvhasználat
+\item határon túli nyelvhasználat is\\
+(\kiem{Kárpát-medencei Magyar Korpusz})
+\end{colitemize}
+
+\end{textblock}
+
+% If you want to add a figure do something like this:
+\begin{textblock}{7}(-0.5,19)
+ \begin{center}
+\resizebox{6\TPHorizModule}{!}{
+	\includegraphics{kereses.png}
+}
+ \end{center}
+ \end{textblock}
+ 
+ \begin{textblock}{7}(6.5,18.3)
+ \begin{center}
+\resizebox{8\TPHorizModule}{!}{
+	\includegraphics{result.png}
+}
+
+ \end{center}
+
+\end{textblock}
+
+
+\begin{textblock}{2}(12,24.5)
+\raisebox{0.5cm}{\textsl{\tiny A platformot támogatja: }}
+\resizebox{1\TPHorizModule}{!}{
+	\includegraphics{nkth.png}
+}
+
+\end{textblock}
+ 
+
+
+
+
+\end{document}
+
