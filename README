@@ -7,7 +7,7 @@ Takes the instance file as input and extracts the article - NER category
 pairings. The mapping from DBPedia to ConLL categories can be supplied in
 another file.
 
-ner_filter_incomplete_sentences.py:
+ner_filter_incomplete_sentences.py
 ----------------------------------
 Filters incomplete sentences. To be applied on the tagged training corpus.
 
@@ -20,7 +20,7 @@ awk '$2 == 0 {print $3}' pages | sed -e "s/_/ /g" > main_pages
 python /home/ndavid/../zseder/Proj/WP/AutoCorpus/articles.py < huwiki-latest-pages-articles.xml > huwiki-latest-pages-articles.out
 python split_records.py huwiki-latest-pages-articles.out "^%%#PAGE.*" 4
 # (modify wiki.conf accordingly)
-python create_morphtable.py -l hu wiki.conf /home/ndavid/huwiki/huwiki-morph.4 /home/ndavid/huwiki/huwiki-latest-pages-articles.out.4 >/home/ndavid/huwiki/morph-log.4 2>&1
+for i in `seq 1 4`; do python create_morphtable.py -l hu wiki.conf /home/ndavid/huwiki/huwiki-morph.$i /home/ndavid/huwiki/huwiki-latest-pages-articles.out.$i >/home/ndavid/huwiki/morph-log.$i 2>&1 &; done
 # (for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
 python wikitext_to_conll.py -l hu.3 wiki.conf /home/ndavid/huwiki/huwiki-latest-pages-articles.out.3 /home/ndavid/huwiki/huwiki-articles.conll.3 /home/ndavid/huwiki/huwiki-templates.3 > ~/huwiki/log.3 2>&1
 # (for pid in `ps | grep python | awk '{print $1}'`; do renice -n 10 -p $pid; done)
