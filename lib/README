@@ -1,0 +1,10 @@
+Add hunmisc as a submodule here. From the main directory, execute:
+
+git submodule add git@github.com:zseder/hunmisc.git lib/hunmisc
+git submodule init
+git submodule update
+
+After that, you can update the hunmisc dependency by
+
+cd lib/hunmisc
+git pull
